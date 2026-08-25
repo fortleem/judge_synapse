@@ -60,10 +60,10 @@ export function SovereignHeader({
           </div>
           <div className="min-w-0">
             <h1 className="font-serif-judicial text-lg font-bold leading-tight text-amber-300 truncate">
-              الدماغ القضائي المصري
+              المنصة القضائية الذكية
             </h1>
             <p className="font-jetbrains text-[10px] text-sidebar-foreground/60 tracking-wider truncate">
-              EGYPTIAN JUDICIAL BRAIN · V2.1 · SOVEREIGN PILOT
+              EGYPTIAN JUDICIAL SMART · V2.1 · SOVEREIGN PILOT
             </p>
           </div>
         </div>

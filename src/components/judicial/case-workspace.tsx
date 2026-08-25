@@ -1,11 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
   Gavel, FileText, FolderOpen, CalendarClock, GitBranch, BookOpen,
   Bot, Scale, ShieldCheck, Loader2, AlertTriangle, Swords, Eye, ServerOff,
-  CalendarDays, Upload,
+  CalendarDays, Upload, Lightbulb,
 } from "lucide-react"
 import { cn, colorClasses, formatDate } from "@/lib/judicial/ui"
 import {
@@ -31,8 +31,9 @@ import { AdversaryReviewTab } from "./tabs/adversary-review"
 import { JudgeNotesTab } from "./tabs/judge-notes"
 import { DeadlinesTab } from "./tabs/deadlines"
 import { DocumentsTab } from "./tabs/documents"
+import { InsightsTab } from "./tabs/insights"
 
-type TabKey = "overview" | "facts" | "evidence" | "timeline" | "deadlines" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes" | "documents"
+type TabKey = "overview" | "documents" | "facts" | "evidence" | "timeline" | "deadlines" | "issues" | "authorities" | "ai" | "adversary" | "insights" | "judge" | "indicators" | "notes"
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: CaseDetailT) => number }[] = [
   { key: "overview", label: "نظرة عامة", icon: <FileText className="h-4 w-4" /> },
@@ -43,6 +44,7 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: Cas
   { key: "deadlines", label: "المواعيد القانونية", icon: <CalendarDays className="h-4 w-4" />, badge: (c) => c.deadlines.length },
   { key: "issues", label: "المسائل القانونية", icon: <GitBranch className="h-4 w-4" />, badge: (c) => c.issues.length },
   { key: "authorities", label: "السلطات", icon: <Scale className="h-4 w-4" />, badge: (c) => c.authorities.length },
+  { key: "insights", label: "الرؤى الذكية", icon: <Lightbulb className="h-4 w-4" /> },
   { key: "ai", label: "تحليل AI", icon: <Bot className="h-4 w-4" /> },
   { key: "adversary", label: "المراجعة الخصومية", icon: <Swords className="h-4 w-4" />, badge: (c) => c.adversaryReviews.length },
   { key: "judge", label: "القاضي", icon: <Gavel className="h-4 w-4" /> },
@@ -58,6 +60,16 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
   const stage = findConstant(PROCEDURAL_STAGES, c.proceduralStage)
   const risk = findConstant(RISK_LEVELS, c.riskLevel)
   const state = findConstant(OPERATING_STATES, c.operatingState)
+
+  // Proactive contradiction scan — notifies judge immediately
+  const contradictionsQ = useQuery({
+    queryKey: ["contradictions", c.id],
+    queryFn: () => api.scanContradictions(c.id) as Promise<any>,
+    enabled: !!c.id,
+    refetchInterval: 60000,
+  })
+  const contradictionReport = contradictionsQ.data?.data ?? contradictionsQ.data
+  const hasCriticalAlerts = contradictionReport?.criticalCount > 0
 
   const updateCase = async (patch: Record<string, unknown>, msg: string) => {
     try {
@@ -132,6 +144,14 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
         <OperatingStatesBanner caseDetail={c} onUpdate={updateCase} />
       </div>
 
+      {/* Proactive contradiction notification banner */}
+      {contradictionReport && contradictionReport.totalAlerts > 0 && (
+        <ContradictionAlertBanner
+          report={contradictionReport}
+          onViewDetails={() => setTab("insights")}
+        />
+      )}
+
       {/* Tabs */}
       <div className="border-b border-border bg-background/60 px-3">
         <nav className="flex items-center gap-1 overflow-x-auto scroll-sovereign">
@@ -174,6 +194,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
         {tab === "deadlines" && <DeadlinesTab caseDetail={c} />}
         {tab === "issues" && <IssuesTab caseDetail={c} />}
         {tab === "authorities" && <AuthoritiesTab caseDetail={c} />}
+        {tab === "insights" && <InsightsTab caseDetail={c} />}
         {tab === "ai" && <AIAnalysisTab caseDetail={c} />}
         {tab === "adversary" && <AdversaryReviewTab caseDetail={c} />}
         {tab === "judge" && <JudgeFieldsTab caseDetail={c} />}
@@ -233,6 +254,54 @@ function OperatingStatesBanner({
           {state.value === "SYSTEM_DEGRADED" && "النظام في وضع متدهور — يلزم التحقق من التكامل قبل الاعتماد"}
         </div>
       )}
+    </div>
+  )
+}
+
+// ─── Proactive Contradiction Alert Banner ───────────────────────
+// Shows at top of case workspace when contradictions are detected
+function ContradictionAlertBanner({ report, onViewDetails }: { report: any; onViewDetails: () => void }) {
+  const criticalCount = report.criticalCount ?? 0
+  const warningCount = report.warningCount ?? 0
+  const isCritical = criticalCount > 0
+
+  return (
+    <div className={cn(
+      "border-b px-4 py-2.5 flex items-center justify-between gap-3",
+      isCritical ? "border-red-500/40 bg-red-500/5" : "border-amber-500/40 bg-amber-500/5"
+    )}>
+      <div className="flex items-center gap-2.5 min-w-0">
+        <div className={cn(
+          "flex h-8 w-8 items-center justify-center rounded-md shrink-0",
+          isCritical ? "bg-red-500/15 text-red-600" : "bg-amber-500/15 text-amber-600"
+        )}>
+          <AlertTriangle className="h-4 w-4 sovereign-pulse" />
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2 mb-0.5">
+            <span className={cn("font-kufi text-xs font-semibold", isCritical ? "text-red-700" : "text-amber-700")}>
+              {isCritical ? "تنبيهات حرجة مُكتشَفة" : "تنبيهات مُكتشَفة"}
+            </span>
+            {criticalCount > 0 && <StatusBadge label={`${criticalCount} حرج`} color="red" size="sm" glow />}
+            {warningCount > 0 && <StatusBadge label={`${warningCount} تحذير`} color="amber" size="sm" />}
+          </div>
+          <p className="font-kufi text-[10px] text-muted-foreground leading-relaxed truncate">
+            {report.summary}
+          </p>
+        </div>
+      </div>
+      <button
+        onClick={onViewDetails}
+        className={cn(
+          "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors shrink-0",
+          isCritical
+            ? "border-red-500/40 text-red-600 hover:bg-red-500/10"
+            : "border-amber-500/40 text-amber-600 hover:bg-amber-500/10"
+        )}
+      >
+        <Lightbulb className="h-3.5 w-3.5" />
+        عرض الرؤى الذكية
+      </button>
     </div>
   )
 }

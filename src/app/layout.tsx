@@ -26,14 +26,14 @@ const jetbrains = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "الدماغ القضائي المصري — Egyptian Judicial Brain V2.1",
+  title: "المنصة القضائية الذكية — Egyptian Judicial Smart V2.1",
   description:
     "منصة سيادية للذكاء القضائي والبحث القانوني وتنظيم الأدلة ودعم التسبيب — النسخة 2.1 — تجربة قضائية مقيّدة — للقاضي شريف",
   keywords: [
     "القضاء المصري", "الذكاء القضائي", "بحث قانوني", "تنظيم الأدلة",
-    "Egyptian Judicial Brain", "judicial intelligence", "legal research",
+    "Egyptian Judicial Smart", "judicial intelligence", "legal research",
   ],
-  authors: [{ name: "Egyptian Judicial Brain — Court-Pilot" }],
+  authors: [{ name: "Egyptian Judicial Smart — Court-Pilot" }],
   icons: {
     icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
   },

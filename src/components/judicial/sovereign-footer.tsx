@@ -22,7 +22,7 @@ export function SovereignFooter({
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-1.5">
             <Scale className="h-3.5 w-3.5 text-amber-400" />
-            <span className="font-serif-judicial text-sm font-bold text-amber-300">الدماغ القضائي المصري</span>
+            <span className="font-serif-judicial text-sm font-bold text-amber-300">المنصة القضائية الذكية</span>
             <span className="font-jetbrains text-[9px] text-sidebar-foreground/50">V2.1</span>
           </div>
           <span className="text-sidebar-border">|</span>

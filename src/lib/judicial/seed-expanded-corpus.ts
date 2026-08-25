@@ -33,10 +33,10 @@ export async function seedExpandedLegalTexts() {
   if (!internalSource) {
     internalSource = await db.legalSource.create({
       data: {
-        name: "السجل الداخلي الموثَّق — الدماغ القضائي المصري",
+        name: "السجل الداخلي الموثَّق — المنصة القضائية الذكية",
         nameEn: "EJB Internal Verified Registry",
         sourceType: "statute",
-        issuingBody: "الدماغ القضائي المصري — فريق المعرفة القانونية",
+        issuingBody: "المنصة القضائية الذكية — فريق المعرفة القانونية",
         jurisdiction: "داخلي — نصوص موثَّقة من المصادر الرسمية",
         accessStatus: "VERIFIED",
         sourceTier: 3,

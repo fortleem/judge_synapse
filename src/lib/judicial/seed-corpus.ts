@@ -72,11 +72,11 @@ export async function seedCorpusRegistry() {
   // Add "verified_secondary" source for the EJB internal corpus
   const internalSource = await db.legalSource.create({
     data: {
-      name: "السجل الداخلي الموثَّق — الدماغ القضائي المصري",
+      name: "السجل الداخلي الموثَّق — المنصة القضائية الذكية",
       nameEn: "EJB Internal Verified Registry",
       portalUrl: null,
       sourceType: "statute",
-      issuingBody: "الدماغ القضائي المصري — فريق المعرفة القانونية",
+      issuingBody: "المنصة القضائية الذكية — فريق المعرفة القانونية",
       jurisdiction: "داخلي — نصوص موثَّقة من المصادر الرسمية",
       accessStatus: "VERIFIED",
       sourceTier: 3,

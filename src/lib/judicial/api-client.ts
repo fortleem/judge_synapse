@@ -361,4 +361,22 @@ export const api = {
       body: JSON.stringify({ items }),
     })
   },
+
+  // ─── Law Number Check (with web search) ──
+  async checkLaw(caseId: string, lawNumber: string, courtType: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/law-check`, {
+      method: "POST",
+      body: JSON.stringify({ lawNumber, courtType }),
+    })
+  },
+
+  // ─── Contradiction Alerts ──
+  async scanContradictions(caseId: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/contradictions`, { cache: "no-store" })
+  },
+
+  // ─── Legal Strength Analysis ──
+  async analyzeStrength(caseId: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/strength`, { cache: "no-store" })
+  },
 }
