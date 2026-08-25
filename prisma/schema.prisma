@@ -1,0 +1,232 @@
+// Egyptian Judicial Brain V2.1 — Sovereign Court-Pilot Data Model
+// Judicial Evidence–Law–Authority–Temporal–Reasoning Control System
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ─── CASE INTELLIGENCE ENGINE (§18) ──────────────────────────────
+model Case {
+  id              String   @id @default(cuid())
+  caseNumber      String   @unique
+  title           String
+  court           String
+  circuit         String
+  caseType        String
+  parties         String
+  subjectMatter   String
+  proceduralStage String   // FILED, REGISTERED, SERVICE, PLEADINGS, EVIDENCE, EXPERT, HEARING, DELIBERATION, JUDGMENT, APPEAL, FINALITY, EXECUTION
+  riskLevel       String   // LOW, MEDIUM, HIGH, CRITICAL
+  operatingState  String   // NOMINAL, REVIEW, INSUFFICIENT_EVIDENCE, CONFLICT, SYSTEM_DEGRADED
+  summary         String
+  filedDate       DateTime?
+  nextHearing     DateTime?
+  aiSyncEnabled   Boolean  @default(false)
+  corpusVersion   String   @default("EJB-CORPUS-2026.08-R1")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  facts        Fact[]
+  evidence     Evidence[]
+  timeline     TimelineEvent[]
+  issues       LegalIssue[]
+  authorities  Authority[]
+  judgeFields  JudgeField[]
+  aiAnalyses   AIAnalysis[]
+  indicators   Indicator[]
+
+  @@index([proceduralStage])
+  @@index([riskLevel])
+  @@index([operatingState])
+}
+
+// ─── FACT-STATE ENGINE (§19) ─────────────────────────────────────
+// Status: alleged, admitted, denied, undisputed, supported, contradicted,
+//         judicially_established, unresolved, immaterial, procedurally_irrelevant
+// Materiality: outcome_material, supporting, immaterial (§27)
+model Fact {
+  id           String   @id @default(cuid())
+  caseId       String
+  statement    String
+  status       String   @default("unresolved")
+  materiality  String   @default("supporting")
+  party        String?
+  sourceNote   String?
+  aiExtracted  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  case         Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([status])
+}
+
+// ─── EVIDENCE INTELLIGENCE ENGINE (§20, §21) ─────────────────────
+// type: document | digital
+// evidenceType: contract, email, message, pdf, spreadsheet, image, video, audio, signature, scan
+// admissibility: admissible, challenged, excluded, pending_review
+// judicialTreatment: unexamined, accepted, rejected, weighed
+model Evidence {
+  id                String   @id @default(cuid())
+  caseId            String
+  title             String
+  type              String   @default("document")
+  evidenceType      String
+  origin            String?
+  source            String?
+  date              DateTime?
+  integrityHash     String?
+  admissibility     String   @default("pending_review")
+  judicialTreatment String   @default("unexamined")
+  relevance         String?
+  metadata          String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  case              Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([type])
+}
+
+// ─── LEGAL TEMPORAL ENGINE (§13) ─────────────────────────────────
+// eventType: contract, transaction, breach, discovery, filing, notice,
+//            amendment, service, procedural_order, hearing, judgment, appeal, execution
+model TimelineEvent {
+  id          String   @id @default(cuid())
+  caseId      String
+  title       String
+  description String?
+  eventDate   DateTime
+  eventType   String
+  legalRegime String?
+  createdAt   DateTime @default(now())
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([eventDate])
+}
+
+// ─── LEGAL ISSUE ENGINE (§25) — hierarchical issue tree ──────────
+// issueType: jurisdiction, admissibility, procedural, primary, defense,
+//            counterclaim, constitutional, remedy
+model LegalIssue {
+  id          String   @id @default(cuid())
+  caseId      String
+  title       String
+  description String?
+  issueType   String
+  status      String   @default("open") // open, resolved, unresolved, blocked
+  parentId    String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([parentId])
+}
+
+// ─── LEGAL AUTHORITY ENGINE (§8, §9) ─────────────────────────────
+// stance: supporting | opposing | contrary | distinguishing | neutral
+// legalForce: constitutional_provision, statute, regulation, executive_decision,
+//             constitutional_judgment, judicial_principle, court_judgment,
+//             state_council_opinion, administrative_interpretation, verified_secondary,
+//             academic_commentary, research_only
+model Authority {
+  id                  String   @id @default(cuid())
+  caseId              String
+  title               String
+  issuingAuthority    String?
+  judicialBody        String?
+  court               String?
+  chamber             String?
+  documentType        String?
+  legalDomain         String?
+  jurisdiction        String?
+  citation            String?
+  referenceDate       DateTime?
+  stance              String   @default("supporting")
+  authorityStatus     String   @default("active") // active, superseded, repealed, archived
+  legalForce          String   @default("court_judgment")
+  temporalStatus      String   @default("current") // current, historical, transitional
+  sourceTier          Int      @default(3)
+  verificationStatus  String   @default("verified") // verified, partially_verified, unverified, blocked
+  exactPassage        String?
+  sourceUrl           String?
+  relationNote        String?
+  contrarySearched   Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+  case                Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([stance])
+  @@index([verificationStatus])
+}
+
+// ─── JUDGE / AI SEPARATION (§41) ──────────────────────────────────
+// fieldType: judge_results | judge_reasoning | draft | integrity_review
+// status: empty | ai_proposed | judge_reviewing | judge_accepted | judge_rejected | judge_modified
+model JudgeField {
+  id        String   @id @default(cuid())
+  caseId    String
+  fieldType String
+  content   String   @default("")
+  status    String   @default("empty")
+  updatedAt DateTime @updatedAt
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@unique([caseId, fieldType])
+  @@index([caseId])
+}
+
+// ─── AI ANALYSIS (separate from judge, §34, §66) ──────────────────
+// responseStatus: verified, partially_verified, conflicted, insufficient, unverified, blocked
+model AIAnalysis {
+  id             String   @id @default(cuid())
+  caseId         String
+  analysisType   String   // summary, scenario, adversarial, jurisdiction, constitutional, procedural
+  title          String
+  content        String
+  responseStatus String   @default("unverified")
+  provenance     String?
+  modelId        String   @default("sovereign-local-pool")
+  nonAuthoritative Boolean @default(true)
+  createdAt      DateTime @default(now())
+  case           Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+}
+
+// ─── INTEGRITY INDICATORS (§39) ──────────────────────────────────
+// indicatorType: citation_soundness | legal_version | defense_coverage | evidence_consistency
+model Indicator {
+  id            String   @id @default(cuid())
+  caseId        String
+  indicatorType String
+  score         Int      @default(0) // 0–100
+  status        String   @default("pending") // pending, pass, warn, fail
+  details       String?
+  updatedAt     DateTime @updatedAt
+  case          Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@unique([caseId, indicatorType])
+  @@index([caseId])
+}
+
+// ─── GOVERNANCE SETTINGS (§5, §6) ────────────────────────────────
+// category: governance | law_sources | templates | model_policy
+model Setting {
+  id        String   @id @default(cuid())
+  category  String
+  key       String
+  value     String
+  updatedAt DateTime @updatedAt
+
+  @@unique([category, key])
+}
