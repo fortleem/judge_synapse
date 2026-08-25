@@ -272,3 +272,153 @@
   mask-composite: exclude;
   pointer-events: none;
 }
+
+/* ═════════════════════════════════════════════════════════════════
+   2026 STATE-OF-THE-ART DESIGN SYSTEM
+   Bento layouts · Glassmorphism · Micro-interactions · Command palette
+   ═════════════════════════════════════════════════════════════════ */
+
+/* ─── Glassmorphism panels — frosted depth ─────────────────────── */
+.glass-panel {
+  background: color-mix(in oklch, var(--card) 75%, transparent);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  box-shadow: 0 4px 24px -8px oklch(0.2 0.02 155 / 0.15), inset 0 1px 0 oklch(1 0 0 / 0.06);
+}
+
+.glass-panel-accent {
+  background: linear-gradient(135deg, color-mix(in oklch, var(--card) 80%, transparent), color-mix(in oklch, var(--accent) 8%, transparent));
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid color-mix(in oklch, var(--sovereign-gold) 30%, transparent);
+}
+
+/* ─── Bento grid layout ────────────────────────────────────────── */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+}
+.bento-col-3 { grid-column: span 3; }
+.bento-col-4 { grid-column: span 4; }
+.bento-col-6 { grid-column: span 6; }
+.bento-col-8 { grid-column: span 8; }
+.bento-col-12 { grid-column: span 12; }
+@media (max-width: 768px) {
+  .bento-grid { grid-template-columns: repeat(2, 1fr); }
+  .bento-col-3, .bento-col-4, .bento-col-6, .bento-col-8 { grid-column: span 2; }
+}
+
+/* ─── Micro-interactions ───────────────────────────────────────── */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, transparent, color-mix(in oklch, var(--sovereign-gold) 20%, transparent), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite;
+}
+
+@keyframes slide-up-fade {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up-fade 0.3s ease-out; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scale-in 0.2s ease-out; }
+
+/* Hover lift effect */
+.hover-lift {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px -12px oklch(0.2 0.02 155 / 0.2);
+}
+
+/* Press feedback */
+.press-feedback {
+  transition: transform 0.1s ease;
+}
+.press-feedback:active {
+  transform: scale(0.97);
+}
+
+/* ─── Sticky context bar ──────────────────────────────────────── */
+.sticky-context-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  background: color-mix(in oklch, var(--background) 80%, transparent);
+  border-bottom: 1px solid var(--border);
+}
+
+/* ─── Command palette styling ──────────────────────────────────── */
+.cmdk-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: oklch(0.1 0.01 155 / 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+}
+.cmdk-panel {
+  width: 90%;
+  max-width: 640px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px -20px oklch(0.1 0.02 155 / 0.4);
+  overflow: hidden;
+  animation: scale-in 0.15s ease-out;
+}
+
+/* ─── Mobile bottom navigation ────────────────────────────────── */
+.mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  background: color-mix(in oklch, var(--card) 92%, transparent);
+  backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border);
+  padding: 0.5rem;
+  padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+  display: none;
+}
+@media (max-width: 768px) {
+  .mobile-bottom-nav { display: flex; }
+}
+
+/* ─── Skeleton loading ─────────────────────────────────────────── */
+.skeleton-bento {
+  background: linear-gradient(90deg, var(--muted) 25%, color-mix(in oklch, var(--muted) 50%, var(--card)) 50%, var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* ─── Focus ring ───────────────────────────────────────────────── */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--sovereign-gold);
+  outline-offset: 2px;
+}
+
+/* ─── Scroll snap for mobile tabs ──────────────────────────────── */
+.scroll-snap-x {
+  scroll-snap-type: x mandatory;
+}
+.scroll-snap-item {
+  scroll-snap-align: start;
+}

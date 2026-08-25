@@ -324,7 +324,7 @@ export const api = {
   },
 
   // ─── Document Upload & AI Extraction ──
-  async uploadDocument(caseId: string, file: File, uploadedBy = "rapporteur", sourceType = "case_file"): Promise<StoredDocumentT> {
+  async uploadDocument(caseId: string, file: File, uploadedBy = "judge", sourceType = "case_file"): Promise<StoredDocumentT> {
     const formData = new FormData()
     formData.append("file", file)
     formData.append("uploadedBy", uploadedBy)

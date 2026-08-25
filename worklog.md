@@ -289,3 +289,25 @@ Stage Summary:
 - Proactive contradiction notifications: judge is alerted immediately when contradictions detected
 - Legal strength meter: visual balance of plaintiff vs defendant
 - All add-ons are non-authoritative — judge makes the final decision
+
+---
+Task ID: 1-research-competing
+Agent: research-agent
+Task: Research competing judicial platforms and identify critical missing features for the judge-focused workflow
+
+Work Log:
+- Read worklog.md (291 lines) to map the existing platform: 12-tab case workspace (Overview/Facts/Evidence/Timeline/Issues/Authorities/AI/Judge/Indicators/Documents/Adversary/Notes/Insights/Deadlines), Legal Research Center (14 official portals), Audit Log with source separation, Sphinx Gateway (Groq/Gemini/HF), Egyptian Deadlines engine (12 deadline types), Document upload + AI extraction + promotion pipeline, Contradiction Alerts, Law Number Check, Legal Strength Meter, Court Types registry (15 types), Expanded legal corpus (39 texts)
+- Ran 16 z-ai web_search queries covering: judicial AI case management 2025, Harvey AI, Lexis+ AI, Westlaw/CoCounsel, CaseMine, Relativity/Everlaw, Egyptian e-court (ELEC), Saudi Najiz, UAE AI judicial platform, command palette UX, voice dictation for judges, case comparison/timeline software, bookmark/annotation, dashboard theme toggle, calendar integration, case prediction analytics, kanban for legal, FAB UX, recent activity feed, bento/glassmorphism UI trends, PWA offline, Egyptian digital justice, Westlaw Key Number System, case templates, bulk actions
+- Triangulated findings across 13 competing platforms: Harvey AI, Lexis+ AI (Protégé), Westlaw/CoCounsel, CaseMine (Amicus), Clio Manage, RelativityOne, Everlaw, Pre/Dicta, Saudi Najiz, UAE AI Judicial Platform, Egypt ELEC, Casefleet, Opus2/DISCO Timelines
+- Mapped each platform's features against our existing 12-tab workspace + audit log + research center + AI extraction pipeline, identifying 24 critical-missing features with priority, implementation effort, judge-specific benefit, references, and implementation notes for each
+- Catalogued 15 UI/UX trends for 2026 (bento box, glassmorphism, micro-interactions, contextual floating panels, bottom nav on mobile, command palette as universal nav, skeleton screens, sticky context bars, inline editing, subtle AI hints, density toggle, RTL-native, color-coded urgency, persistent filter chips, empty-state teaching)
+- Wrote structured JSON to /home/z/my-project/research-competing.json (validated: 13 platforms + 24 criticalMissingFeatures + 15 uiTrends2026 + summary). All entries include url, keyFeatures, judgeApplicability rating, and where relevant, implementation notes that reference existing infrastructure (Zod schemas, audit log, corpus search, shadcn primitives like the unused Command component)
+
+Stage Summary:
+- 13 competing judicial/legal AI platforms documented with key features and judge-applicability ratings
+- 24 critical missing features identified, prioritized, with implementation effort + notes tied to existing infrastructure
+- Priority order for next sprint: (1) Command Palette (Cmd+K) — shadcn/ui command primitive already installed but unused [critical], (2) Keyboard Shortcuts system [critical], (3) Bookmark & Highlight legal texts [critical], (4) Smart Notifications + Task Queue inbox [high], (5) Recent Activity Feed (judge-facing, distinct from technical audit log) [high], (6) Hearing Calendar & Reminders (extends existing deadlines engine) [high], (7) Export to PDF/Word [high], (8) Voice Dictation (Web Speech API, ar-EG) [high], (9) Document Annotation & Highlighting (react-pdf) [high], (10) Case Comparison side-by-side [high], (11) Graphical Timeline with swimlanes & filters [high], (12) Case Templates per court type (leverages existing 15 court types) [high]
+- Key strategic finding: our platform is doctrinally ahead (AI/Judge separation, signed corpus, adversary review, contrary-authority verification — no competitor has these) but lacks VELOCITY features. The existing infrastructure (Zod schemas, audit log, typed API client, shadcn primitives) makes most features medium-effort UX layers over already-built data.
+- Regional benchmark: UAE AI-powered judicial platform (launched 2025-2026) is the closest regional competitor — judge-facing AI analysis at multiple case stages, digital identity verification, smart court services. We must benchmark against it.
+- Long-term unlock: Egyptian Government Integration Layer (ELEC + esc.gov.eg + Misr Digital national ID + Ministry of Justice e-payment) is the strategic differentiator that converts this from a judge's personal tool into the national judicial operating system. Existing ImportJob pattern provides the architectural foundation for outbound push queueing.
+- File: /home/z/my-project/research-competing.json (valid JSON, 13 platforms + 24 features + 15 UI trends + summary)

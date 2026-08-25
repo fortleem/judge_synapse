@@ -1,0 +1,451 @@
+{
+  "researchMeta": {
+    "taskId": "1-research-competing",
+    "agent": "research-agent",
+    "date": "2026-08-25",
+    "platformStudied": "Egyptian Judicial Smart V2.1",
+    "scope": "Judge-focused features (sole data entry person), Arabic RTL, Egyptian legal corpus"
+  },
+  "platforms": [
+    {
+      "name": "Harvey AI",
+      "category": "Legal AI assistant (lawyers/firms)",
+      "url": "https://www.harvey.ai",
+      "keyFeatures": [
+        "Case law research with grounded citations (no fabrication)",
+        "Document review and analysis (discovery)",
+        "Drafting (briefs, memos, contracts) with templates",
+        "Due diligence & compliance workflows",
+        "Harvey Mobile — on-the-go access for attorneys",
+        "Compare/contrast two legal opinions side-by-side",
+        "Legislative tracking across jurisdictions",
+        "ROI calculator for firm productivity"
+      ],
+      "judgeApplicability": "Medium — drafting & research translate to judge's reasoning/draft fields, but Harvey is firm-billing-oriented. Side-by-side opinion comparison is the killer feature to port."
+    },
+    {
+      "name": "Lexis+ AI (with Protégé)",
+      "category": "Legal research + AI drafting",
+      "url": "https://www.lexisnexis.com/en-us/products/lexis-plus.page",
+      "keyFeatures": [
+        "Conversational search across authoritative LexisNexis corpus",
+        "Summarization of long cases & statutes",
+        "Intelligent legal drafting (briefs, memos, contracts)",
+        "Document upload & analysis with highlight/annotate",
+        "Protégé personalized AI memory (remembers preferences)",
+        "Highlight & Annotate feature for marking key passages",
+        "Lexis Create — Word add-in for drafting in-flow",
+        "Citation verification (Shepard's signals)"
+      ],
+      "judgeApplicability": "High — Protégé-style personalization, highlight/annotate, and Shepard's-like citation signals all map directly to a judge's research workflow."
+    },
+    {
+      "name": "Westlaw / Thomson Reuters CoCounsel",
+      "category": "Legal research + AI assistant",
+      "url": "https://legal.thomsonreuters.com/en/products/cocounsel-legal",
+      "keyFeatures": [
+        "West Key Number System — 100+ year classification taxonomy of legal concepts (topic & key number) for cross-jurisdictional research",
+        "Westlaw Edge — AI-enhanced research with verified answers",
+        "CoCounsel — agentic AI for deep research + litigation document analysis",
+        "Practical Law — practice notes, checklists, how-to guides",
+        "KeyCite citation verification (analogous to Shepard's)",
+        "Brief analysis tool + judicial analytics (insights on judges)",
+        "Statute alerts for legislative changes",
+        "Litigation timeline & document review accelerators"
+      ],
+      "judgeApplicability": "High — Key Number classification taxonomy could inspire an Egyptian legal-issue taxonomy; KeyCite-like verification already partly implemented via our verify-citation route."
+    },
+    {
+      "name": "CaseMine (Indian AI legal research + Amicus generative AI)",
+      "category": "AI legal research (common-law jurisdictions)",
+      "url": "https://www.casemine.com",
+      "keyFeatures": [
+        "Cross-jurisdictional case law search (US, UK, India)",
+        "Amicus generative AI Q&A with cited authorities",
+        "Citation network visualization (which cases cite which)",
+        "AI-assisted reasoning extraction (how courts reasoned, not just what they held)",
+        "Precedent mapping & authority graph",
+        "Entity extraction from judgments (parties, judges, statutes)",
+        "Treatise-style case digests",
+        "Saves research history and lets users re-run past queries"
+      ],
+      "judgeApplicability": "High — reasoning extraction, citation network graph, and search history persistence are directly useful. Entity extraction overlaps with our existing AI extraction."
+    },
+    {
+      "name": "Clio Manage (Clio Cloud)",
+      "category": "Legal practice management (firms)",
+      "url": "https://www.clio.com/features/case-management",
+      "keyFeatures": [
+        "Centralized dashboard with role-based views",
+        "Customizable widgets (drag-arrange dashboard)",
+        "Case-to-contact/document/calendar/bill linking (relational hub)",
+        "Court Rules calendaring — track court deadlines by jurisdiction & trigger event",
+        "Document automation with templates",
+        "Time tracking & billing (firm-oriented, N/A for judge)",
+        "Mobile app (Clio for iOS/Android)",
+        "Bulk matter management & workflows"
+      ],
+      "judgeApplicability": "Medium — Court Rules calendaring and customizable widgets translate well; time/billing is irrelevant. Bulk management is useful for case triage."
+    },
+    {
+      "name": "Relativity / RelativityOne",
+      "category": "e-Discovery & document review",
+      "url": "https://www.relativity.com/data-solutions/ediscovery",
+      "keyFeatures": [
+        "AI-assisted review with automated coding suggestions",
+        "PII/PHI auto-detection and redaction at scale",
+        "Concept clustering & near-duplicate detection",
+        "Email threading & conversation reconstruction",
+        "Search term reports & analytics dashboards",
+        "Predictive coding (TAR — technology-assisted review)",
+        "Native file viewer with redaction/annotation",
+        "Reviewer assignment and batch workflows"
+      ],
+      "judgeApplicability": "High for evidence volume — clustering, dedup, and predictive coding would massively accelerate a judge's evidence triage in big cases."
+    },
+    {
+      "name": "Everlaw",
+      "category": "e-Discovery + litigation platform",
+      "url": "https://www.everlaw.com",
+      "keyFeatures": [
+        "EverlawAI — automated coding suggestions, writing/review assistance, open-ended Q&A on documents",
+        "Storybuilder — narrative timeline construction from evidence",
+        "Native review with fast, intuitive UX",
+        "Predictive coding with transparent explanations",
+        "Document discussion threads (collaboration)",
+        "Batch production and export",
+        "Visualization of communication patterns"
+      ],
+      "judgeApplicability": "High — Storybuilder (narrative timeline) maps perfectly to our Timeline tab. Document-level Q&A on individual evidence files would be a game-changer for judge review."
+    },
+    {
+      "name": "Pre/Dicta (Judicial Prediction Intelligence)",
+      "category": "Judicial analytics / case outcome prediction",
+      "url": "https://www.pre-dicta.com",
+      "keyFeatures": [
+        "Predicts how a specific judge will rule (85% accuracy on motions to dismiss)",
+        "Trained on 15M federal cases with 50-100 data points per case",
+        "Appellate forecasting + biographical analysis",
+        "Comparative predictions across judges",
+        "Litigation timeline forecasting by case stage",
+        "Judge behavioral patterns (grant/deny rates per motion type)",
+        "Resource allocation guidance ('should we invest in this case?')"
+      ],
+      "judgeApplicability": "Low for a judge's own self-use (they don't predict themselves) — but the SAME technique inverted could give the judge a 'how-similar-cases-resolved' comparator without issuing verdicts."
+    },
+    {
+      "name": "Saudi — Najiz Judicial Platform",
+      "category": "Government e-justice portal",
+      "url": "https://www.moj.gov.sa/English/Ministry/Departments/NajizCenter/pages/default.aspx",
+      "keyFeatures": [
+        "140+ judicial e-services (courts, enforcement, notarization)",
+        "Four portals: individuals / businesses / lawyers / judges",
+        "Online case filing, e-payment of fees, virtual hearings",
+        "Enforcement & notarization workflows",
+        "Mobile-first design (iOS/Android apps)",
+        "Single sign-on with national digital ID (Absher)",
+        "Integrated with Saudi e-government ecosystem",
+        "Real-time case status notifications"
+      ],
+      "judgeApplicability": "High for design reference — judge-specific portal separation + national-ID auth + real-time notifications + mobile-first are all directly applicable to an Egyptian judicial platform."
+    },
+    {
+      "name": "UAE — AI-Powered Integrated Judicial Platform (2025-2026)",
+      "category": "Government AI judicial system",
+      "url": "https://www.govtechintelhub.org/case-study-details/transforming-the-uae-judicial-system-through-digital-courts/aJYTG0000000Ty54AE",
+      "keyFeatures": [
+        "World's first fully integrated AI-powered judicial platform",
+        "AI analyzes case files & documents at multiple case stages",
+        "Digital identity verification (UAE Pass)",
+        "Cloud computing + secure inter-system data exchange",
+        "Smart court services — automated scheduling, e-filing, virtual hearings",
+        "Sharjah Judicial Council: digital file tracking + computerized movement index per file",
+        "AI-assisted judgment review & decision support",
+        "End-to-end case lifecycle digitization"
+      ],
+      "judgeApplicability": "Very High — UAE's judge-facing AI analysis at case stages is conceptually similar to our Sphinx Gateway. Digital file tracking + movement index is a judge's daily-bread feature we lack."
+    },
+    {
+      "name": "Egypt — Economic Courts ELEC (التقاضي الإلكتروني)",
+      "category": "Egyptian government e-litigation portal",
+      "url": "https://elec.eecourts.gov.eg",
+      "keyFeatures": [
+        "Electronic filing of lawsuits, appeals, reconsideration",
+        "Online fee payment for civil cases (select primary courts, May 2026)",
+        "Case status inquiry for litigants",
+        "Digital Egypt (Misr Digital) national ID integration",
+        "Egyptian State Council E-Justice Portal (esc.gov.eg)",
+        "First-ever Egyptian electronic litigation registry (Jan 2021)",
+        "Egyptian Justice City — integrated digital judicial system (under construction)",
+        "Online criminal records via Public Prosecution + Misr Digital"
+      ],
+      "judgeApplicability": "Critical for integration — our platform MUST interoperate with ELEC, esc.gov.eg, and Misr Digital national ID. This is the integration surface for a real Egyptian judicial platform."
+    },
+    {
+      "name": "Casefleet",
+      "category": "Case chronology & fact management",
+      "url": "https://www.casefleet.com/features/fact-chronologies",
+      "keyFeatures": [
+        "Fact chronology builder — tie facts to dates, witnesses, documents",
+        "Source-linked facts (every fact cites its evidence source)",
+        "Filterable timeline (by date, source, party, issue)",
+        "Issue-based fact coding (which facts bear on which legal issue)",
+        "Witness & entity relationship management",
+        "Built-in search across all case materials",
+        "Custom fields per case type"
+      ],
+      "judgeApplicability": "High — issue-based fact coding (linking each fact to the specific legal issue it bears on) is the missing link between our Facts tab and Issues tab."
+    },
+    {
+      "name": "Opus2 / DISCO Timelines",
+      "category": "Litigation timeline visualization",
+      "url": "https://www.opus2.com/resources/insights/litigation-timeline-software",
+      "keyFeatures": [
+        "Graphical timeline visualization with filter & zoom",
+        "Hotspot markers for critical events",
+        "Date-range scrubbing",
+        "Event clustering for dense periods",
+        "Cross-link events to documents & witnesses",
+        "Export timeline as image or PDF",
+        "Multi-party swimlane visualization"
+      ],
+      "judgeApplicability": "High — our Timeline tab is vertical text-only. A graphical, filterable, multi-party swimlane view would let the judge 'see' the case shape at a glance."
+    }
+  ],
+  "criticalMissingFeatures": [
+    {
+      "feature": "Command Palette (Cmd+K / Ctrl+K)",
+      "description": "Universal quick-search across all cases, legal texts, authorities, judge notes, deadlines — opens with one keystroke, fuzzy-matches, navigates directly to the entity. shadcn/ui `command` primitive is already installed but unused.",
+      "priority": "critical",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Eliminates 4-6 clicks to find any case or authority; lets judge navigate at keyboard speed without leaving the current view",
+      "references": ["Harvey Mobile", "Clio dashboard search", "shadcn/ui command primitive"],
+      "implementationNotes": "Wire to existing /api/cases, /api/corpus/search, /api/cases/[id]/notes, /api/deadlines. Add global keyboard listener (Ctrl+K). Reuse Command primitive."
+    },
+    {
+      "feature": "Keyboard Shortcuts System",
+      "description": "Power-user shortcuts for the judge: J/K to navigate case list, Enter to open, E to edit, N for new, / to focus search, T to jump to tabs, G then D for dashboard, G then R for research center, B to bookmark current item, ? to show all shortcuts.",
+      "priority": "critical",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Judges who type once and never touch the mouse will save hours per week",
+      "references": ["GitHub shortcuts", "Gmail shortcuts", "Linear app"],
+      "implementationNotes": "Single useHotkeys() hook with Mousetrap-style binding. Show '?' overlay. Store preferences in localStorage."
+    },
+    {
+      "feature": "Bookmark & Highlight Legal Texts",
+      "description": "Per-legal-text bookmarks (anchor to a specific article/clause) with named markers (e.g., 'mention in verdict'), color-coded highlights, and a personal bookmarks panel. Currently judge-notes exists but is item-level only — needs character-level text anchoring on the legal text itself.",
+      "priority": "critical",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Lets judge mark the exact paragraph in a statute or precedent they intend to cite — like dog-earing a printed code book",
+      "references": ["Lexis+ Highlight & Annotate", "TypeLaw digital brief bookmarks", "NISO digital bookmarking standard"],
+      "implementationNotes": "Add Bookmark model (legalTextId, anchorPath, label, color, judgeId). Render anchors on text view. Reuse existing JudgeNote table or fork a new TextBookmark table."
+    },
+    {
+      "feature": "Case Comparison (Side-by-Side)",
+      "description": "Pick 2-3 cases and view them side-by-side across Facts / Issues / Authorities / Indicators / Strength. Diff-style highlighting of what differs (similar facts, different defense coverage, opposing authority stance).",
+      "priority": "high",
+      "implementationEffort": "high",
+      "judgeBenefit": "Judges routinely compare current case to precedent — visual side-by-side beats mental comparison",
+      "references": ["Harvey AI compare/contrast opinions", "Clio matter comparison"],
+      "implementationNotes": "New route /api/cases/compare?ids=[a,b]. New CaseCompareView component. Leverages existing serialize layer. Could start with 2-case, expand to 3."
+    },
+    {
+      "feature": "Document Annotation & Highlighting",
+      "description": "PDF/document viewer with text highlight, sticky notes, anchored comments, freehand drawing (touch/stylus), and the ability to promote a highlighted passage directly into a Fact or Evidence entry. Currently Documents tab only shows metadata + extraction — no judge-level markup.",
+      "priority": "high",
+      "implementationEffort": "high",
+      "judgeBenefit": "Judges annotate paper case files today — same workflow must work digitally or they will print PDFs and lose the digital trail",
+      "references": ["Lexis+ Highlight & Annotate", "Relativity native file viewer", "Drawboard PDF"],
+      "implementationNotes": "Use react-pdf or pdf.js + custom annotation layer. Persist annotations per StoredDocument. 'Promote highlight → Fact' uses existing promote endpoint."
+    },
+    {
+      "feature": "Hearing Calendar & Reminders",
+      "description": "Visual calendar (month/week/day) with hearing dates pulled from case data, deadline engine, and external integration. Per-hearing prep checklist, automatic reminders (1-day, 1-hour). iCal/Google Calendar export.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "A judge's calendar IS the courtroom — deadlines engine exists but hearings don't. Critical for daily planning.",
+      "references": ["Clio Court Rules", "eCourtDate scheduling", "CourtAlert deadline reminders"],
+      "implementationNotes": "Add Hearing model (caseId, date, type, partiesPresent, prepStatus). Reuse existing calendar shadcn primitive. Wire to /api/cases/[id]/hearings."
+    },
+    {
+      "feature": "Smart Notifications & Task Queue",
+      "description": "Unified inbox of all judge-actionable items: deadline-approaching, contradiction-detected, adversary-review-pending-transfer, AI-extraction-needs-promotion, unverified-citation-found. Sorted by criticality. Each item has a 'snooze' and 'open case' action.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Replaces the judge's mental todo list — single queue of 'what needs my decision today'",
+      "references": ["Bill4Time task dashboard", "Maatdesk task prioritization", "Checkbox.ai"],
+      "implementationNotes": "New /api/inbox route aggregating existing signals (deadlines, contradictions, adversary-review, documents pending promotion). Single right-rail or top-bar panel."
+    },
+    {
+      "feature": "Recent Activity Feed (Judge-Facing)",
+      "description": "Chronological, filterable feed of what the judge themselves did (and what the system proposed) in the last N days — distinct from the audit log (which is technical/compliance-focused). Quick 'continue where you left off' entry points.",
+      "priority": "high",
+      "implementationEffort": "low",
+      "judgeBenefit": "When a judge returns to a case after a week, they need 'what did I last touch here?' — currently audit log is too technical",
+      "references": ["GitHub activity feed", "Notion recent pages", "Linear inbox"],
+      "implementationNotes": "Reuse AuditLog with judge_decision source filter + simpler visual cards. Add to operations dashboard as a top widget."
+    },
+    {
+      "feature": "Search History & Saved Searches",
+      "description": "Persist last 20 searches per judge (corpus + cases + authorities). Save a named search with filters as a 'watch' that re-runs on new corpus imports.",
+      "priority": "high",
+      "implementationEffort": "low",
+      "judgeBenefit": "Judges search the same statute over and over for different cases — saved searches eliminate retyping",
+      "references": ["CaseMine saved research history", "Westlaw search history"],
+      "implementationNotes": "Add SearchHistory table (judgeId, query, filters, timestamp). Add SavedSearch table for named watches. localStorage for offline tail."
+    },
+    {
+      "feature": "Tag System (Free-Form)",
+      "description": "User-defined tags on Cases, Facts, Authorities, Evidence — multi-tag, colored, with tag management UI. Currently we use controlled vocab (stage/risk/operating-state) but no free-form judge tags like 'priority', 'follow-up', 'cited-in-verdict', 'needs-research'.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Judges use post-its and margin notes today — tags are the digital equivalent",
+      "references": ["AltLegal bulk tag actions", "Trello card labels", "Notion tags"],
+      "implementationNotes": "Add Tag model + Tagged polymorphic join. Bulk-tag actions in lists. Filter sidebar by tag combination."
+    },
+    {
+      "feature": "Voice Dictation for Judge Notes",
+      "description": "Web Speech API (Arabic dialect support) for in-app voice-to-text on Judge Fields and Notes. Hands-free dictation during courtroom sessions or while reviewing documents. Auto-punctuation, custom legal vocabulary.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Judges often dictate verdicts to a clerk today — same flow, but the judge keeps control of the text",
+      "references": ["Speechmatics legal transcription", "Voicescript AI", "Colibri real-time legal"],
+      "implementationNotes": "Use Web Speech API (built into Chromium). ar-EG locale. Custom legal dictionary overlay. Mic button on every textarea."
+    },
+    {
+      "feature": "Drag-and-Drop Case Organization (Kanban)",
+      "description": "Board view of cases by stage (e.g., intake → hearing → deliberation → verdict → archived) with drag-to-move. Quick visual caseload management. Alternative to current list view.",
+      "priority": "medium",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Visual case triage on Monday morning — see the whole week's pipeline",
+      "references": ["Lexzur Kanban for lawyers", "Legal Boards", "Trello"],
+      "implementationNotes": "Use @dnd-kit/core. Wire to PATCH /api/cases/[id] stage field. Toggle between list and board in sidebar."
+    },
+    {
+      "feature": "Export to PDF / Word",
+      "description": "One-click export of: (a) Judge Fields (results/reasoning/draft) as a formatted PDF verdict; (b) case dossier as a Word document; (c) legal text with bookmarks as PDF; (d) timeline as image.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Verdicts must be printable on official letterhead — and the case file must be exportable for archive",
+      "references": ["Clio document automation", "Gavel precedent drafting"],
+      "implementationNotes": "Server-side: pdfkit or @react-pdf/renderer. Word: docx library. Client-side export buttons in each tab."
+    },
+    {
+      "feature": "Floating Action Button (Quick Actions)",
+      "description": "Persistent FAB on mobile (bottom-right) and a top-bar split-button on desktop: 'New Case', 'New Deadline', 'New Note', 'Run Contrary Search', 'Capture Voice Note'. Single tap from anywhere.",
+      "priority": "medium",
+      "implementationEffort": "low",
+      "judgeBenefit": "On mobile, judge can capture a thought/note in <3 seconds without navigating",
+      "references": ["Material Design FAB", "ServiceNow mobile FAB"],
+      "implementationNotes": "Use shadcn/ui DropdownMenu with a floating button. Position fixed bottom-right on mobile."
+    },
+    {
+      "feature": "Bulk Actions on Case Items",
+      "description": "Multi-select on Facts, Evidence, Authorities, Timeline events → bulk change status, bulk delete, bulk tag, bulk promote to verdict draft.",
+      "priority": "medium",
+      "implementationEffort": "medium",
+      "judgeBenefit": "When 50 facts are loaded from a long case file, judge needs to mark 'all proven' or 'all dismissed' in one action, not 50 clicks",
+      "references": ["AltLegal bulk matter management", "Notion bulk edit"],
+      "implementationNotes": "Checkbox column on each list tab. Selection toolbar appears at top. Reuse existing PATCH endpoints."
+    },
+    {
+      "feature": "Customizable Dashboard Widgets",
+      "description": "Drag-arrange widgets on Operations Dashboard: hide/show stat tiles, reorder, resize. Per-judge layout persisted.",
+      "priority": "medium",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Different judges care about different metrics (some about deadlines, some about contradictions, some about pending promotions)",
+      "references": ["Clio role-based dashboard", "ArcGIS theme switcher", "ThingsBoard dashboard editor"],
+      "implementationNotes": "Use react-grid-layout. Persist layout in localStorage + Settings table."
+    },
+    {
+      "feature": "Dark / Light Theme Toggle",
+      "description": "Restore original dark sovereign theme (obsidian+emerald+gold) and offer a toggle in the header. Currently locked to light. Both themes are already implemented in globals.css tokens.",
+      "priority": "medium",
+      "implementationEffort": "low",
+      "judgeBenefit": "Long reading sessions — judges want dark mode in the evening, light in the courtroom",
+      "references": ["ThingsBoard dark mode toggle", "ArcGIS theme switcher"],
+      "implementationNotes": "next-themes package. Wrap layout. Toggle in header. Both palettes already in :root tokens."
+    },
+    {
+      "feature": "Contextual Help / Tooltips / Onboarding",
+      "description": "First-visit coach-marks explaining each tab. Persistent '?' icons with judicial-doctrine tooltips (e.g., 'AI Analysis is non-authoritative — see §32'). In-app guided tour.",
+      "priority": "medium",
+      "implementationEffort": "low",
+      "judgeBenefit": "Judges new to the platform have steep learning curve — contextual help prevents abandonment",
+      "references": ["Linear onboarding", "Notion tooltips", "Intercom product tours"],
+      "implementationNotes": "Use driver.js or shepherd.js. Help tooltips via existing Tooltip primitive. Onboarding state in localStorage."
+    },
+    {
+      "feature": "Case Templates / Precedents",
+      "description": "Pre-built case skeletons for common case types (commercial breach, labor dismissal, property title, family, criminal): pre-populated LegalIssue trees, default authority sets, default deadline triggers, default indicator checklists.",
+      "priority": "high",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Starting a new labor case from a template saves 30 minutes of setup — every labor case needs the same 5 issues and 3 deadlines",
+      "references": ["Clio document templates", "Gavel precedent-based drafting", "Settings already has templates table"],
+      "implementationNotes": "Leverage existing 15 court types in court-types.ts. Add CaseTemplate table (courtType, defaultIssues[], defaultAuthorities[], defaultDeadlines[]). 'New case from template' flow."
+    },
+    {
+      "feature": "PWA Offline Mode + Installability",
+      "description": "Service worker caching of last-viewed cases, manifest for installability, offline indicator banner when network drops, background sync for changes made offline.",
+      "priority": "medium",
+      "implementationEffort": "medium",
+      "judgeBenefit": "Courtrooms have unreliable Wi-Fi — judge must be able to read a case file even when offline, with changes queued for sync",
+      "references": ["PWAs going offline (Google)", "Ironclad offline audit log"],
+      "implementationNotes": "next-pwa plugin. IndexedDB cache via Dexie. Background Sync API. Offline banner in header."
+    },
+    {
+      "feature": "Email / File Integration",
+      "description": "Forward ruling notifications by email, attach case dossier to email, save email correspondence as evidence, drag emails into Documents tab.",
+      "priority": "medium",
+      "implementationEffort": "high",
+      "judgeBenefit": "Court clerks currently email judges PDFs — those emails should become evidence items directly",
+      "references": ["Clio email integration", "Relativity email threading"],
+      "implementationNotes": "SMTP/IMAP gateway. Webhook for inbound email. Convert email attachments to StoredDocument."
+    },
+    {
+      "feature": "Graphical Timeline with Filters & Swimlanes",
+      "description": "Enhance current vertical Timeline tab with: date-range scrubber, party swimlanes (plaintiff / defendant / court / third-party), event-type filter chips, hotspot markers for critical events, zoom in/out, export as image.",
+      "priority": "high",
+      "implementationEffort": "high",
+      "judgeBenefit": "A 2-year commercial dispute with 40 events is unreadable as a list — it must be visual",
+      "references": ["Opus2 litigation timeline", "DISCO Timelines agentic AI", "Casefleet chronologies"],
+      "implementationNotes": "Use vis-timeline or custom SVG. Reuse existing TimelineEvent data. Add party field to TimelineEvent if missing."
+    },
+    {
+      "feature": "Judicial Issue Taxonomy (Egyptian Key Number System)",
+      "description": "A controlled taxonomy of Egyptian legal issues (mirrors Westlaw's Key Number System) — hierarchical, e.g., Law of Obligations → Contracts → Breach → Remedies → Damages → Compensatory. Every LegalIssue is classified under the tree, enabling cross-case precedent search by topic.",
+      "priority": "medium",
+      "implementationEffort": "high",
+      "judgeBenefit": "Lets judge search 'all cases involving compensatory damages in commercial breach' across the entire caseload — currently impossible",
+      "references": ["Westlaw Key Number System", "CaseMine entity tagging"],
+      "implementationNotes": "Build taxonomy as JSON tree (Egyptian civil law has well-known structure). Add taxonomyId to LegalIssue. New 'Browse by Topic' view."
+    },
+    {
+      "feature": "Egyptian Government Integration Layer (ELEC + Misr Digital)",
+      "description": "API adapters to: Economic Courts ELEC (elec.eecourts.gov.eg), State Council E-Justice Portal (esc.gov.eg), Misr Digital national ID verification, Ministry of Justice e-payment. Pull case status, push verdicts.",
+      "priority": "high",
+      "implementationEffort": "high",
+      "judgeBenefit": "Without government integration, the platform is a closed silo. Real judges need to push a verdict → ELEC → published gazette.",
+      "references": ["Egyptian Ministry of Justice online services", "UAE judicial digital platform integration"],
+      "implementationNotes": "Abstract GovernmentGateway interface. Stub implementations per service. Queue outbound pushes via existing ImportJob pattern."
+    }
+  ],
+  "uiTrends2026": [
+    "Bento box layouts — modular dashboard grids (Figma Config 2025 auto-layout, popularized by Apple)",
+    "Glassmorphism with depth — frosted panels, layered transparency (used sparingly for focus)",
+    "Micro-interactions — hover transitions, button press feedback, loading states with personality",
+    "Contextual floating panels — slide-overs that appear next to the cursor instead of modals",
+    "Bottom navigation on mobile — thumb-zone-friendly 5-tab bar replacing hamburger menus",
+    "Command palette (Cmd+K) as universal navigation — Linear, Raycast, Notion pattern",
+    "Skeleton screens + streaming responses — perceived performance over spinners",
+    "Sticky context bars — case context persists at top while scrolling long forms",
+    "Inline editing — click any field to edit without modal (Notion/Airtable pattern)",
+    "Subtle AI hints — ghost text suggestions, not full takeover (Copilot pattern)",
+    "Density toggle — compact/comfortable/spacious modes for the same view",
+    "RTL-native layouts — not mirrored LTR but designed Arabic-first (our platform already leads here)",
+    "Color-coded urgency — desaturated base palette with one accent for the most-urgent action",
+    "Persistent filter chips — show active filters as removable chips above lists",
+    "Empty-state teaching — every empty state explains what to do next, not just 'no data'"
+  ],
+  "summary": "Our Egyptian Judicial Smart V2.1 platform is doctrinally ahead of every competitor studied: the strict AI/Judge separation, contrary-authority verification, signed corpus snapshots, and adversary review ('judicial shadow') are unique and judicially sound. However, the platform is currently optimized for DEPTH (analysis, doctrine, verification) and lacks VELOCITY features that competing platforms have standardized. The single most-impactful gap is the absence of a Command Palette (Cmd+K) — judges need keyboard-speed navigation, not menu navigation. Close behind: bookmark/highlight on legal texts (Lexis+ does this natively), document annotation (Relativity/Everlaw standard), graphical timeline with filters (Casefleet/Opus2), and a unified notifications/task inbox. The platform's existing infrastructure (Zod schemas, audit log, corpus search, AI extraction) makes most of these features medium-effort: they are UX layers over already-built data. Priority order for next sprint: (1) Command Palette + Keyboard Shortcuts [critical], (2) Bookmark/Highlight legal texts [critical], (3) Smart Notifications + Recent Activity Feed [high], (4) Hearing Calendar [high], (5) Export to PDF/Word [high], (6) Voice Dictation [high], (7) Document Annotation [high], (8) Case Comparison side-by-side [high], (9) Graphical Timeline with swimlanes [high], (10) Case Templates per court type [high]. Longer-term: Egyptian Government Integration Layer (ELEC + Misr Digital) is the unlock that turns this from a judge's personal tool into the national judicial operating system. The UAE AI-powered judicial platform (2025-2026) is the closest regional competitor and is moving fast — we should benchmark against it."
+}

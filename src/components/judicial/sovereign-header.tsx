@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked, UserRound } from "lucide-react"
+import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked, UserRound, Search } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
 import { OPERATING_STATES, findConstant } from "@/lib/judicial/constants"
 import type { DashboardT, HealthT } from "@/lib/judicial/schemas"
@@ -94,6 +94,16 @@ export function SovereignHeader({
 
         {/* Right cluster */}
         <div className="flex items-center gap-2 mr-auto">
+          {/* Command palette trigger */}
+          <button
+            onClick={() => window.dispatchEvent(new CustomEvent("open-cmdk"))}
+            className="hidden md:flex items-center gap-2 rounded-lg border border-sidebar-border/60 bg-sidebar-accent/30 px-3 py-1.5 font-kufi text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors group"
+            title="فتح لوحة الأوامر"
+          >
+            <Search className="h-3.5 w-3.5" />
+            <span>بحث سريع…</span>
+            <kbd className="font-jetbrains text-[9px] px-1.5 py-0.5 rounded border border-sidebar-border/60 bg-sidebar/50 group-hover:bg-sidebar">⌘K</kbd>
+          </button>
           {serverDown ? (
             <StatusBadge label="الخادم غير متاح" color="red" glow />
           ) : loading ? (

@@ -364,7 +364,7 @@ export function serializeDocument(row: AnyRow): StoredDocumentT {
     storedName: String(row.storedName),
     mimeType: String(row.mimeType),
     fileSize: Number(row.fileSize ?? 0),
-    uploadedBy: String(row.uploadedBy ?? "rapporteur"),
+    uploadedBy: String(row.uploadedBy ?? "judge"),
     sourceType: String(row.sourceType ?? "case_file"),
     ocrStatus: String(row.ocrStatus ?? "pending"),
     ocrText: row.ocrText ? String(row.ocrText) : null,

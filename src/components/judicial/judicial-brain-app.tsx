@@ -14,12 +14,16 @@ import { FallbackDemoMode } from "./fallback"
 import { SettingsTab } from "./tabs/settings"
 import { LegalResearchCenter } from "./legal-research-center"
 import { AuditLogView } from "./audit-log-view"
+import { CommandPalette } from "./command-palette"
+import { MobileBottomNav } from "./mobile-bottom-nav"
 
 export type View = "operations" | "settings" | "research" | "audit"
 
 export function JudicialBrainApp() {
   const [selectedCaseId, setSelectedCaseId] = React.useState<string | null>(null)
   const [view, setView] = React.useState<View>("operations")
+  const [cmdkOpen, setCmdkOpen] = React.useState(false)
+  const [isMobile, setIsMobile] = React.useState(false)
 
   const healthQ = useQuery<HealthT>({
     queryKey: ["health"],
@@ -51,27 +55,101 @@ export function JudicialBrainApp() {
 
   const serverDown = healthQ.isError || isServerUnreachable()
 
+  // Detect mobile
+  React.useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener("resize", check)
+    return () => window.removeEventListener("resize", check)
+  }, [])
+
+  // Keyboard shortcuts
+  React.useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      // Cmd+K / Ctrl+K — command palette
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault()
+        setCmdkOpen((v) => !v)
+        return
+      }
+      // Don't trigger shortcuts when typing in inputs
+      const target = e.target as HTMLElement
+      if (target.tagName === "INPUT" || target.tagName === "TEXTAREA" || target.isContentEditable) return
+
+      // G + key navigation (Vim-style)
+      if (e.key === "g") {
+        const handler2 = (e2: KeyboardEvent) => {
+          if (e2.key === "h") { setView("operations"); setSelectedCaseId(null) }
+          else if (e2.key === "r") { setView("research"); setSelectedCaseId(null) }
+          else if (e2.key === "a") { setView("audit"); setSelectedCaseId(null) }
+          else if (e2.key === "s") { setView("settings"); setSelectedCaseId(null) }
+          window.removeEventListener("keydown", handler2)
+        }
+        window.addEventListener("keydown", handler2, { once: true })
+        setTimeout(() => window.removeEventListener("keydown", handler2), 1000)
+      }
+      // Escape — go back to dashboard
+      if (e.key === "Escape" && selectedCaseId) {
+        setSelectedCaseId(null)
+      }
+    }
+    window.addEventListener("keydown", handler)
+    return () => window.removeEventListener("keydown", handler)
+  }, [selectedCaseId])
+
+  // Listen for custom navigation events (from command palette / quick actions)
+  React.useEffect(() => {
+    const navHandler = (e: Event) => {
+      const detail = (e as CustomEvent).detail
+      if (detail === "research") { setView("research"); setSelectedCaseId(null) }
+      else if (detail === "audit") { setView("audit"); setSelectedCaseId(null) }
+      else if (detail === "settings") { setView("settings"); setSelectedCaseId(null) }
+      else if (detail === "operations") { setView("operations"); setSelectedCaseId(null) }
+      else if (detail === "navigate-case" && casesQ.data?.[0]) { setSelectedCaseId(casesQ.data[0].id); setView("operations") }
+      else if (detail === "new-case" && casesQ.data?.[0]) { setSelectedCaseId(casesQ.data[0].id); setView("operations") }
+    }
+    const cmdkHandler = () => setCmdkOpen(true)
+    window.addEventListener("navigate", navHandler as EventListener)
+    window.addEventListener("open-cmdk", cmdkHandler)
+    return () => {
+      window.removeEventListener("navigate", navHandler as EventListener)
+      window.removeEventListener("open-cmdk", cmdkHandler)
+    }
+  }, [casesQ.data])
+
+  const handleNavigate = (v: View) => { setView(v); setSelectedCaseId(null) }
+
   return (
     <div className="min-h-screen flex flex-col bg-background sovereign-grid">
+      {/* Command Palette */}
+      <CommandPalette
+        open={cmdkOpen}
+        onOpenChange={setCmdkOpen}
+        onSelectCase={(id) => { setSelectedCaseId(id); setView("operations") }}
+      />
+
       <SovereignHeader
         health={healthQ.data}
         dashboard={dashboardQ.data}
         loading={healthQ.isLoading}
         serverDown={serverDown}
-        onNavigate={(v) => { setView(v); setSelectedCaseId(null) }}
+        onNavigate={handleNavigate}
         activeView={view}
       />
 
       <div className="flex-1 flex min-h-0">
-        <CaseSidebar
-          cases={casesQ.data ?? []}
-          loading={casesQ.isLoading}
-          selectedId={selectedCaseId}
-          onSelect={(id) => { setSelectedCaseId(id); setView("operations") }}
-          serverDown={serverDown}
-        />
+        {/* Hide sidebar on mobile */}
+        {!isMobile && (
+          <CaseSidebar
+            cases={casesQ.data ?? []}
+            loading={casesQ.isLoading}
+            selectedId={selectedCaseId}
+            onSelect={(id) => { setSelectedCaseId(id); setView("operations") }}
+            serverDown={serverDown}
+          />
+        )}
 
-        <main className="flex-1 min-w-0 flex flex-col">
+        <main className="flex-1 min-w-0 flex flex-col pb-16 md:pb-0">
           {serverDown ? (
             <FallbackDemoMode />
           ) : selectedCaseId ? (
@@ -104,6 +182,15 @@ export function JudicialBrainApp() {
         systemState={dashboardQ.data?.systemState ?? "NOMINAL"}
         serverDown={serverDown}
       />
+
+      {/* Mobile bottom navigation */}
+      {isMobile && (
+        <MobileBottomNav
+          view={view}
+          onNavigate={handleNavigate}
+          caseCount={casesQ.data?.length ?? 0}
+        />
+      )}
     </div>
   )
 }

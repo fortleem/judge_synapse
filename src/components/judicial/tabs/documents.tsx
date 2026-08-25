@@ -4,7 +4,7 @@ import * as React from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Upload, FileText, Trash2, Loader2, Sparkles, CheckCircle2, XCircle,
-  AlertTriangle, FileSearch, Bot, User, ArrowRightLeft, Clock, FileImage,
+  AlertTriangle, FileSearch, Bot, User, UserRound, ArrowRightLeft, Clock, FileImage,
   FileType2, HardDriveDownload,
 } from "lucide-react"
 import { cn, colorClasses, formatDate, formatDateTime } from "@/lib/judicial/ui"
@@ -41,8 +41,8 @@ const EXTRACTION_STATUS_META: Record<string, { label: string; color: string }> =
 }
 
 const UPLOADER_ROLES = [
-  { value: "rapporteur", label: "المُقرّر", color: "amber", icon: <User className="h-3 w-3" /> },
   { value: "judge", label: "القاضي", color: "emerald", icon: <User className="h-3 w-3" /> },
+  { value: "rapporteur", label: "المُقرّر", color: "amber", icon: <User className="h-3 w-3" /> },
   { value: "administrator", label: "المدير", color: "violet", icon: <User className="h-3 w-3" /> },
 ]
 
@@ -57,7 +57,7 @@ const SOURCE_TYPES = [
 
 export function DocumentsTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
   const qc = useQueryClient()
-  const [uploadedBy, setUploadedBy] = React.useState("rapporteur")
+  const [uploadedBy, setUploadedBy] = React.useState("judge")
   const [sourceType, setSourceType] = React.useState("case_file")
   const [dragOver, setDragOver] = React.useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
@@ -89,18 +89,18 @@ export function DocumentsTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
   return (
     <div className="space-y-4">
       {/* Workflow banner */}
-      <div className="rounded-lg border border-blue-500/40 bg-blue-500/5 p-3 flex items-start gap-3">
-        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-blue-500/15 text-blue-600 shrink-0">
-          <ArrowRightLeft className="h-5 w-5" />
+      <div className="rounded-lg border border-emerald-500/40 bg-emerald-500/5 p-3 flex items-start gap-3">
+        <div className="flex h-9 w-9 items-center justify-center rounded-md bg-emerald-500/15 text-emerald-600 shrink-0">
+          <UserRound className="h-5 w-5" />
         </div>
         <div>
-          <h3 className="font-kufi text-sm font-semibold text-blue-700 mb-0.5">
-            سير عمل إدخال البيانات — من يُدخل ماذا؟
+          <h3 className="font-kufi text-sm font-semibold text-emerald-700 mb-0.5">
+            مساحة القاضي الكاملة — الإدخال والمراجعة والاعتماد
           </h3>
           <p className="font-kufi text-xs text-muted-foreground leading-relaxed">
-            <span className="text-amber-600 font-medium">المُقرّر</span> يرفع المستندات ويُراجع الاستخراج الآلي.
-            <span className="text-emerald-600 font-medium"> النظام</span> يستخرج الوقائع والخط الزمني والاستشهادات آليًا — كلها «مرشّحة» حتى يُتحقَّق منها.
-            <span className="text-violet-600 font-medium"> القاضي</span> يراجع ويُعتمد أو يرفض قبل أي ترقية لحقوله.
+            <span className="text-emerald-600 font-medium">سيادتكم</span> يرفع المستندات ويُراجع الاستخراج الآلي ويعتمد الترقية.
+            <span className="text-amber-600 font-medium"> النظام</span> يستخرج الوقائع والخط الزمني والاستشهادات آليًا — كلها «مرشّحة» حتى يُعتمدها القاضي.
+            لا يُرقَّى أي عنصر دون موافقة صريحة من القاضي.
           </p>
         </div>
       </div>
