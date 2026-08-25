@@ -45,6 +45,7 @@ model Case {
   auditLogs       AuditLog[]
   citationVerifications CitationVerification[]
   deadlines       CaseDeadline[]
+  documents       StoredDocument[]
 
   @@index([proceduralStage])
   @@index([riskLevel])
@@ -478,4 +479,39 @@ model CaseDeadline {
   @@index([caseId])
   @@index([deadlineType])
   @@index([status])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DOCUMENT INGESTION & AI EXTRACTION (§22, §69, §101)
+// Judge/Rapporteur uploads documents → system auto-extracts facts/timeline/citations
+// All extractions are "candidate" until human verification (§60 candidate relationships)
+// ═══════════════════════════════════════════════════════════════════
+// uploadedBy: judge | rapporteur | administrator
+// ocrStatus: pending | processing | completed | failed | not_needed
+// extractionStatus: pending | processing | completed | failed | partial
+// sourceType: case_file | contract | judgment | evidence | correspondence | other
+model StoredDocument {
+  id              String   @id @default(cuid())
+  caseId          String
+  originalName    String
+  storedName      String
+  mimeType        String
+  fileSize        Int
+  uploadedBy      String   @default("rapporteur")
+  sourceType      String   @default("case_file")
+  ocrStatus       String   @default("pending")
+  ocrText         String?
+  ocrConfidence   Float?
+  extractionStatus String  @default("pending")
+  extractedData   String?  // JSON: { facts: [], timeline: [], citations: [], parties: [], evidence: [] }
+  extractionSummary String?
+  verified        Boolean  @default(false)
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([uploadedBy])
+  @@index([extractionStatus])
 }

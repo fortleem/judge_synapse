@@ -378,6 +378,55 @@ export const CaseDeadlineSchema = z.object({
 })
 export type CaseDeadlineT = z.infer<typeof CaseDeadlineSchema>
 
+// ─── Stored Documents (uploads + AI extraction) ──────────────────
+export const StoredDocumentSchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  originalName: z.string(),
+  storedName: z.string(),
+  mimeType: z.string(),
+  fileSize: z.number(),
+  uploadedBy: z.string(),
+  sourceType: z.string(),
+  ocrStatus: z.string(),
+  ocrText: z.string().nullable(),
+  ocrConfidence: z.number().nullable(),
+  extractionStatus: z.string(),
+  extractedData: z.string().nullable(),
+  extractionSummary: z.string().nullable(),
+  verified: z.boolean(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type StoredDocumentT = z.infer<typeof StoredDocumentSchema>
+
+// ─── Extracted Data (from AI extraction) ─────────────────────────
+export const ExtractedFactSchema = z.object({
+  statement: z.string(),
+  status: z.string(),
+  materiality: z.string(),
+  party: z.string().nullable(),
+})
+export const ExtractedTimelineSchema = z.object({
+  title: z.string(),
+  eventDate: z.string(),
+  eventType: z.string(),
+  description: z.string().nullable(),
+  legalRegime: z.string().nullable(),
+})
+export const ExtractedCitationSchema = z.object({
+  citation: z.string(),
+  title: z.string(),
+  legalDomain: z.string().nullable(),
+  stance: z.string(),
+})
+export const ExtractedEvidenceSchema = z.object({
+  title: z.string(),
+  evidenceType: z.string(),
+  relevance: z.string().nullable(),
+})
+
 // ─── Composite / case detail ────────────────────────────────────
 export const CaseDetailSchema = CaseSchema.extend({
   facts: z.array(FactSchema),
@@ -394,6 +443,7 @@ export const CaseDetailSchema = CaseSchema.extend({
   auditLogs: z.array(AuditLogSchema),
   citationVerifications: z.array(CitationVerificationSchema),
   deadlines: z.array(CaseDeadlineSchema),
+  documents: z.array(StoredDocumentSchema),
 })
 export type CaseDetailT = z.infer<typeof CaseDetailSchema>
 

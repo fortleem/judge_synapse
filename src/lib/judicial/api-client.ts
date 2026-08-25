@@ -7,12 +7,12 @@ import {
   ContrarySearchResultSchema,
   LegalSourceSchema, LegalTextSchema, CorpusSnapshotSchema, ImportJobSchema,
   AuditLogSchema, ConflictSchema, AdversaryReviewSchema, JudgeNoteSchema, CitationVerificationSchema,
-  CaseDeadlineSchema,
+  CaseDeadlineSchema, StoredDocumentSchema,
   type CaseT, type CaseDetailT, type DashboardT, type HealthT,
   type SettingT, type ContrarySearchResult,
   type LegalSourceT, type LegalTextT, type CorpusSnapshotT, type ImportJobT,
   type AuditLogT, type ConflictT, type AdversaryReviewT, type JudgeNoteT, type CitationVerificationT,
-  type CaseDeadlineT,
+  type CaseDeadlineT, type StoredDocumentT,
 } from "./schemas"
 
 export const API_BASE = "/api"
@@ -320,6 +320,45 @@ export const api = {
     return request(`/cases/${encodeURIComponent(caseId)}/ai-assist`, {
       method: "POST",
       body: JSON.stringify({ task, prompt, maxTokens }),
+    })
+  },
+
+  // ─── Document Upload & AI Extraction ──
+  async uploadDocument(caseId: string, file: File, uploadedBy = "rapporteur", sourceType = "case_file"): Promise<StoredDocumentT> {
+    const formData = new FormData()
+    formData.append("file", file)
+    formData.append("uploadedBy", uploadedBy)
+    formData.append("sourceType", sourceType)
+    const res = await fetch(`${API_BASE}/cases/${encodeURIComponent(caseId)}/documents/upload`, {
+      method: "POST",
+      body: formData,
+    })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const json = await res.json()
+    markServerUnreachable(false)
+    if (json?.ok === false) throw new Error(json.error?.message ?? "Upload error")
+    return StoredDocumentSchema.parse(json.data)
+  },
+
+  async listDocuments(caseId: string): Promise<StoredDocumentT[]> {
+    return request(`/cases/${encodeURIComponent(caseId)}/documents`, { cache: "no-store" }, z.array(StoredDocumentSchema))
+  },
+
+  async deleteDocument(caseId: string, docId: string) {
+    await request(`/cases/${encodeURIComponent(caseId)}/documents/${encodeURIComponent(docId)}`, { method: "DELETE" })
+  },
+
+  async extractDocument(caseId: string, docId: string, manualText?: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/documents/${encodeURIComponent(docId)}/extract`, {
+      method: "POST",
+      body: JSON.stringify({ text: manualText ?? null }),
+    })
+  },
+
+  async promoteExtractions(caseId: string, docId: string, items: Array<{ type: string; data: Record<string, unknown> }>) {
+    return request(`/cases/${encodeURIComponent(caseId)}/documents/${encodeURIComponent(docId)}/promote`, {
+      method: "POST",
+      body: JSON.stringify({ items }),
     })
   },
 }

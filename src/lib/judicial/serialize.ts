@@ -6,7 +6,7 @@ import type {
   JudgeFieldT, AIAnalysisT, IndicatorT, SettingT, CaseDetailT,
   LegalSourceT, LegalTextT, CorpusSnapshotT, ImportJobT,
   ConflictT, AdversaryReviewT, JudgeNoteT, AuditLogT, CitationVerificationT,
-  CaseDeadlineT,
+  CaseDeadlineT, StoredDocumentT,
 } from "./schemas"
 
 function iso(d: Date | string | null | undefined): string | null {
@@ -356,6 +356,29 @@ export function serializeDeadline(row: AnyRow): CaseDeadlineT {
   }
 }
 
+export function serializeDocument(row: AnyRow): StoredDocumentT {
+  return {
+    id: String(row.id),
+    caseId: String(row.caseId),
+    originalName: String(row.originalName),
+    storedName: String(row.storedName),
+    mimeType: String(row.mimeType),
+    fileSize: Number(row.fileSize ?? 0),
+    uploadedBy: String(row.uploadedBy ?? "rapporteur"),
+    sourceType: String(row.sourceType ?? "case_file"),
+    ocrStatus: String(row.ocrStatus ?? "pending"),
+    ocrText: row.ocrText ? String(row.ocrText) : null,
+    ocrConfidence: row.ocrConfidence != null ? Number(row.ocrConfidence) : null,
+    extractionStatus: String(row.extractionStatus ?? "pending"),
+    extractedData: row.extractedData ? String(row.extractedData) : null,
+    extractionSummary: row.extractionSummary ? String(row.extractionSummary) : null,
+    verified: Boolean(row.verified),
+    notes: row.notes ? String(row.notes) : null,
+    createdAt: iso(row.createdAt as Date)!,
+    updatedAt: iso(row.updatedAt as Date)!,
+  }
+}
+
 export function serializeCaseDetail(row: AnyRow): CaseDetailT {
   return {
     ...serializeCase(row),
@@ -373,5 +396,6 @@ export function serializeCaseDetail(row: AnyRow): CaseDetailT {
     auditLogs: ((row.auditLogs as AnyRow[]) ?? []).map(serializeAuditLog),
     citationVerifications: ((row.citationVerifications as AnyRow[]) ?? []).map(serializeCitationVerification),
     deadlines: ((row.deadlines as AnyRow[]) ?? []).map(serializeDeadline),
+    documents: ((row.documents as AnyRow[]) ?? []).map(serializeDocument),
   }
 }

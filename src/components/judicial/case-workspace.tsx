@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import {
   Gavel, FileText, FolderOpen, CalendarClock, GitBranch, BookOpen,
   Bot, Scale, ShieldCheck, Loader2, AlertTriangle, Swords, Eye, ServerOff,
-  CalendarDays,
+  CalendarDays, Upload,
 } from "lucide-react"
 import { cn, colorClasses, formatDate } from "@/lib/judicial/ui"
 import {
@@ -30,11 +30,13 @@ import { IndicatorsTab } from "./tabs/indicators"
 import { AdversaryReviewTab } from "./tabs/adversary-review"
 import { JudgeNotesTab } from "./tabs/judge-notes"
 import { DeadlinesTab } from "./tabs/deadlines"
+import { DocumentsTab } from "./tabs/documents"
 
-type TabKey = "overview" | "facts" | "evidence" | "timeline" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes" | "deadlines"
+type TabKey = "overview" | "facts" | "evidence" | "timeline" | "deadlines" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes" | "documents"
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: CaseDetailT) => number }[] = [
   { key: "overview", label: "نظرة عامة", icon: <FileText className="h-4 w-4" /> },
+  { key: "documents", label: "المستندات", icon: <Upload className="h-4 w-4" />, badge: (c) => c.documents.length },
   { key: "facts", label: "الوقائع", icon: <BookOpen className="h-4 w-4" />, badge: (c) => c.facts.length },
   { key: "evidence", label: "الأدلة", icon: <FolderOpen className="h-4 w-4" />, badge: (c) => c.evidence.length },
   { key: "timeline", label: "الخط الزمني", icon: <CalendarClock className="h-4 w-4" />, badge: (c) => c.timeline.length },
@@ -165,6 +167,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto scroll-sovereign p-4 min-h-0">
         {tab === "overview" && <OverviewTab caseDetail={c} />}
+        {tab === "documents" && <DocumentsTab caseDetail={c} />}
         {tab === "facts" && <FactsTab caseDetail={c} />}
         {tab === "evidence" && <EvidenceTab caseDetail={c} />}
         {tab === "timeline" && <TimelineTab caseDetail={c} />}
