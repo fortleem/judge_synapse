@@ -1,0 +1,234 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: judicial
+    description: Judicial workbench operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /judicial/dashboard:
+    get:
+      operationId: getJudicialDashboard
+      tags: [judicial]
+      summary: Get the judicial workbench dashboard
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JudicialDashboard"
+  /judicial/cases:
+    get:
+      operationId: getJudicialCases
+      tags: [judicial]
+      summary: List authorized cases
+      responses:
+        "200":
+          description: Authorized cases
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JudicialCase"
+  /judicial/cases/{caseId}:
+    get:
+      operationId: getJudicialCase
+      tags: [judicial]
+      summary: Get a case workbench
+      parameters:
+        - name: caseId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Case workbench
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/JudicialCaseDetail"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    JudicialDashboard:
+      type: object
+      required: [activeCases, pendingReviews, verifiedSources, attentionItems, recentActivity]
+      properties:
+        activeCases:
+          type: number
+        pendingReviews:
+          type: number
+        verifiedSources:
+          type: number
+        attentionItems:
+          type: number
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/JudicialActivity"
+    JudicialActivity:
+      type: object
+      required: [id, title, detail, time, type]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        detail:
+          type: string
+        time:
+          type: string
+        type:
+          type: string
+          enum: [review, source, case, alert]
+    JudicialCase:
+      type: object
+      required: [id, number, title, chamber, stage, risk, updatedAt, tags]
+      properties:
+        id:
+          type: string
+        number:
+          type: string
+        title:
+          type: string
+        chamber:
+          type: string
+        stage:
+          type: string
+          enum: [analysis, hearing, draft, review]
+        risk:
+          type: string
+          enum: [low, medium, high]
+        updatedAt:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    JudicialCaseDetail:
+      allOf:
+        - $ref: "#/components/schemas/JudicialCase"
+        - type: object
+          required: [summary, facts, evidence, issues, authorities, integrity]
+          properties:
+            summary:
+              type: string
+            facts:
+              type: array
+              items:
+                $ref: "#/components/schemas/JudicialFact"
+            evidence:
+              type: array
+              items:
+                $ref: "#/components/schemas/JudicialEvidence"
+            issues:
+              type: array
+              items:
+                $ref: "#/components/schemas/JudicialIssue"
+            authorities:
+              type: array
+              items:
+                $ref: "#/components/schemas/JudicialAuthority"
+            integrity:
+              type: array
+              items:
+                $ref: "#/components/schemas/IntegrityCheck"
+    JudicialFact:
+      type: object
+      required: [id, text, status, source]
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        status:
+          type: string
+          enum: [verified, disputed, unresolved]
+        source:
+          type: string
+    JudicialEvidence:
+      type: object
+      required: [id, name, kind, status, pages]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        kind:
+          type: string
+        status:
+          type: string
+          enum: [verified, review, conflict]
+        pages:
+          type: number
+    JudicialIssue:
+      type: object
+      required: [id, title, state, note]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        state:
+          type: string
+          enum: [open, supported, contested]
+        note:
+          type: string
+    JudicialAuthority:
+      type: object
+      required: [id, citation, title, force, temporal, direction]
+      properties:
+        id:
+          type: string
+        citation:
+          type: string
+        title:
+          type: string
+        force:
+          type: string
+        temporal:
+          type: string
+        direction:
+          type: string
+          enum: [support, contrary]
+    IntegrityCheck:
+      type: object
+      required: [label, state, detail]
+      properties:
+        label:
+          type: string
+        state:
+          type: string
+          enum: [passed, attention, blocked]
+        detail:
+          type: string
+
