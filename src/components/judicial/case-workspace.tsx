@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query"
 import {
   Gavel, FileText, FolderOpen, CalendarClock, GitBranch, BookOpen,
   Bot, Scale, ShieldCheck, Loader2, AlertTriangle, Swords, Eye, ServerOff,
+  CalendarDays,
 } from "lucide-react"
 import { cn, colorClasses, formatDate } from "@/lib/judicial/ui"
 import {
@@ -28,14 +29,16 @@ import { JudgeFieldsTab } from "./tabs/judge-fields"
 import { IndicatorsTab } from "./tabs/indicators"
 import { AdversaryReviewTab } from "./tabs/adversary-review"
 import { JudgeNotesTab } from "./tabs/judge-notes"
+import { DeadlinesTab } from "./tabs/deadlines"
 
-type TabKey = "overview" | "facts" | "evidence" | "timeline" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes"
+type TabKey = "overview" | "facts" | "evidence" | "timeline" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes" | "deadlines"
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: CaseDetailT) => number }[] = [
   { key: "overview", label: "نظرة عامة", icon: <FileText className="h-4 w-4" /> },
   { key: "facts", label: "الوقائع", icon: <BookOpen className="h-4 w-4" />, badge: (c) => c.facts.length },
   { key: "evidence", label: "الأدلة", icon: <FolderOpen className="h-4 w-4" />, badge: (c) => c.evidence.length },
   { key: "timeline", label: "الخط الزمني", icon: <CalendarClock className="h-4 w-4" />, badge: (c) => c.timeline.length },
+  { key: "deadlines", label: "المواعيد القانونية", icon: <CalendarDays className="h-4 w-4" />, badge: (c) => c.deadlines.length },
   { key: "issues", label: "المسائل القانونية", icon: <GitBranch className="h-4 w-4" />, badge: (c) => c.issues.length },
   { key: "authorities", label: "السلطات", icon: <Scale className="h-4 w-4" />, badge: (c) => c.authorities.length },
   { key: "ai", label: "تحليل AI", icon: <Bot className="h-4 w-4" /> },
@@ -165,6 +168,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
         {tab === "facts" && <FactsTab caseDetail={c} />}
         {tab === "evidence" && <EvidenceTab caseDetail={c} />}
         {tab === "timeline" && <TimelineTab caseDetail={c} />}
+        {tab === "deadlines" && <DeadlinesTab caseDetail={c} />}
         {tab === "issues" && <IssuesTab caseDetail={c} />}
         {tab === "authorities" && <AuthoritiesTab caseDetail={c} />}
         {tab === "ai" && <AIAnalysisTab caseDetail={c} />}

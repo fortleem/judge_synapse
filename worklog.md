@@ -143,3 +143,36 @@ Stage Summary:
 - Citation verification gateway blocks fabricated citations — never silently corrects
 - Import queue for auth-required portals (court-correct approach: official registry + signed snapshots + provenance + no-reliance-until-verified)
 - All verification criteria met: UI+server running, typecheck pass, typed API client+Zod schemas, all endpoints respond, UI renders in preview without browser errors
+
+---
+Task ID: 10-13 (Judge Sherif Customization + Sphinx Gateway + Legal Deadlines + Light Theme)
+Agent: main (project manager)
+Task: Add Sphinx Model Gateway (Groq/Gemini/HF), Egyptian Legal Deadlines engine, switch to light institutional theme, add welcome banner for Judge Sherif.
+
+Work Log:
+- Stored 3 API keys (Groq/Gemini/HF) in .env (gitignored, server-side only) with security warning
+- Built Sphinx Model Gateway (src/lib/judicial/sphinx-gateway.ts): policy-controlled router with §82 policy engine, provider-neutral HTTP calls (no SDK lock-in per §51), model registry with fallback lists, fabrication detection, degrade-safely behavior (§98)
+- Built Egyptian Legal Deadlines engine (src/lib/judicial/deadlines.ts): 12 real legal deadlines from 4 Egyptian laws (مرافعات 13/1968, إجراءات جنائية 150/1950, مدني 131/1948, مجلس الدولة 47/1972), calculator with Friday adjustment + defendant-abroad extension
+- Added Prisma CaseDeadline model, API routes (GET/POST deadlines, DELETE deadline/[did], GET /api/deadlines reference)
+- Built DeadlinesTab frontend: compute form with 12 deadline types, status cards (pending/approaching/expired), reference table with all legal bases
+- Added Sphinx AI Assist panel to AI Analysis tab: 5 task types (summary/adversarial/research/drafting/extraction), quick-prompts, real-time result display with provenance + policy note + token/latency stats, auto-persisted as non-authoritative AIAnalysis
+- Switched layout from dark to light institutional theme: removed `className="dark"` from html, adjusted :root tokens for parchment background + lighter emerald sidebar + gold accents
+- Added welcome banner: "أهلاً وسهلاً بسيادة المستشار / شريف" in header with current date in Arabic
+- Updated model registry with fallback lists for both Groq (4 models) and Gemini (4 models) to handle deprecation
+
+Verification:
+- Groq API key returns 403 Forbidden (key invalid/revoked) — Sphinx correctly degrades safely
+- Gemini API key valid but sandbox location geo-blocked ("User location is not supported") — Sphinx correctly degrades safely
+- Both failures produce the proper "وضع التدهور الآمن" message with full error explanation
+- When valid keys are used from authorized court infrastructure, AI analysis will work end-to-end
+- Deadlines: computed 40-day appeal deadline from today → 4 Oct 2026, with legal basis "مادة 215 من قانون المرافعات 13/1968"
+- TypeScript typecheck: clean (0 errors)
+- ESLint: clean (0 errors)
+- Light theme renders correctly, welcome banner visible, mobile responsive, footer sticky
+
+Stage Summary:
+- 4 add-ons implemented: Sphinx Gateway, Legal Deadlines, Light Theme, Judge Sherif Welcome
+- API keys stored securely in .env (never in source code, never committed)
+- Security warning added: keys shared in chat should be rotated after pilot
+- Sphinx Gateway architecture sound: policy routing → provider fallback → model fallback → degrade-safely
+- All existing features preserved: Legal Research Center, Adversary Review, Audit Log, Citation Verification

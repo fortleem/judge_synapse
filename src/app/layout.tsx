@@ -28,7 +28,7 @@ const jetbrains = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "الدماغ القضائي المصري — Egyptian Judicial Brain V2.1",
   description:
-    "منصة سيادية للذكاء القضائي والبحث القانوني وتنظيم الأدلة ودعم التسبيب — النسخة 2.1 — تجربة قضائية مقيّدة",
+    "منصة سيادية للذكاء القضائي والبحث القانوني وتنظيم الأدلة ودعم التسبيب — النسخة 2.1 — تجربة قضائية مقيّدة — للقاضي شريف",
   keywords: [
     "القضاء المصري", "الذكاء القضائي", "بحث قانوني", "تنظيم الأدلة",
     "Egyptian Judicial Brain", "judicial intelligence", "legal research",
@@ -45,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning className="dark">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${amiri.variable} ${notoKufi.variable} ${jetbrains.variable} font-kufi antialiased`}
       >

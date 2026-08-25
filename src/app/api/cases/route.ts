@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
   for (const indicatorType of ["citation_soundness", "legal_version", "defense_coverage", "evidence_consistency"]) {
     await db.indicator.create({ data: { caseId: row.id, indicatorType, score: 0, status: "pending" } })
   }
-  const full = await db.case.findUnique({ where: { id: row.id }, include: { facts: true, evidence: true, timeline: true, issues: true, authorities: true, judgeFields: true, aiAnalyses: true, indicators: true, conflicts: true, adversaryReviews: true, notes: true, auditLogs: true, citationVerifications: true } })
+  const full = await db.case.findUnique({ where: { id: row.id }, include: { facts: true, evidence: true, timeline: true, issues: true, authorities: true, judgeFields: true, aiAnalyses: true, indicators: true, conflicts: true, adversaryReviews: true, notes: true, auditLogs: true, citationVerifications: true, deadlines: true } })
   if (!full) return fail("INTERNAL_ERROR", "فشل إنشاء القضية", 500)
   return ok(serializeCaseDetail(full))
 }

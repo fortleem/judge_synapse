@@ -7,10 +7,12 @@ import {
   ContrarySearchResultSchema,
   LegalSourceSchema, LegalTextSchema, CorpusSnapshotSchema, ImportJobSchema,
   AuditLogSchema, ConflictSchema, AdversaryReviewSchema, JudgeNoteSchema, CitationVerificationSchema,
+  CaseDeadlineSchema,
   type CaseT, type CaseDetailT, type DashboardT, type HealthT,
   type SettingT, type ContrarySearchResult,
   type LegalSourceT, type LegalTextT, type CorpusSnapshotT, type ImportJobT,
   type AuditLogT, type ConflictT, type AdversaryReviewT, type JudgeNoteT, type CitationVerificationT,
+  type CaseDeadlineT,
 } from "./schemas"
 
 export const API_BASE = "/api"
@@ -295,5 +297,29 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ citation, claimedSource: claimedSource ?? null }),
     }, CitationVerificationSchema)
+  },
+
+  // ─── Legal Deadlines ──
+  async listDeadlines(caseId: string): Promise<CaseDeadlineT[]> {
+    return request(`/cases/${encodeURIComponent(caseId)}/deadlines`, { cache: "no-store" }, z.array(CaseDeadlineSchema))
+  },
+
+  async createDeadline(caseId: string, deadlineType: string, startDate: string, defendantAbroad = false, notes?: string): Promise<CaseDeadlineT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/deadlines`, {
+      method: "POST",
+      body: JSON.stringify({ deadlineType, startDate, defendantAbroad, notes: notes ?? null }),
+    }, CaseDeadlineSchema)
+  },
+
+  async deleteDeadline(caseId: string, deadlineId: string) {
+    await request(`/cases/${encodeURIComponent(caseId)}/deadlines/${encodeURIComponent(deadlineId)}`, { method: "DELETE" })
+  },
+
+  // ─── Sphinx AI Assist (External Model Gateway) ──
+  async aiAssist(caseId: string, task: string, prompt: string, maxTokens?: number) {
+    return request(`/cases/${encodeURIComponent(caseId)}/ai-assist`, {
+      method: "POST",
+      body: JSON.stringify({ task, prompt, maxTokens }),
+    })
   },
 }

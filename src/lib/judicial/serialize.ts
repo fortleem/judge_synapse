@@ -6,6 +6,7 @@ import type {
   JudgeFieldT, AIAnalysisT, IndicatorT, SettingT, CaseDetailT,
   LegalSourceT, LegalTextT, CorpusSnapshotT, ImportJobT,
   ConflictT, AdversaryReviewT, JudgeNoteT, AuditLogT, CitationVerificationT,
+  CaseDeadlineT,
 } from "./schemas"
 
 function iso(d: Date | string | null | undefined): string | null {
@@ -338,6 +339,23 @@ export function serializeCitationVerification(row: AnyRow): CitationVerification
   }
 }
 
+export function serializeDeadline(row: AnyRow): CaseDeadlineT {
+  return {
+    id: String(row.id),
+    caseId: String(row.caseId),
+    deadlineType: String(row.deadlineType),
+    title: String(row.title),
+    legalBasis: String(row.legalBasis),
+    startDate: iso(row.startDate as Date)!,
+    computedDeadline: iso(row.computedDeadline as Date)!,
+    daysAllowed: Number(row.daysAllowed ?? 0),
+    defendantAbroad: Boolean(row.defendantAbroad),
+    status: String(row.status),
+    notes: row.notes ? String(row.notes) : null,
+    createdAt: iso(row.createdAt as Date)!,
+  }
+}
+
 export function serializeCaseDetail(row: AnyRow): CaseDetailT {
   return {
     ...serializeCase(row),
@@ -354,5 +372,6 @@ export function serializeCaseDetail(row: AnyRow): CaseDetailT {
     notes: ((row.notes as AnyRow[]) ?? []).map(serializeJudgeNote),
     auditLogs: ((row.auditLogs as AnyRow[]) ?? []).map(serializeAuditLog),
     citationVerifications: ((row.citationVerifications as AnyRow[]) ?? []).map(serializeCitationVerification),
+    deadlines: ((row.deadlines as AnyRow[]) ?? []).map(serializeDeadline),
   }
 }

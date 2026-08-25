@@ -23,6 +23,7 @@ const CASE_INCLUDE = {
   notes: { orderBy: { createdAt: "asc" as const } },
   auditLogs: { orderBy: { timestamp: "desc" as const }, take: 100 },
   citationVerifications: { orderBy: { verifiedAt: "desc" as const } },
+  deadlines: { orderBy: { computedDeadline: "asc" as const } },
 }
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {

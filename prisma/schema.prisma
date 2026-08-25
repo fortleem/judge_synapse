@@ -44,6 +44,7 @@ model Case {
   notes           JudgeNote[]
   auditLogs       AuditLog[]
   citationVerifications CitationVerification[]
+  deadlines       CaseDeadline[]
 
   @@index([proceduralStage])
   @@index([riskLevel])
@@ -450,4 +451,31 @@ model CitationVerification {
 
   @@index([caseId])
   @@index([verificationStatus])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EGYPTIAN LEGAL DEADLINES ENGINE (قانون المرافعات + القانون المدني)
+// Computes and tracks procedural deadlines per case
+// ═══════════════════════════════════════════════════════════════════
+// deadlineType: appeal | cassation | opposition | reconsideration |
+//               prescription | service | hearing_notice | objection
+// status: pending | approaching | expired | met | extended
+model CaseDeadline {
+  id              String   @id @default(cuid())
+  caseId          String
+  deadlineType    String
+  title           String
+  legalBasis      String
+  startDate       DateTime
+  computedDeadline DateTime
+  daysAllowed     Int
+  defendantAbroad Boolean  @default(false)
+  status          String   @default("pending")
+  notes           String?
+  createdAt       DateTime @default(now())
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([deadlineType])
+  @@index([status])
 }

@@ -361,6 +361,23 @@ export const CitationVerificationSchema = z.object({
 })
 export type CitationVerificationT = z.infer<typeof CitationVerificationSchema>
 
+// ─── Case Deadlines ──────────────────────────────────────────────
+export const CaseDeadlineSchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  deadlineType: z.string(),
+  title: z.string(),
+  legalBasis: z.string(),
+  startDate: z.string(),
+  computedDeadline: z.string(),
+  daysAllowed: z.number(),
+  defendantAbroad: z.boolean(),
+  status: z.string(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+})
+export type CaseDeadlineT = z.infer<typeof CaseDeadlineSchema>
+
 // ─── Composite / case detail ────────────────────────────────────
 export const CaseDetailSchema = CaseSchema.extend({
   facts: z.array(FactSchema),
@@ -376,6 +393,7 @@ export const CaseDetailSchema = CaseSchema.extend({
   notes: z.array(JudgeNoteSchema),
   auditLogs: z.array(AuditLogSchema),
   citationVerifications: z.array(CitationVerificationSchema),
+  deadlines: z.array(CaseDeadlineSchema),
 })
 export type CaseDetailT = z.infer<typeof CaseDetailSchema>
 

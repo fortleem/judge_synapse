@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked } from "lucide-react"
+import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked, UserRound } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
 import { OPERATING_STATES, findConstant } from "@/lib/judicial/constants"
 import type { DashboardT, HealthT } from "@/lib/judicial/schemas"
@@ -25,6 +25,24 @@ export function SovereignHeader({
     <header className="sticky top-0 z-30 border-b border-border bg-sidebar text-sidebar-foreground backdrop-blur supports-[backdrop-filter]:bg-sidebar/95">
       {/* Gold rule */}
       <div className="gold-rule" />
+
+      {/* Welcome banner — Judge Sherif */}
+      <div className="px-4 py-1.5 bg-sidebar-accent/40 border-b border-sidebar-border/40 flex items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500/20 text-amber-300 shrink-0">
+            <UserRound className="h-3.5 w-3.5" />
+          </div>
+          <span className="font-serif-judicial text-sm text-amber-200">
+            أهلاً وسهلاً بسيادة المستشار / شريف
+          </span>
+          <span className="font-kufi text-[10px] text-sidebar-foreground/50 hidden sm:inline">
+            — منصة الذكاء القضائي المصري في خدمتكم
+          </span>
+        </div>
+        <span className="font-jetbrains text-[9px] text-sidebar-foreground/40 hidden md:inline">
+          {new Date().toLocaleDateString("ar-EG", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+        </span>
+      </div>
 
       <div className="flex items-center gap-4 px-4 h-16">
         {/* Seal + title */}
