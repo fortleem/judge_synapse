@@ -185,3 +185,145 @@ export function findConstant<T extends { value: string }>(
   if (!value) return undefined
   return list.find((item) => item.value === value)
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// LEGAL CORPUS LAYER (§15, §16, §17)
+// ═══════════════════════════════════════════════════════════════════
+
+export const SOURCE_TYPES = [
+  { value: "constitution", label: "الدستور", labelEn: "Constitution", color: "gold", icon: "crown" },
+  { value: "official_gazette", label: "الجريدة الرسمية", labelEn: "Official Gazette", color: "amber", icon: "newspaper" },
+  { value: "statute", label: "تشريع", labelEn: "Statute", color: "blue", icon: "book-open" },
+  { value: "cassation", label: "أحكام النقض", labelEn: "Cassation", color: "emerald", icon: "gavel" },
+  { value: "state_council", label: "مجلس الدولة", labelEn: "State Council", color: "teal", icon: "landmark" },
+  { value: "constitutional_court", label: "المحكمة الدستورية", labelEn: "Constitutional Court", color: "rose", icon: "scale" },
+  { value: "specialized_court", label: "محاكم متخصصة", labelEn: "Specialized Court", color: "violet", icon: "building" },
+  { value: "ministry", label: "وزارة", labelEn: "Ministry", color: "slate", icon: "building-2" },
+] as const
+
+export const ACCESS_STATUS = [
+  { value: "PUBLIC", label: "متاح للعموم", labelEn: "Public", color: "emerald" },
+  { value: "AUTH_REQUIRED", label: "يتطلب تسجيلاً", labelEn: "Auth Required", color: "orange" },
+  { value: "PARTIAL", label: "متاح جزئياً", labelEn: "Partial", color: "amber" },
+  { value: "QUEUED", label: "في طابور الاستيراد", labelEn: "Queued", color: "slate" },
+  { value: "IMPORTED", label: "مستورد", labelEn: "Imported", color: "blue" },
+  { value: "VERIFIED", label: "متحقَّق منه", labelEn: "Verified", color: "emerald" },
+] as const
+
+export const SOURCE_TIERS = [
+  { value: 1, label: "الطبقة 1 — واجهة API رسمية مؤمّنة", labelEn: "Tier 1 — Official Secure API", color: "emerald" },
+  { value: 2, label: "الطبقة 2 — مستودع مؤسسي موثّق", labelEn: "Tier 2 — Authenticated Institutional Repository", color: "teal" },
+  { value: 3, label: "الطبقة 3 — مصدر رسمي عام", labelEn: "Tier 3 — Official Public Source", color: "blue" },
+  { value: 4, label: "الطبقة 4 — قاعدة بيانات قانونية مؤسسية معتمدة", labelEn: "Tier 4 — Authorized Institutional Database", color: "violet" },
+  { value: 5, label: "الطبقة 5 — مصدر ثانوي موثّق", labelEn: "Tier 5 — Verified Secondary Source", color: "amber" },
+  { value: 6, label: "الطبقة 6 — بحث واكتشاف فقط", labelEn: "Tier 6 — Research/Discovery Only", color: "slate" },
+] as const
+
+export const LEGAL_TEXT_DOCUMENT_TYPES = [
+  { value: "constitutional_provision", label: "نص دستوري", color: "gold" },
+  { value: "statute_article", label: "مادة تشريعية", color: "blue" },
+  { value: "judgment", label: "حكم قضائي", color: "emerald" },
+  { value: "principle", label: "مبدأ قضائي", color: "violet" },
+  { value: "regulation", label: "لائحة تنفيذية", color: "teal" },
+  { value: "executive_decision", label: "قرار تنفيذي", color: "amber" },
+] as const
+
+export const CORPUS_SNAPSHOT_STATUS = [
+  { value: "draft", label: "مسودة", color: "slate" },
+  { value: "approved", label: "معتمدة", color: "blue" },
+  { value: "published", label: "منشورة", color: "emerald" },
+  { value: "expired", label: "منتهية الصلاحية", color: "red" },
+] as const
+
+export const IMPORT_JOB_STATUS = [
+  { value: "QUEUED", label: "في الانتظار", color: "slate" },
+  { value: "IN_PROGRESS", label: "قيد التنفيذ", color: "blue" },
+  { value: "COMPLETED", label: "مكتمل", color: "emerald" },
+  { value: "FAILED", label: "فشل", color: "red" },
+  { value: "BLOCKED", label: "محظور", color: "orange" },
+] as const
+
+// ═══════════════════════════════════════════════════════════════════
+// CONFLICT ENGINE (§29, §30)
+// ═══════════════════════════════════════════════════════════════════
+
+export const CONFLICT_TYPES = [
+  { value: "factual", label: "تعارض وقائعي", labelEn: "Factual Contradiction", color: "orange", icon: "file-x" },
+  { value: "temporal", label: "تعارض زمني", labelEn: "Chronological Contradiction", color: "amber", icon: "clock" },
+  { value: "jurisdictional", label: "تعارض اختصاصي", labelEn: "Jurisdictional Conflict", color: "violet", icon: "map" },
+  { value: "legal", label: "تعارض قانوني", labelEn: "Legal Contradiction", color: "red", icon: "scale" },
+  { value: "procedural", label: "تعارض إجرائي", labelEn: "Procedural Contradiction", color: "blue", icon: "git-branch" },
+  { value: "draft", label: "تعارض في المسودة", labelEn: "Draft Contradiction", color: "rose", icon: "file-pen-line" },
+] as const
+
+export const CONFLICT_STATUS = [
+  { value: "POTENTIAL_CONFLICT", label: "تعارض محتمل", labelEn: "Potential Conflict", color: "amber" },
+  { value: "CONFLICT", label: "تعارض مؤكَّد", labelEn: "Conflict (Validated)", color: "red" },
+  { value: "RESOLVED", label: "محلول", labelEn: "Resolved", color: "emerald" },
+  { value: "FALSE_POSITIVE", label: "إيجابية كاذبة", labelEn: "False Positive", color: "slate" },
+] as const
+
+export const CONFLICT_REVIEW = [
+  { value: "pending", label: "بانتظار المراجعة", color: "amber" },
+  { value: "reviewed", label: "تمت المراجعة", color: "blue" },
+  { value: "dismissed", label: "مرفوض", color: "slate" },
+  { value: "confirmed", label: "مؤكَّد", color: "red" },
+] as const
+
+// ═══════════════════════════════════════════════════════════════════
+// ADVERSARY REVIEW — The Judicial Shadow (§34, §36)
+// ═══════════════════════════════════════════════════════════════════
+
+export const ADVERSARY_TARGET_TYPES = [
+  { value: "ai_analysis", label: "تحليل ذكاء اصطناعي", color: "amber", icon: "bot" },
+  { value: "fact", label: "واقعة", color: "blue", icon: "file-text" },
+  { value: "authority", label: "سلطة قانونية", color: "emerald", icon: "scale" },
+  { value: "judge_field", label: "حقل القاضي", color: "violet", icon: "gavel" },
+  { value: "proposition", label: "قضية قانونية", color: "rose", icon: "git-branch" },
+] as const
+
+export const ADVERSARY_ANGLES = [
+  { key: "factsAngle", label: "زاوية الوقائع", labelEn: "Facts Angle", icon: "file-search", desc: "هل الوقائع المثبتة تدعم النتيجة؟ هل توجد وقائع متناقضة؟" },
+  { key: "textAngle", label: "زاوية النص", labelEn: "Text Angle", icon: "book-open", desc: "هل النص القانوني ينطبق بحرفيته؟ هل توجد نسخة أحدث؟" },
+  { key: "defenseAngle", label: "زاوية الدفع المضاد", labelEn: "Defense Angle", icon: "shield", desc: "ما الدفع المضاد الذي لم يُعالَج؟ هل يوجد دفع ساقط؟" },
+  { key: "proceduralAngle", label: "زاوية الاتساق الإجرائي", labelEn: "Procedural Angle", icon: "git-branch", desc: "هل الإجراءات سليمة؟ هل توجد ثغرات إجرائية؟" },
+] as const
+
+export const ADVERSARY_TRANSFER_STATUS = [
+  { value: "none", label: "بدون نقل", color: "slate" },
+  { value: "requested", label: "طُلب النقل", color: "amber" },
+  { value: "transferred", label: "نُقل للقاضي", color: "emerald" },
+  { value: "rejected", label: "رُفض النقل", color: "red" },
+] as const
+
+// ═══════════════════════════════════════════════════════════════════
+// AUDIT LOG (§87) — source separates system proposals from judge decisions
+// ═══════════════════════════════════════════════════════════════════
+
+export const AUDIT_SOURCES = [
+  { value: "system_proposal", label: "اقتراح النظام", labelEn: "System Proposal", color: "amber", icon: "bot" },
+  { value: "judge_decision", label: "قرار القاضي", labelEn: "Judge Decision", color: "emerald", icon: "gavel" },
+  { value: "system_action", label: "إجراء النظام", labelEn: "System Action", color: "blue", icon: "cog" },
+  { value: "adversary_transfer", label: "نقل من المراجعة الخصومية", labelEn: "Adversary Transfer", color: "violet", icon: "arrow-right-left" },
+  { value: "audit", label: "تدقيق", labelEn: "Audit", color: "slate", icon: "shield-check" },
+] as const
+
+export const AUDIT_ACTORS = [
+  { value: "system", label: "النظام", color: "blue" },
+  { value: "judge", label: "القاضي", color: "emerald" },
+  { value: "rapporteur", label: "المقرر", color: "amber" },
+  { value: "administrator", label: "المدير", color: "violet" },
+] as const
+
+// ═══════════════════════════════════════════════════════════════════
+// JUDGE NOTES
+// ═══════════════════════════════════════════════════════════════════
+
+export const NOTE_ITEM_TYPES = [
+  { value: "general", label: "ملاحظة عامة", icon: "sticky-note" },
+  { value: "fact", label: "ملاحظة على واقعة", icon: "file-text" },
+  { value: "evidence", label: "ملاحظة على دليل", icon: "folder" },
+  { value: "authority", label: "ملاحظة على سلطة", icon: "scale" },
+  { value: "issue", label: "ملاحظة على مسألة", icon: "git-branch" },
+  { value: "adversary", label: "ملاحظة على مراجعة خصومية", icon: "swords" },
+] as const

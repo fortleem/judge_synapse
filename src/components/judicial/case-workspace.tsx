@@ -26,8 +26,10 @@ import { AuthoritiesTab } from "./tabs/authorities"
 import { AIAnalysisTab } from "./tabs/ai-analysis"
 import { JudgeFieldsTab } from "./tabs/judge-fields"
 import { IndicatorsTab } from "./tabs/indicators"
+import { AdversaryReviewTab } from "./tabs/adversary-review"
+import { JudgeNotesTab } from "./tabs/judge-notes"
 
-type TabKey = "overview" | "facts" | "evidence" | "timeline" | "issues" | "authorities" | "ai" | "judge" | "indicators"
+type TabKey = "overview" | "facts" | "evidence" | "timeline" | "issues" | "authorities" | "ai" | "adversary" | "judge" | "indicators" | "notes"
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: CaseDetailT) => number }[] = [
   { key: "overview", label: "نظرة عامة", icon: <FileText className="h-4 w-4" /> },
@@ -37,8 +39,10 @@ const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: Cas
   { key: "issues", label: "المسائل القانونية", icon: <GitBranch className="h-4 w-4" />, badge: (c) => c.issues.length },
   { key: "authorities", label: "السلطات", icon: <Scale className="h-4 w-4" />, badge: (c) => c.authorities.length },
   { key: "ai", label: "تحليل AI", icon: <Bot className="h-4 w-4" /> },
+  { key: "adversary", label: "المراجعة الخصومية", icon: <Swords className="h-4 w-4" />, badge: (c) => c.adversaryReviews.length },
   { key: "judge", label: "القاضي", icon: <Gavel className="h-4 w-4" /> },
   { key: "indicators", label: "المؤشرات", icon: <ShieldCheck className="h-4 w-4" /> },
+  { key: "notes", label: "الملاحظات", icon: <FileText className="h-4 w-4" />, badge: (c) => c.notes.length },
 ]
 
 export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT; loading: boolean }) {
@@ -164,8 +168,10 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
         {tab === "issues" && <IssuesTab caseDetail={c} />}
         {tab === "authorities" && <AuthoritiesTab caseDetail={c} />}
         {tab === "ai" && <AIAnalysisTab caseDetail={c} />}
+        {tab === "adversary" && <AdversaryReviewTab caseDetail={c} />}
         {tab === "judge" && <JudgeFieldsTab caseDetail={c} />}
         {tab === "indicators" && <IndicatorsTab caseDetail={c} />}
+        {tab === "notes" && <JudgeNotesTab caseDetail={c} />}
       </div>
     </div>
   )

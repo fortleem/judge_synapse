@@ -9,21 +9,28 @@ import { z } from "zod"
 
 export const dynamic = "force-dynamic"
 
+const CASE_INCLUDE = {
+  facts: { orderBy: { createdAt: "asc" as const } },
+  evidence: { orderBy: { createdAt: "asc" as const } },
+  timeline: { orderBy: { eventDate: "asc" as const } },
+  issues: { orderBy: { sortOrder: "asc" as const } },
+  authorities: { orderBy: { createdAt: "asc" as const } },
+  judgeFields: true,
+  aiAnalyses: { orderBy: { createdAt: "asc" as const } },
+  indicators: true,
+  conflicts: { orderBy: { createdAt: "asc" as const } },
+  adversaryReviews: { orderBy: { createdAt: "asc" as const } },
+  notes: { orderBy: { createdAt: "asc" as const } },
+  auditLogs: { orderBy: { timestamp: "desc" as const }, take: 100 },
+  citationVerifications: { orderBy: { verifiedAt: "desc" as const } },
+}
+
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   await ensureSeed()
   const { id } = await ctx.params
   const row = await db.case.findUnique({
     where: { id },
-    include: {
-      facts: { orderBy: { createdAt: "asc" } },
-      evidence: { orderBy: { createdAt: "asc" } },
-      timeline: { orderBy: { eventDate: "asc" } },
-      issues: { orderBy: { sortOrder: "asc" } },
-      authorities: { orderBy: { createdAt: "asc" } },
-      judgeFields: true,
-      aiAnalyses: { orderBy: { createdAt: "asc" } },
-      indicators: true,
-    },
+    include: CASE_INCLUDE,
   })
   if (!row) return fail("NOT_FOUND", "القضية غير موجودة", 404)
   return ok(serializeCaseDetail(row))
@@ -54,7 +61,7 @@ export async function PATCH(req: NextRequest, ctx: { params: Promise<{ id: strin
   }
   if (parsed.data.aiSyncEnabled !== undefined) data.aiSyncEnabled = parsed.data.aiSyncEnabled
   const row = await db.case.update({ where: { id }, data })
-  const full = await db.case.findUnique({ where: { id: row.id }, include: { facts: true, evidence: true, timeline: true, issues: true, authorities: true, judgeFields: true, aiAnalyses: true, indicators: true } })
+  const full = await db.case.findUnique({ where: { id: row.id }, include: CASE_INCLUDE })
   if (!full) return fail("NOT_FOUND", "القضية غير موجودة", 404)
   return ok(serializeCaseDetail(full))
 }

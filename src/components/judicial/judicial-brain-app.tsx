@@ -12,8 +12,10 @@ import { OperationsDashboard } from "./operations-dashboard"
 import { SovereignFooter } from "./sovereign-footer"
 import { FallbackDemoMode } from "./fallback"
 import { SettingsTab } from "./tabs/settings"
+import { LegalResearchCenter } from "./legal-research-center"
+import { AuditLogView } from "./audit-log-view"
 
-export type View = "operations" | "settings"
+export type View = "operations" | "settings" | "research" | "audit"
 
 export function JudicialBrainApp() {
   const [selectedCaseId, setSelectedCaseId] = React.useState<string | null>(null)
@@ -82,6 +84,10 @@ export function JudicialBrainApp() {
             )
           ) : view === "settings" ? (
             <SettingsTab />
+          ) : view === "research" ? (
+            <LegalResearchCenter />
+          ) : view === "audit" ? (
+            <AuditLogView />
           ) : (
             <OperationsDashboard
               dashboard={dashboardQ.data}

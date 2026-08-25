@@ -2,6 +2,7 @@
 
 import { NextResponse } from "next/server"
 import { seedJudicialCorpus } from "./seed"
+import { seedCorpusRegistry } from "./seed-corpus"
 
 export function ok<T>(data: T, status = 200) {
   return NextResponse.json({ ok: true, data }, { status })
@@ -30,7 +31,7 @@ let seedPromise: Promise<unknown> | null = null
 
 export async function ensureSeed() {
   if (!seedPromise) {
-    seedPromise = seedJudicialCorpus().catch((e) => {
+    seedPromise = Promise.all([seedJudicialCorpus(), seedCorpusRegistry()]).catch((e) => {
       console.error("[seed] failed", e)
       seedPromise = null
       throw e

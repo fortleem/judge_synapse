@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database } from "lucide-react"
+import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
 import { OPERATING_STATES, findConstant } from "@/lib/judicial/constants"
 import type { DashboardT, HealthT } from "@/lib/judicial/schemas"
@@ -89,6 +89,30 @@ export function SovereignHeader({
             <IndicatorDot ok={health?.database ?? false} label="قاعدة بيانات" />
           </div>
 
+          <button
+            onClick={() => onNavigate("research")}
+            className={cn(
+              "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors",
+              activeView === "research"
+                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
+                : "border-sidebar-border/60 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:border-sidebar-border"
+            )}
+          >
+            <BookMarked className="h-3.5 w-3.5" />
+            مركز البحث
+          </button>
+          <button
+            onClick={() => onNavigate("audit")}
+            className={cn(
+              "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors",
+              activeView === "audit"
+                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
+                : "border-sidebar-border/60 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:border-sidebar-border"
+            )}
+          >
+            <ShieldCheck className="h-3.5 w-3.5" />
+            سجل التدقيق
+          </button>
           <button
             onClick={() => onNavigate("settings")}
             className={cn(

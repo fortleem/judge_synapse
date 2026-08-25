@@ -39,6 +39,11 @@ model Case {
   judgeFields  JudgeField[]
   aiAnalyses   AIAnalysis[]
   indicators   Indicator[]
+  conflicts       Conflict[]
+  adversaryReviews AdversaryReview[]
+  notes           JudgeNote[]
+  auditLogs       AuditLog[]
+  citationVerifications CitationVerification[]
 
   @@index([proceduralStage])
   @@index([riskLevel])
@@ -229,4 +234,220 @@ model Setting {
   updatedAt DateTime @updatedAt
 
   @@unique([category, key])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// LEGAL CORPUS LAYER (§15, §16, §17) — Source Registry + Versioned Texts
+// ═══════════════════════════════════════════════════════════════════
+
+// ─── LEGAL SOURCE REGISTRY — official portals (§16) ─────────────
+// sourceType: constitution | official_gazette | statute | cassation |
+//             state_council | constitutional_court | specialized_court | ministry
+// accessStatus: PUBLIC | AUTH_REQUIRED | PARTIAL | QUEUED | IMPORTED | VERIFIED
+model LegalSource {
+  id              String   @id @default(cuid())
+  name            String
+  nameEn          String?
+  portalUrl       String?
+  sourceType      String
+  issuingBody     String
+  jurisdiction    String?
+  accessStatus    String   @default("QUEUED")
+  sourceTier      Int      @default(3)
+  contentAvailable String?
+  accessNotes     String?
+  lastChecked     DateTime?
+  verified        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  legalTexts      LegalText[]
+
+  @@index([sourceType])
+  @@index([accessStatus])
+  @@index([sourceTier])
+}
+
+// ─── LEGAL TEXT with temporal versioning (§14) ───────────────────
+// documentType: constitutional_provision | statute_article | judgment | principle | regulation
+// legalForce: constitutional_provision | statute | regulation | court_judgment | ...
+// verificationStatus: verified | partially_verified | unverified | blocked
+// temporalStatus: current | historical | transitional
+model LegalText {
+  id              String   @id @default(cuid())
+  sourceId        String
+  title           String
+  citation        String   @unique
+  documentType    String
+  legalDomain     String?
+  legalForce      String   @default("statute")
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  versionLabel    String
+  sourceHash      String
+  retrievalTimestamp DateTime @default(now())
+  publicationDate DateTime?
+  officialJournalRef String?
+  verificationStatus String @default("verified")
+  temporalStatus  String   @default("current")
+  exactText       String
+  sourceUrl       String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  source          LegalSource @relation(fields: [sourceId], references: [id])
+
+  @@index([sourceId])
+  @@index([legalDomain])
+  @@index([verificationStatus])
+  @@index([temporalStatus])
+}
+
+// ─── CORPUS SNAPSHOTS — signed versioned (§46, §150) ─────────────
+// approvalStatus: draft | approved | published | expired
+model CorpusSnapshot {
+  id              String   @id @default(cuid())
+  versionLabel    String   @unique
+  createdAt       DateTime @default(now())
+  sourceManifest  String
+  hash            String
+  signature       String?
+  approvalStatus  String   @default("draft")
+  effectiveFrom   DateTime
+  effectiveTo     DateTime?
+  textCount       Int      @default(0)
+  sourceCount     Int      @default(0)
+  notes           String?
+}
+
+// ─── IMPORT QUEUE for auth-required sources (§17) ─────────────────
+// status: QUEUED | IN_PROGRESS | COMPLETED | FAILED | BLOCKED
+model ImportJob {
+  id              String   @id @default(cuid())
+  sourceName      String
+  sourceUrl       String?
+  sourceType      String
+  status          String   @default("QUEUED")
+  priority        Int      @default(5)
+  requiresAuth    Boolean  @default(false)
+  authType        String?
+  lastAttempt     DateTime?
+  contentScope    String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONFLICT ENGINE (§29, §30) — POTENTIAL_CONFLICT → CONFLICT (validated)
+// ═══════════════════════════════════════════════════════════════════
+// conflictType: factual | temporal | jurisdictional | legal | procedural | draft
+// status: POTENTIAL_CONFLICT | CONFLICT | RESOLVED | FALSE_POSITIVE
+// judgeReview: pending | reviewed | dismissed | confirmed
+model Conflict {
+  id              String   @id @default(cuid())
+  caseId          String
+  conflictType    String
+  status          String   @default("POTENTIAL_CONFLICT")
+  authorityAId    String?
+  authorityBId    String?
+  description     String
+  significance    String?
+  explanation     String?
+  judgeReview     String   @default("pending")
+  createdAt       DateTime @default(now())
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([conflictType])
+  @@index([status])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// ADVERSARY REVIEW — The Judicial Shadow (§34, §36)
+// Tests each result from 4 angles WITHOUT issuing a verdict
+// ═══════════════════════════════════════════════════════════════════
+// targetType: ai_analysis | fact | authority | judge_field | proposition
+// transferStatus: none | requested | transferred | rejected
+model AdversaryReview {
+  id              String   @id @default(cuid())
+  caseId          String
+  targetType      String
+  targetId        String?
+  proposition     String
+  factsAngle      String
+  textAngle       String
+  defenseAngle    String
+  proceduralAngle String
+  vulnerabilities String?
+  transferStatus  String   @default("none")
+  transferredAt   DateTime?
+  judgeNote       String?
+  createdAt       DateTime @default(now())
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([targetType])
+  @@index([transferStatus])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// JUDGE NOTES — free-form, linkable to items
+// ═══════════════════════════════════════════════════════════════════
+// itemType: fact | evidence | authority | issue | adversary | general
+model JudgeNote {
+  id              String   @id @default(cuid())
+  caseId          String
+  itemType        String   @default("general")
+  itemId          String?
+  content         String
+  pinned          Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([itemType])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// AUDIT LOG — immutable, separates system proposals from judge decisions (§87)
+// ═══════════════════════════════════════════════════════════════════
+// actor: system | judge | rapporteur | administrator
+// source: system_proposal | judge_decision | system_action | audit | adversary_transfer
+model AuditLog {
+  id              String   @id @default(cuid())
+  caseId          String?
+  actor           String   @default("system")
+  action          String
+  entityType      String
+  entityId        String?
+  source          String   @default("system_action")
+  details         String?
+  timestamp       DateTime @default(now())
+  case            Case?    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([source])
+  @@index([timestamp])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CITATION VERIFICATION (§64) — verify against canonical source
+// ═══════════════════════════════════════════════════════════════════
+// verificationStatus: verified | partially_verified | unverified | blocked
+model CitationVerification {
+  id              String   @id @default(cuid())
+  caseId          String?
+  citation        String
+  claimedSource   String?
+  verificationStatus String @default("unverified")
+  canonicalMatch  String?
+  sourceHash      String?
+  legalTextId     String?
+  verifiedAt      DateTime @default(now())
+  notes           String?
+  case            Case?    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([verificationStatus])
 }

@@ -5,8 +5,12 @@ import { z } from "zod"
 import {
   CaseSchema, CaseDetailSchema, DashboardSchema, HealthSchema, SettingSchema,
   ContrarySearchResultSchema,
+  LegalSourceSchema, LegalTextSchema, CorpusSnapshotSchema, ImportJobSchema,
+  AuditLogSchema, ConflictSchema, AdversaryReviewSchema, JudgeNoteSchema, CitationVerificationSchema,
   type CaseT, type CaseDetailT, type DashboardT, type HealthT,
   type SettingT, type ContrarySearchResult,
+  type LegalSourceT, type LegalTextT, type CorpusSnapshotT, type ImportJobT,
+  type AuditLogT, type ConflictT, type AdversaryReviewT, type JudgeNoteT, type CitationVerificationT,
 } from "./schemas"
 
 export const API_BASE = "/api"
@@ -169,5 +173,127 @@ export const api = {
       method: "POST",
       body: JSON.stringify({ category, key, value }),
     })
+  },
+
+  // ─── Legal Corpus ──
+  async listSources(params?: { sourceType?: string; accessStatus?: string; q?: string }): Promise<LegalSourceT[]> {
+    const qs = new URLSearchParams()
+    if (params?.sourceType) qs.set("sourceType", params.sourceType)
+    if (params?.accessStatus) qs.set("accessStatus", params.accessStatus)
+    if (params?.q) qs.set("q", params.q)
+    const path = `/corpus/sources${qs.toString() ? `?${qs.toString()}` : ""}`
+    return request(path, { cache: "no-store" }, z.array(LegalSourceSchema))
+  },
+
+  async createSource(input: Record<string, unknown>): Promise<LegalSourceT> {
+    return request("/corpus/sources", { method: "POST", body: JSON.stringify(input) }, LegalSourceSchema)
+  },
+
+  async listTexts(params?: { q?: string; legalDomain?: string; documentType?: string; verificationStatus?: string; temporalStatus?: string; sourceId?: string }): Promise<LegalTextT[]> {
+    const qs = new URLSearchParams()
+    if (params?.q) qs.set("q", params.q)
+    if (params?.legalDomain) qs.set("legalDomain", params.legalDomain)
+    if (params?.documentType) qs.set("documentType", params.documentType)
+    if (params?.verificationStatus) qs.set("verificationStatus", params.verificationStatus)
+    if (params?.temporalStatus) qs.set("temporalStatus", params.temporalStatus)
+    if (params?.sourceId) qs.set("sourceId", params.sourceId)
+    const path = `/corpus/texts${qs.toString() ? `?${qs.toString()}` : ""}`
+    return request(path, { cache: "no-store" }, z.array(LegalTextSchema))
+  },
+
+  async createText(input: Record<string, unknown>): Promise<LegalTextT> {
+    return request("/corpus/texts", { method: "POST", body: JSON.stringify(input) }, LegalTextSchema)
+  },
+
+  async listSnapshots(): Promise<CorpusSnapshotT[]> {
+    return request("/corpus/snapshots", { cache: "no-store" }, z.array(CorpusSnapshotSchema))
+  },
+
+  async createSnapshot(input: Record<string, unknown>): Promise<CorpusSnapshotT> {
+    return request("/corpus/snapshots", { method: "POST", body: JSON.stringify(input) }, CorpusSnapshotSchema)
+  },
+
+  async listImportJobs(): Promise<ImportJobT[]> {
+    return request("/corpus/import-queue", { cache: "no-store" }, z.array(ImportJobSchema))
+  },
+
+  async createImportJob(input: Record<string, unknown>): Promise<ImportJobT> {
+    return request("/corpus/import-queue", { method: "POST", body: JSON.stringify(input) }, ImportJobSchema)
+  },
+
+  async updateImportJob(id: string, patch: Record<string, unknown>): Promise<ImportJobT> {
+    return request(`/corpus/import-queue/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(patch) }, ImportJobSchema)
+  },
+
+  async searchCorpus(query: string, opts?: { legalDomain?: string; documentType?: string; temporalStatus?: string; verificationFilter?: boolean }) {
+    return request("/corpus/search", {
+      method: "POST",
+      body: JSON.stringify({ query, ...opts }),
+    })
+  },
+
+  // ─── Conflicts ──
+  async detectConflicts(caseId: string): Promise<ConflictT[]> {
+    return request(`/cases/${encodeURIComponent(caseId)}/conflicts`, { cache: "no-store" }, z.array(ConflictSchema))
+  },
+
+  async updateConflict(caseId: string, conflictId: string, patch: Record<string, unknown>): Promise<ConflictT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/conflicts/${encodeURIComponent(conflictId)}`, {
+      method: "PATCH", body: JSON.stringify(patch),
+    }, ConflictSchema)
+  },
+
+  // ─── Adversary Review (Judicial Shadow) ──
+  async generateAdversaryReview(caseId: string, proposition: string, targetType?: string, targetId?: string): Promise<AdversaryReviewT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/adversary-review`, {
+      method: "POST",
+      body: JSON.stringify({ proposition, targetType: targetType ?? "proposition", targetId: targetId ?? null }),
+    }, AdversaryReviewSchema)
+  },
+
+  async transferAdversaryReview(caseId: string, reviewId: string, transferStatus: string, judgeNote?: string): Promise<AdversaryReviewT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/adversary-review/${encodeURIComponent(reviewId)}`, {
+      method: "PATCH",
+      body: JSON.stringify({ transferStatus, judgeNote: judgeNote ?? null }),
+    }, AdversaryReviewSchema)
+  },
+
+  // ─── Judge Notes ──
+  async listNotes(caseId: string): Promise<JudgeNoteT[]> {
+    return request(`/cases/${encodeURIComponent(caseId)}/notes`, { cache: "no-store" }, z.array(JudgeNoteSchema))
+  },
+
+  async createNote(caseId: string, content: string, itemType?: string, itemId?: string): Promise<JudgeNoteT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/notes`, {
+      method: "POST",
+      body: JSON.stringify({ content, itemType: itemType ?? "general", itemId: itemId ?? null }),
+    }, JudgeNoteSchema)
+  },
+
+  async updateNote(caseId: string, noteId: string, patch: Record<string, unknown>): Promise<JudgeNoteT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/notes/${encodeURIComponent(noteId)}`, {
+      method: "PATCH", body: JSON.stringify(patch),
+    }, JudgeNoteSchema)
+  },
+
+  async deleteNote(caseId: string, noteId: string) {
+    await request(`/cases/${encodeURIComponent(caseId)}/notes/${encodeURIComponent(noteId)}`, { method: "DELETE" })
+  },
+
+  // ─── Audit Log ──
+  async listAudit(caseId?: string, source?: string): Promise<AuditLogT[]> {
+    const qs = new URLSearchParams()
+    if (caseId) qs.set("caseId", caseId)
+    if (source) qs.set("source", source)
+    const path = `/audit${qs.toString() ? `?${qs.toString()}` : ""}`
+    return request(path, { cache: "no-store" }, z.array(AuditLogSchema))
+  },
+
+  // ─── Citation Verification ──
+  async verifyCitation(caseId: string, citation: string, claimedSource?: string): Promise<CitationVerificationT> {
+    return request(`/cases/${encodeURIComponent(caseId)}/verify-citation`, {
+      method: "POST",
+      body: JSON.stringify({ citation, claimedSource: claimedSource ?? null }),
+    }, CitationVerificationSchema)
   },
 }

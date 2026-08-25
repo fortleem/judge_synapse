@@ -4,6 +4,8 @@
 import type {
   CaseT, FactT, EvidenceT, TimelineEventT, LegalIssueT, AuthorityT,
   JudgeFieldT, AIAnalysisT, IndicatorT, SettingT, CaseDetailT,
+  LegalSourceT, LegalTextT, CorpusSnapshotT, ImportJobT,
+  ConflictT, AdversaryReviewT, JudgeNoteT, AuditLogT, CitationVerificationT,
 } from "./schemas"
 
 function iso(d: Date | string | null | undefined): string | null {
@@ -176,6 +178,166 @@ export function serializeSetting(row: AnyRow): SettingT {
   }
 }
 
+// ─── Legal Corpus ──────────────────────────────────────────────────
+export function serializeLegalSource(row: AnyRow): LegalSourceT {
+  return {
+    id: String(row.id),
+    name: String(row.name),
+    nameEn: row.nameEn ? String(row.nameEn) : null,
+    portalUrl: row.portalUrl ? String(row.portalUrl) : null,
+    sourceType: String(row.sourceType),
+    issuingBody: String(row.issuingBody),
+    jurisdiction: row.jurisdiction ? String(row.jurisdiction) : null,
+    accessStatus: String(row.accessStatus),
+    sourceTier: Number(row.sourceTier ?? 3),
+    contentAvailable: row.contentAvailable ? String(row.contentAvailable) : null,
+    accessNotes: row.accessNotes ? String(row.accessNotes) : null,
+    lastChecked: iso(row.lastChecked as Date | null),
+    verified: Boolean(row.verified),
+    createdAt: iso(row.createdAt as Date)!,
+    updatedAt: iso(row.updatedAt as Date)!,
+  }
+}
+
+export function serializeLegalText(row: AnyRow): LegalTextT {
+  return {
+    id: String(row.id),
+    sourceId: String(row.sourceId),
+    title: String(row.title),
+    citation: String(row.citation),
+    documentType: String(row.documentType),
+    legalDomain: row.legalDomain ? String(row.legalDomain) : null,
+    legalForce: String(row.legalForce),
+    effectiveFrom: iso(row.effectiveFrom as Date)!,
+    effectiveTo: iso(row.effectiveTo as Date | null),
+    versionLabel: String(row.versionLabel),
+    sourceHash: String(row.sourceHash),
+    retrievalTimestamp: iso(row.retrievalTimestamp as Date)!,
+    publicationDate: iso(row.publicationDate as Date | null),
+    officialJournalRef: row.officialJournalRef ? String(row.officialJournalRef) : null,
+    verificationStatus: String(row.verificationStatus),
+    temporalStatus: String(row.temporalStatus),
+    exactText: String(row.exactText),
+    sourceUrl: row.sourceUrl ? String(row.sourceUrl) : null,
+    notes: row.notes ? String(row.notes) : null,
+    createdAt: iso(row.createdAt as Date)!,
+    updatedAt: iso(row.updatedAt as Date)!,
+  }
+}
+
+export function serializeCorpusSnapshot(row: AnyRow): CorpusSnapshotT {
+  return {
+    id: String(row.id),
+    versionLabel: String(row.versionLabel),
+    createdAt: iso(row.createdAt as Date)!,
+    sourceManifest: String(row.sourceManifest),
+    hash: String(row.hash),
+    signature: row.signature ? String(row.signature) : null,
+    approvalStatus: String(row.approvalStatus),
+    effectiveFrom: iso(row.effectiveFrom as Date)!,
+    effectiveTo: iso(row.effectiveTo as Date | null),
+    textCount: Number(row.textCount ?? 0),
+    sourceCount: Number(row.sourceCount ?? 0),
+    notes: row.notes ? String(row.notes) : null,
+  }
+}
+
+export function serializeImportJob(row: AnyRow): ImportJobT {
+  return {
+    id: String(row.id),
+    sourceName: String(row.sourceName),
+    sourceUrl: row.sourceUrl ? String(row.sourceUrl) : null,
+    sourceType: String(row.sourceType),
+    status: String(row.status),
+    priority: Number(row.priority ?? 5),
+    requiresAuth: Boolean(row.requiresAuth),
+    authType: row.authType ? String(row.authType) : null,
+    lastAttempt: iso(row.lastAttempt as Date | null),
+    contentScope: row.contentScope ? String(row.contentScope) : null,
+    notes: row.notes ? String(row.notes) : null,
+    createdAt: iso(row.createdAt as Date)!,
+    updatedAt: iso(row.updatedAt as Date)!,
+  }
+}
+
+// ─── Conflict / Adversary / Notes / Audit / Citation ──────────────
+export function serializeConflict(row: AnyRow): ConflictT {
+  return {
+    id: String(row.id),
+    caseId: String(row.caseId),
+    conflictType: String(row.conflictType),
+    status: String(row.status),
+    authorityAId: row.authorityAId ? String(row.authorityAId) : null,
+    authorityBId: row.authorityBId ? String(row.authorityBId) : null,
+    description: String(row.description),
+    significance: row.significance ? String(row.significance) : null,
+    explanation: row.explanation ? String(row.explanation) : null,
+    judgeReview: String(row.judgeReview),
+    createdAt: iso(row.createdAt as Date)!,
+  }
+}
+
+export function serializeAdversaryReview(row: AnyRow): AdversaryReviewT {
+  return {
+    id: String(row.id),
+    caseId: String(row.caseId),
+    targetType: String(row.targetType),
+    targetId: row.targetId ? String(row.targetId) : null,
+    proposition: String(row.proposition),
+    factsAngle: String(row.factsAngle),
+    textAngle: String(row.textAngle),
+    defenseAngle: String(row.defenseAngle),
+    proceduralAngle: String(row.proceduralAngle),
+    vulnerabilities: row.vulnerabilities ? String(row.vulnerabilities) : null,
+    transferStatus: String(row.transferStatus),
+    transferredAt: iso(row.transferredAt as Date | null),
+    judgeNote: row.judgeNote ? String(row.judgeNote) : null,
+    createdAt: iso(row.createdAt as Date)!,
+  }
+}
+
+export function serializeJudgeNote(row: AnyRow): JudgeNoteT {
+  return {
+    id: String(row.id),
+    caseId: String(row.caseId),
+    itemType: String(row.itemType),
+    itemId: row.itemId ? String(row.itemId) : null,
+    content: String(row.content),
+    pinned: Boolean(row.pinned),
+    createdAt: iso(row.createdAt as Date)!,
+    updatedAt: iso(row.updatedAt as Date)!,
+  }
+}
+
+export function serializeAuditLog(row: AnyRow): AuditLogT {
+  return {
+    id: String(row.id),
+    caseId: row.caseId ? String(row.caseId) : null,
+    actor: String(row.actor),
+    action: String(row.action),
+    entityType: String(row.entityType),
+    entityId: row.entityId ? String(row.entityId) : null,
+    source: String(row.source),
+    details: row.details ? String(row.details) : null,
+    timestamp: iso(row.timestamp as Date)!,
+  }
+}
+
+export function serializeCitationVerification(row: AnyRow): CitationVerificationT {
+  return {
+    id: String(row.id),
+    caseId: row.caseId ? String(row.caseId) : null,
+    citation: String(row.citation),
+    claimedSource: row.claimedSource ? String(row.claimedSource) : null,
+    verificationStatus: String(row.verificationStatus),
+    canonicalMatch: row.canonicalMatch ? String(row.canonicalMatch) : null,
+    sourceHash: row.sourceHash ? String(row.sourceHash) : null,
+    legalTextId: row.legalTextId ? String(row.legalTextId) : null,
+    verifiedAt: iso(row.verifiedAt as Date)!,
+    notes: row.notes ? String(row.notes) : null,
+  }
+}
+
 export function serializeCaseDetail(row: AnyRow): CaseDetailT {
   return {
     ...serializeCase(row),
@@ -187,5 +349,10 @@ export function serializeCaseDetail(row: AnyRow): CaseDetailT {
     judgeFields: ((row.judgeFields as AnyRow[]) ?? []).map(serializeJudgeField),
     aiAnalyses: ((row.aiAnalyses as AnyRow[]) ?? []).map(serializeAIAnalysis),
     indicators: ((row.indicators as AnyRow[]) ?? []).map(serializeIndicator),
+    conflicts: ((row.conflicts as AnyRow[]) ?? []).map(serializeConflict),
+    adversaryReviews: ((row.adversaryReviews as AnyRow[]) ?? []).map(serializeAdversaryReview),
+    notes: ((row.notes as AnyRow[]) ?? []).map(serializeJudgeNote),
+    auditLogs: ((row.auditLogs as AnyRow[]) ?? []).map(serializeAuditLog),
+    citationVerifications: ((row.citationVerifications as AnyRow[]) ?? []).map(serializeCitationVerification),
   }
 }

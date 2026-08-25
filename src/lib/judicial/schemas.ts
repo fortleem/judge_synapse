@@ -206,6 +206,161 @@ export const SettingSchema = z.object({
 })
 export type SettingT = z.infer<typeof SettingSchema>
 
+// ─── Legal Corpus Layer ──────────────────────────────────────────
+export const LegalSourceSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  nameEn: z.string().nullable(),
+  portalUrl: z.string().nullable(),
+  sourceType: z.string(),
+  issuingBody: z.string(),
+  jurisdiction: z.string().nullable(),
+  accessStatus: z.string(),
+  sourceTier: z.number(),
+  contentAvailable: z.string().nullable(),
+  accessNotes: z.string().nullable(),
+  lastChecked: z.string().nullable(),
+  verified: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type LegalSourceT = z.infer<typeof LegalSourceSchema>
+
+export const LegalTextSchema = z.object({
+  id: z.string(),
+  sourceId: z.string(),
+  title: z.string(),
+  citation: z.string(),
+  documentType: z.string(),
+  legalDomain: z.string().nullable(),
+  legalForce: z.string(),
+  effectiveFrom: z.string(),
+  effectiveTo: z.string().nullable(),
+  versionLabel: z.string(),
+  sourceHash: z.string(),
+  retrievalTimestamp: z.string(),
+  publicationDate: z.string().nullable(),
+  officialJournalRef: z.string().nullable(),
+  verificationStatus: z.string(),
+  temporalStatus: z.string(),
+  exactText: z.string(),
+  sourceUrl: z.string().nullable(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type LegalTextT = z.infer<typeof LegalTextSchema>
+
+export const CorpusSnapshotSchema = z.object({
+  id: z.string(),
+  versionLabel: z.string(),
+  createdAt: z.string(),
+  sourceManifest: z.string(),
+  hash: z.string(),
+  signature: z.string().nullable(),
+  approvalStatus: z.string(),
+  effectiveFrom: z.string(),
+  effectiveTo: z.string().nullable(),
+  textCount: z.number(),
+  sourceCount: z.number(),
+  notes: z.string().nullable(),
+})
+export type CorpusSnapshotT = z.infer<typeof CorpusSnapshotSchema>
+
+export const ImportJobSchema = z.object({
+  id: z.string(),
+  sourceName: z.string(),
+  sourceUrl: z.string().nullable(),
+  sourceType: z.string(),
+  status: z.string(),
+  priority: z.number(),
+  requiresAuth: z.boolean(),
+  authType: z.string().nullable(),
+  lastAttempt: z.string().nullable(),
+  contentScope: z.string().nullable(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type ImportJobT = z.infer<typeof ImportJobSchema>
+
+// ─── Conflict Engine ─────────────────────────────────────────────
+export const ConflictSchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  conflictType: z.string(),
+  status: z.string(),
+  authorityAId: z.string().nullable(),
+  authorityBId: z.string().nullable(),
+  description: z.string(),
+  significance: z.string().nullable(),
+  explanation: z.string().nullable(),
+  judgeReview: z.string(),
+  createdAt: z.string(),
+})
+export type ConflictT = z.infer<typeof ConflictSchema>
+
+// ─── Adversary Review (Judicial Shadow) ──────────────────────────
+export const AdversaryReviewSchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  targetType: z.string(),
+  targetId: z.string().nullable(),
+  proposition: z.string(),
+  factsAngle: z.string(),
+  textAngle: z.string(),
+  defenseAngle: z.string(),
+  proceduralAngle: z.string(),
+  vulnerabilities: z.string().nullable(),
+  transferStatus: z.string(),
+  transferredAt: z.string().nullable(),
+  judgeNote: z.string().nullable(),
+  createdAt: z.string(),
+})
+export type AdversaryReviewT = z.infer<typeof AdversaryReviewSchema>
+
+// ─── Judge Notes ─────────────────────────────────────────────────
+export const JudgeNoteSchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  itemType: z.string(),
+  itemId: z.string().nullable(),
+  content: z.string(),
+  pinned: z.boolean(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
+})
+export type JudgeNoteT = z.infer<typeof JudgeNoteSchema>
+
+// ─── Audit Log ────────────────────────────────────────────────────
+export const AuditLogSchema = z.object({
+  id: z.string(),
+  caseId: z.string().nullable(),
+  actor: z.string(),
+  action: z.string(),
+  entityType: z.string(),
+  entityId: z.string().nullable(),
+  source: z.string(),
+  details: z.string().nullable(),
+  timestamp: z.string(),
+})
+export type AuditLogT = z.infer<typeof AuditLogSchema>
+
+// ─── Citation Verification ───────────────────────────────────────
+export const CitationVerificationSchema = z.object({
+  id: z.string(),
+  caseId: z.string().nullable(),
+  citation: z.string(),
+  claimedSource: z.string().nullable(),
+  verificationStatus: z.string(),
+  canonicalMatch: z.string().nullable(),
+  sourceHash: z.string().nullable(),
+  legalTextId: z.string().nullable(),
+  verifiedAt: z.string(),
+  notes: z.string().nullable(),
+})
+export type CitationVerificationT = z.infer<typeof CitationVerificationSchema>
+
 // ─── Composite / case detail ────────────────────────────────────
 export const CaseDetailSchema = CaseSchema.extend({
   facts: z.array(FactSchema),
@@ -216,6 +371,11 @@ export const CaseDetailSchema = CaseSchema.extend({
   judgeFields: z.array(JudgeFieldSchema),
   aiAnalyses: z.array(AIAnalysisSchema),
   indicators: z.array(IndicatorSchema),
+  conflicts: z.array(ConflictSchema),
+  adversaryReviews: z.array(AdversaryReviewSchema),
+  notes: z.array(JudgeNoteSchema),
+  auditLogs: z.array(AuditLogSchema),
+  citationVerifications: z.array(CitationVerificationSchema),
 })
 export type CaseDetailT = z.infer<typeof CaseDetailSchema>
 

@@ -71,3 +71,75 @@ Stage Summary:
 - Fallback demo mode for server-unreachable state
 - Fully responsive + accessible (semantic HTML, ARIA, keyboard nav)
 - All verification criteria met: UI+server running, typecheck pass, typed API client+Zod schemas, dashboard/case endpoints respond, UI renders in preview without browser errors
+
+---
+Task ID: 2-research
+Agent: research-agent
+Task: Research official Egyptian legal portals for the judicial corpus registry
+
+Work Log:
+- Read worklog.md to review foundation (Prisma schema, Zod contracts, sovereign operations-room UI) and confirm scope: only OFFICIAL government portals (.gov.eg domains or known official institutional sites), no commercial aggregators
+- Used z-ai web_search CLI to query each of the 8 mandated portals in Arabic (Constitution, Official Gazette, Parliament, Court of Cassation, State Council, Supreme Constitutional Court, Ministry of Justice, Economic Courts) plus verification queries for Al-Amiriya Press Authority, National Legislation Database, Egyptian Legislation Portal
+- Confirmed 13 official portals by triangulating across multiple search results, cross-referencing Wikipedia + Ministry of Justice sub-pages + Facebook official pages + IDSC library records to ensure each domain is genuinely the official government source
+- Verified SCC judgments access (Rules_Html public, principles per year) and State Council مجموعات العليا principles access (public, e-services gated)
+- Discovered two additional official legislation repositories beyond the 8 mandated categories: بوابة التشريعات المصرية (register.cc.gov.eg/legislations, Court of Cassation, 163,678 legislations) and قاعدة التشريعات القومية (moj.gov.eg:73, Ministry of Justice, launched Jan 2023)
+- Classified each portal by sourceType (constitution | official_gazette | statute | cassation | state_council | constitutional_court | specialized_court | ministry), accessStatus (PUBLIC | PARTIAL | AUTH_REQUIRED), and sourceTier (Tier 2 = authenticated institutional repository, Tier 3 = official public source) per the EJB V2.1 blueprint hierarchy
+- Flagged 3 portals as QUEUED awaiting verification (SIS Official Gazette archive, Senate, State Lawsuits Authority) — included with notes, no commercial database was added
+- Wrote structured JSON to /home/z/my-project/research-results.json with `sources` array (13 entries) + `queued` array (3 entries) + `summary` field; validated JSON parses cleanly
+
+Stage Summary:
+- 13 official government portals confirmed and documented; 3 additional portals queued for verification
+- JSON registry: /home/z/my-project/research-results.json (valid, 13 sources + 3 queued + summary)
+- Coverage: Constitution (presidency.eg + parliament.gov.eg) • Official Gazette (alamiria.com — Al-Amiriya Press Authority, official since 1828) • Parliament (parliament.gov.eg) • Court of Cassation (cc.gov.eg public + ccl.gov.eg institutional + register.cc.gov.eg/legislations legislation DB) • State Council (esc.gov.eg) • Supreme Constitutional Court (sccourt.gov.eg — full judgment texts public) • Ministry of Justice (moj.gov.eg + moj.gov.eg:73 National Legislation DB) • Economic Courts (elec.eecourts.gov.eg) • Digital Egypt (digital.gov.eg)
+- Tier distribution: 3 portals at Tier 2 (authenticated institutional — ccl.gov.eg, moj.gov.eg:73, elec.eecourts.gov.eg); 10 portals at Tier 3 (official public)
+- Access distribution: 7 PUBLIC, 4 PARTIAL, 2 AUTH_REQUIRED
+- Key finding: Al-Amiriya Press Authority (alamiria.com) is the SOLE official publisher of the Egyptian Official Gazette (الجريدة الرسمية والوقائع المصرية) — uses .com domain but is affiliated with Ministry of Industry (email: alamiria.public@mti.gov.eg); included with explicit note that .gov.eg is not used but it is the official authority
+- No commercial legal databases (e.g., manshurat.org, laalaws.com, tashreaat.com, egylaws.com) were included — they were observed in search results but excluded per task constraints
+
+---
+Task ID: 1-9 (Platform Expansion — Reference Platform for the Judge)
+Agent: main (project manager)
+Task: Transform the dashboard into a true reference platform for the judge: legal research center, source registry with temporal versions, verification & citation gateway, conflict engine, adversary review (judicial shadow), judge notes, and clear audit log separating system proposals from judge decisions.
+
+Work Log:
+- Expanded Prisma schema: LegalSource, LegalText (versioned + provenance), CorpusSnapshot (signed), ImportJob, Conflict, AdversaryReview, JudgeNote, AuditLog, CitationVerification — all with proper indices and cascade rules
+- Launched research subagent (Task 2-research) that found 13 official Egyptian legal portals via web-search CLI: Constitution (presidency.eg + parliament.gov.eg), Official Gazette (alamiria.com), Parliament (parliament.gov.eg), Court of Cassation (cc.gov.eg + ccl.gov.eg), Legislation Portal (register.cc.gov.eg — 163,678 statutes), State Council (esc.gov.eg), Supreme Constitutional Court (sccourt.gov.eg), Ministry of Justice (moj.gov.eg + moj.gov.eg:73 National Legislation Database), Economic Courts ELEC (elec.eecourts.gov.eg), Digital Egypt (digital.gov.eg) + 3 queued for verification
+- Extended constants with 12 new controlled vocabularies (SOURCE_TYPES, ACCESS_STATUS, SOURCE_TIERS, LEGAL_TEXT_DOCUMENT_TYPES, CORPUS_SNAPSHOT_STATUS, IMPORT_JOB_STATUS, CONFLICT_TYPES, CONFLICT_STATUS, ADVERSARY_ANGLES, ADVERSARY_TRANSFER_STATUS, AUDIT_SOURCES, AUDIT_ACTORS, NOTE_ITEM_TYPES)
+- Extended Zod schemas + serializers for all 9 new entity types
+- Built adversary review engine (src/lib/judicial/adversary.ts): deterministic 4-angle test (facts/text/defense/procedural) that surfaces vulnerabilities WITHOUT issuing verdicts or confidence scores + conflict detection engine
+- Built audit logger (src/lib/judicial/audit.ts) with clear source separation: system_proposal / judge_decision / system_action / adversary_transfer
+- Created 13 new API routes:
+  • Corpus: GET/POST sources, GET/POST texts, GET/POST snapshots, GET/POST import-queue, PATCH import-queue/[id], POST search (hybrid retrieval)
+  • Case-level: GET conflicts (auto-detect), PATCH conflicts/[cid], POST adversary-review (generate), PATCH adversary-review/[aid] (transfer), GET/POST notes, PATCH/DELETE notes/[nid], GET audit, POST verify-citation
+  • Global: GET /api/audit
+- Seeded corpus registry: 14 official sources (13 from research + 1 internal verified), 11 verified legal texts (3 constitutional provisions + 8 statute articles), 1 signed corpus snapshot (EJB-CORPUS-2026.08-R1), 6 import jobs
+- Built Legal Research Center view (5 sub-tabs: sources/texts/search/snapshots/import-queue) with full provenance display
+- Built Audit Log view with 5 stat tiles (filterable by source) and immutable timeline clearly separating system proposals from judge decisions
+- Built Adversary Review tab (the "Judicial Shadow"): proposition input, 4-angle test display, vulnerability summary, transfer-to-judge button with confirmation dialog
+- Built Judge Notes tab with pin/unpin and item-type categorization
+- Added Citation Verification gateway to Authorities tab: verifies against canonical legal texts, blocks fabricated citations
+- Updated header navigation with "مركز البحث" and "سجل التدقيق" buttons
+- Updated case workspace with 2 new tabs (المراجعة الخصومية + الملاحظات)
+
+Verification (Agent Browser end-to-end):
+- Page loads HTTP 200, no console/runtime errors
+- Legal Research Center: 14 sources with real .gov.eg URLs, 11 verified legal texts with hashes + official journal refs, 1 signed snapshot with cryptographic hash + signature, 6 import jobs
+- Adversary Review: generated review for "ثبوت إخلال المدّعى عليه يلزمه بالتعويض" — all 4 angles rendered with specific findings (4 unresolved facts, 1 defense issue, 1 constitutional issue, 2 contrary authorities, 2 pending evidence). Vulnerability summary correctly says "2 ثغرات محتملة" and explicitly states "هذا ليس حكماً على النتيجة"
+- Transfer flow: confirmation dialog with reject/transfer buttons, transfer logged as adversary_transfer source in audit log
+- Audit Log: clear separation — "نقل من المراجعة الخصومية" (adversary_transfer) vs "إجراء النظام" (system_action) with timestamps and entity references
+- Citation Verification: "مدني — 147" → verified (مطابقة كاملة, hash match), "مدني — 9999" → blocked (fabricated, with message "هذا ليس فشلاً للنظام بل نتيجة ناجحة")
+- Conflict detection: auto-detected 2 potential conflicts on administrative case (legal + factual)
+- Mobile responsive (390px): no overflow, all views accessible
+- TypeScript typecheck: clean (0 errors)
+- ESLint: clean (0 errors)
+
+Stage Summary:
+- Platform transformed from data dashboard to true judicial reference platform
+- 14 official Egyptian legal portals documented with real URLs, access tiers, and provenance
+- 11 verified legal texts (constitutional + statute) with full provenance chain
+- Signed corpus snapshot (EJB-CORPUS-2026.08-R1) with cryptographic hash + signature
+- Adversary Review ("Judicial Shadow") functional: 4-angle tests, no verdicts, transfer with confirmation
+- Audit log with strict source separation (system_proposal / judge_decision / system_action / adversary_transfer)
+- Citation verification gateway blocks fabricated citations — never silently corrects
+- Import queue for auth-required portals (court-correct approach: official registry + signed snapshots + provenance + no-reliance-until-verified)
+- All verification criteria met: UI+server running, typecheck pass, typed API client+Zod schemas, all endpoints respond, UI renders in preview without browser errors

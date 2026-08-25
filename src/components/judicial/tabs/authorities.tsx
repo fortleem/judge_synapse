@@ -5,12 +5,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Plus, Trash2, Loader2, Scale, Search, ExternalLink, Quote,
   CheckCircle2, XCircle, AlertTriangle, GitCompare, ShieldAlert, Sparkles,
+  ShieldCheck, Ban, Hash,
 } from "lucide-react"
 import { cn, colorClasses, formatDate } from "@/lib/judicial/ui"
 import {
   AUTHORITY_STANCES, LEGAL_FORCE, AUTHORITY_VERIFICATION, findConstant,
 } from "@/lib/judicial/constants"
-import type { CaseDetailT, AuthorityT, ContrarySearchResult } from "@/lib/judicial/schemas"
+import type { CaseDetailT, AuthorityT, ContrarySearchResult, CitationVerificationT } from "@/lib/judicial/schemas"
 import { api } from "@/lib/judicial/api-client"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
@@ -37,6 +38,9 @@ export function AuthoritiesTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
     <div className="space-y-4">
       {/* Active contrary search */}
       <ContrarySearchPanel caseId={c.id} />
+
+      {/* Citation verification gateway */}
+      <CitationVerificationPanel caseId={c.id} verifications={c.citationVerifications} />
 
       <SovereignPanel
         title="النصوص والمبادئ القضائية والسلطات"
@@ -319,5 +323,87 @@ function AddAuthorityDialog({ caseId }: { caseId: string }) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  )
+}
+
+// ─── Citation Verification Gateway (§64) ─────────────────────────
+function CitationVerificationPanel({ caseId, verifications }: { caseId: string; verifications: CitationVerificationT[] }) {
+  const [citation, setCitation] = React.useState("")
+  const [claimedSource, setClaimedSource] = React.useState("")
+  const qc = useQueryClient()
+
+  const verifyMut = useMutation({
+    mutationFn: () => api.verifyCitation(caseId, citation, claimedSource || undefined),
+    onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["case", caseId] })
+      if (result.verificationStatus === "verified") {
+        toast.success("تم التحقق من الاستشهاد — مطابقة كاملة")
+      } else if (result.verificationStatus === "blocked") {
+        toast.error("محظور — الاستشهاد غير موجود في السجل الموثَّق")
+      } else {
+        toast.warning("مطابقة جزئية — راجع النتيجة")
+      }
+      setCitation("")
+      setClaimedSource("")
+    },
+    onError: () => toast.error("فشل التحقق"),
+  })
+
+  return (
+    <SovereignPanel title="بوابة التحقق والاقتباس" icon={<ShieldCheck className="h-4 w-4" />} accent>
+      <p className="font-kufi text-xs text-muted-foreground mb-3 leading-relaxed">
+        تتحقّق كل استشهاد ضدّ المصدر القانوني الأصلي — لا ضدّ فهرس المتجهات. الاستشهاد الفاشل يُحظَر ولا يُصحَّح بصمت. في الوضع القضائي، لا يُعتمد استشهاد غير متحقَّق منه.
+      </p>
+
+      <div className="flex gap-2 mb-3">
+        <Input value={citation} onChange={(e) => setCitation(e.target.value)} placeholder="الاستشهاد (مثال: مدني — 147)" className="font-kufi text-sm" />
+        <Input value={claimedSource} onChange={(e) => setClaimedSource(e.target.value)} placeholder="المصدر المُدّعى (اختياري)" className="font-kufi text-sm" />
+        <Button
+          onClick={() => verifyMut.mutate()}
+          disabled={verifyMut.isPending || citation.trim().length < 2}
+          className="font-kufi bg-amber-600 hover:bg-amber-700 text-white shrink-0"
+        >
+          {verifyMut.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+          تحقّق
+        </Button>
+      </div>
+
+      {verifications.length > 0 && (
+        <div className="space-y-2 pt-2 border-t border-border/40">
+          <p className="font-kufi text-[10px] text-muted-foreground mb-1">آخر عمليات التحقق:</p>
+          {verifications.slice(0, 5).map((v) => {
+            const cc = v.verificationStatus === "verified" ? colorClasses("emerald")
+              : v.verificationStatus === "partially_verified" ? colorClasses("amber")
+              : colorClasses("red")
+            return (
+              <div key={v.id} className={cn("rounded border p-2 flex items-start gap-2", cc.border, cc.bg)}>
+                {v.verificationStatus === "verified" ? <CheckCircle2 className={cn("h-3.5 w-3.5 shrink-0 mt-0.5", cc.text)} />
+                  : v.verificationStatus === "blocked" ? <Ban className={cn("h-3.5 w-3.5 shrink-0 mt-0.5", cc.text)} />
+                  : <AlertTriangle className={cn("h-3.5 w-3.5 shrink-0 mt-0.5", cc.text)} />}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                    <code className="font-jetbrains text-xs text-amber-500 dark:text-amber-400">{v.citation}</code>
+                    <StatusBadge
+                      label={v.verificationStatus === "verified" ? "متحقَّق" : v.verificationStatus === "partially_verified" ? "جزئي" : v.verificationStatus === "blocked" ? "محظور" : v.verificationStatus}
+                      color={v.verificationStatus === "verified" ? "emerald" : v.verificationStatus === "partially_verified" ? "amber" : "red"}
+                      size="sm"
+                      dot={false}
+                    />
+                    {v.canonicalMatch && <span className="font-kufi text-[10px] text-muted-foreground">← {v.canonicalMatch}</span>}
+                  </div>
+                  {v.notes && <p className="font-kufi text-[10px] text-muted-foreground leading-relaxed">{v.notes}</p>}
+                  {v.sourceHash && (
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <Hash className="h-2.5 w-2.5 text-muted-foreground/60" />
+                      <code className="font-jetbrains text-[9px] text-muted-foreground/70 truncate">{v.sourceHash}</code>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </SovereignPanel>
   )
 }
