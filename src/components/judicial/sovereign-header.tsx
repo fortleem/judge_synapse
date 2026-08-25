@@ -68,28 +68,15 @@ export function SovereignHeader({
           </div>
         </div>
 
-        {/* Operating states bar */}
-        <div className="hidden lg:flex items-center gap-1.5 mx-auto">
-          <span className="font-kufi text-[10px] text-sidebar-foreground/50 ml-2">حالة النظام</span>
-          {OPERATING_STATES.map((s) => {
-            const count = dashboard?.byOperatingState.find((o) => o.state === s.value)?.count ?? 0
-            const active = systemState === s.value
-            const c = colorClasses(s.color)
-            return (
-              <button
-                key={s.value}
-                title={s.labelEn}
-                className={cn(
-                  "flex items-center gap-1.5 rounded border px-2 py-1 font-kufi text-[10px] transition-colors",
-                  active ? cn(c.bg, c.text, c.border, c.glow) : "border-sidebar-border/60 text-sidebar-foreground/50 hover:text-sidebar-foreground"
-                )}
-              >
-                <span className={cn("h-1.5 w-1.5 rounded-full", active ? c.dot : "bg-sidebar-foreground/30")} />
-                {s.label}
-                {count > 0 && <span className="font-jetbrains opacity-70">{count}</span>}
-              </button>
-            )
-          })}
+        {/* Simple status badge (replaces busy states bar) */}
+        <div className="hidden md:flex items-center gap-2 mx-auto">
+          {serverDown ? (
+            <StatusBadge label="الخادم غير متاح" color="red" glow />
+          ) : loading ? (
+            <StatusBadge label="بدء التشغيل…" color="amber" />
+          ) : (
+            <StatusBadge label={stateMeta?.label ?? "سليم"} color={stateMeta?.color ?? "green"} glow={systemState !== "NOMINAL"} />
+          )}
         </div>
 
         {/* Right cluster */}
@@ -104,16 +91,9 @@ export function SovereignHeader({
             <span>بحث سريع…</span>
             <kbd className="font-jetbrains text-[9px] px-1.5 py-0.5 rounded border border-sidebar-border/60 bg-sidebar/50 group-hover:bg-sidebar">⌘K</kbd>
           </button>
-          {serverDown ? (
-            <StatusBadge label="الخادم غير متاح" color="red" glow />
-          ) : loading ? (
-            <StatusBadge label="بدء التشغيل…" color="amber" />
-          ) : (
-            <StatusBadge label={stateMeta?.label ?? "سليم"} color={stateMeta?.color ?? "green"} glow={systemState !== "NOMINAL"} />
-          )}
 
           {/* Corpus version */}
-          <div className="hidden md:flex items-center gap-2 rounded border border-sidebar-border/60 px-2.5 py-1 font-jetbrains text-[10px] text-sidebar-foreground/70">
+          <div className="hidden lg:flex items-center gap-2 rounded border border-sidebar-border/60 px-2.5 py-1 font-jetbrains text-[10px] text-sidebar-foreground/70">
             <Database className="h-3 w-3 text-amber-400" />
             {health?.corpusVersion ?? "EJB-CORPUS-2026.08-R1"}
           </div>

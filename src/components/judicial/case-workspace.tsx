@@ -3,9 +3,8 @@
 import * as React from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import {
-  Gavel, FileText, FolderOpen, CalendarClock, GitBranch, BookOpen,
-  Bot, Scale, ShieldCheck, Loader2, AlertTriangle, Swords, Eye, ServerOff,
-  CalendarDays, Upload, Lightbulb,
+  LayoutDashboard, FolderOpen, Scale, Bot, Gavel, Loader2,
+  AlertTriangle,
 } from "lucide-react"
 import { cn, colorClasses, formatDate } from "@/lib/judicial/ui"
 import {
@@ -17,39 +16,17 @@ import { toast } from "sonner"
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
-import { StatusBadge, SovereignPanel } from "./ui/primitives"
-import { OverviewTab } from "./tabs/overview"
-import { FactsTab } from "./tabs/facts"
-import { EvidenceTab } from "./tabs/evidence"
-import { TimelineTab } from "./tabs/timeline"
-import { IssuesTab } from "./tabs/issues"
-import { AuthoritiesTab } from "./tabs/authorities"
-import { AIAnalysisTab } from "./tabs/ai-analysis"
-import { JudgeFieldsTab } from "./tabs/judge-fields"
-import { IndicatorsTab } from "./tabs/indicators"
-import { AdversaryReviewTab } from "./tabs/adversary-review"
-import { JudgeNotesTab } from "./tabs/judge-notes"
-import { DeadlinesTab } from "./tabs/deadlines"
-import { DocumentsTab } from "./tabs/documents"
-import { InsightsTab } from "./tabs/insights"
+import { StatusBadge } from "./ui/primitives"
 
-type TabKey = "overview" | "documents" | "facts" | "evidence" | "timeline" | "deadlines" | "issues" | "authorities" | "ai" | "adversary" | "insights" | "judge" | "indicators" | "notes"
+// ─── 5 Consolidated Tabs ────────────────────────────────────────
+type TabKey = "overview" | "facts-evidence" | "law" | "analysis" | "decision"
 
 const TABS: { key: TabKey; label: string; icon: React.ReactNode; badge?: (c: CaseDetailT) => number }[] = [
-  { key: "overview", label: "نظرة عامة", icon: <FileText className="h-4 w-4" /> },
-  { key: "documents", label: "المستندات", icon: <Upload className="h-4 w-4" />, badge: (c) => c.documents.length },
-  { key: "facts", label: "الوقائع", icon: <BookOpen className="h-4 w-4" />, badge: (c) => c.facts.length },
-  { key: "evidence", label: "الأدلة", icon: <FolderOpen className="h-4 w-4" />, badge: (c) => c.evidence.length },
-  { key: "timeline", label: "الخط الزمني", icon: <CalendarClock className="h-4 w-4" />, badge: (c) => c.timeline.length },
-  { key: "deadlines", label: "المواعيد القانونية", icon: <CalendarDays className="h-4 w-4" />, badge: (c) => c.deadlines.length },
-  { key: "issues", label: "المسائل القانونية", icon: <GitBranch className="h-4 w-4" />, badge: (c) => c.issues.length },
-  { key: "authorities", label: "السلطات", icon: <Scale className="h-4 w-4" />, badge: (c) => c.authorities.length },
-  { key: "insights", label: "الرؤى الذكية", icon: <Lightbulb className="h-4 w-4" /> },
-  { key: "ai", label: "تحليل AI", icon: <Bot className="h-4 w-4" /> },
-  { key: "adversary", label: "المراجعة الخصومية", icon: <Swords className="h-4 w-4" />, badge: (c) => c.adversaryReviews.length },
-  { key: "judge", label: "القاضي", icon: <Gavel className="h-4 w-4" /> },
-  { key: "indicators", label: "المؤشرات", icon: <ShieldCheck className="h-4 w-4" /> },
-  { key: "notes", label: "الملاحظات", icon: <FileText className="h-4 w-4" />, badge: (c) => c.notes.length },
+  { key: "overview", label: "نظرة عامة", icon: <LayoutDashboard className="h-4 w-4" /> },
+  { key: "facts-evidence", label: "الوقائع والأدلة", icon: <FolderOpen className="h-4 w-4" />, badge: (c) => c.facts.length + c.evidence.length + c.documents.length },
+  { key: "law", label: "القانون", icon: <Scale className="h-4 w-4" />, badge: (c) => c.authorities.length },
+  { key: "analysis", label: "التحليل", icon: <Bot className="h-4 w-4" /> },
+  { key: "decision", label: "القرار", icon: <Gavel className="h-4 w-4" /> },
 ]
 
 export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT; loading: boolean }) {
@@ -61,7 +38,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
   const risk = findConstant(RISK_LEVELS, c.riskLevel)
   const state = findConstant(OPERATING_STATES, c.operatingState)
 
-  // Proactive contradiction scan — notifies judge immediately
+  // Proactive contradiction scan
   const contradictionsQ = useQuery({
     queryKey: ["contradictions", c.id],
     queryFn: () => api.scanContradictions(c.id) as Promise<any>,
@@ -69,7 +46,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
     refetchInterval: 60000,
   })
   const contradictionReport = contradictionsQ.data?.data ?? contradictionsQ.data
-  const hasCriticalAlerts = contradictionReport?.criticalCount > 0
+  const criticalCount = contradictionReport?.criticalCount ?? 0
 
   const updateCase = async (patch: Record<string, unknown>, msg: string) => {
     try {
@@ -93,66 +70,49 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
 
   return (
     <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-      {/* Case header */}
-      <div className="border-b border-border bg-card/40">
-        <div className="px-5 py-4">
-          <div className="flex items-start justify-between gap-4">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2 flex-wrap mb-1.5">
-                <span className="font-jetbrains text-xs text-amber-500 dark:text-amber-400">{c.caseNumber}</span>
-                <span className="text-muted-foreground">·</span>
-                <span className="font-kufi text-xs text-muted-foreground">{c.court} — {c.circuit}</span>
-              </div>
-              <h2 className="font-serif-judicial text-xl font-bold leading-tight mb-1.5">{c.title}</h2>
-              <p className="font-kufi text-xs text-muted-foreground leading-relaxed line-clamp-2">{c.summary}</p>
+      {/* Clean case header */}
+      <div className="border-b border-border bg-card/40 px-4 py-3">
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="font-jetbrains text-xs text-amber-500">{c.caseNumber}</span>
+              <span className="text-muted-foreground">·</span>
+              <span className="font-kufi text-xs text-muted-foreground">{c.court}</span>
             </div>
-            <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-              <Select value={c.proceduralStage} onValueChange={(v) => updateCase({ proceduralStage: v }, "تم تحديث المرحلة")}>
-                <SelectTrigger className="w-32 h-8 text-xs font-kufi">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {PROCEDURAL_STAGES.map((s) => (
-                    <SelectItem key={s.value} value={s.value} className="font-kufi text-xs">{s.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={c.riskLevel} onValueChange={(v) => updateCase({ riskLevel: v }, "تم تحديث مستوى المخاطر")}>
-                <SelectTrigger className="w-28 h-8 text-xs font-kufi">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {RISK_LEVELS.map((r) => (
-                    <SelectItem key={r.value} value={r.value} className="font-kufi text-xs">{r.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            <h2 className="font-serif-judicial text-lg font-bold leading-tight mb-1">{c.title}</h2>
+            <p className="font-kufi text-xs text-muted-foreground leading-relaxed line-clamp-2">{c.summary}</p>
           </div>
-
-          <div className="flex items-center gap-2 flex-wrap mt-3">
-            {stage && <StatusBadge label={`المرحلة: ${stage.label}`} color="slate" />}
-            {risk && <StatusBadge label={`المخاطر: ${risk.label}`} color={risk.color} glow={risk.value === "CRITICAL"} />}
-            <StatusBadge label={c.caseType} color="violet" dot={false} />
-            {c.nextHearing && (
-              <StatusBadge label={`الجلسة القادمة: ${formatDate(c.nextHearing)}`} color="blue" />
-            )}
+          <div className="flex items-center gap-2 shrink-0">
+            <Select value={c.proceduralStage} onValueChange={(v) => updateCase({ proceduralStage: v }, "تم تحديث المرحلة")}>
+              <SelectTrigger className="w-28 h-8 text-xs font-kufi"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {PROCEDURAL_STAGES.map((s) => <SelectItem key={s.value} value={s.value} className="font-kufi text-xs">{s.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={c.riskLevel} onValueChange={(v) => updateCase({ riskLevel: v }, "تم تحديث المخاطر")}>
+              <SelectTrigger className="w-24 h-8 text-xs font-kufi"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {RISK_LEVELS.map((r) => <SelectItem key={r.value} value={r.value} className="font-kufi text-xs">{r.label}</SelectItem>)}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        {/* Operating states banner */}
-        <OperatingStatesBanner caseDetail={c} onUpdate={updateCase} />
+        {/* Single-line status bar */}
+        <div className="flex items-center gap-2 flex-wrap">
+          {stage && <StatusBadge label={stage.label} color="slate" size="sm" dot={false} />}
+          {risk && <StatusBadge label={risk.label} color={risk.color} size="sm" glow={risk.value === "CRITICAL"} />}
+          {state && state.value !== "NOMINAL" && <StatusBadge label={state.label} color={state.color} size="sm" glow />}
+          {c.nextHearing && <StatusBadge label={`الجلسة: ${formatDate(c.nextHearing)}`} color="blue" size="sm" />}
+          {criticalCount > 0 && (
+            <button onClick={() => setTab("analysis")} className="ml-auto">
+              <StatusBadge label={`${criticalCount} تعارض حرج`} color="red" size="sm" glow />
+            </button>
+          )}
+        </div>
       </div>
 
-      {/* Proactive contradiction notification banner */}
-      {contradictionReport && contradictionReport.totalAlerts > 0 && (
-        <ContradictionAlertBanner
-          report={contradictionReport}
-          onViewDetails={() => setTab("insights")}
-        />
-      )}
-
-      {/* Tabs */}
+      {/* 5 tabs only */}
       <div className="border-b border-border bg-background/60 px-3">
         <nav className="flex items-center gap-1 overflow-x-auto scroll-sovereign">
           {TABS.map((t) => {
@@ -164,7 +124,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-2.5 font-kufi text-xs border-b-2 transition-all whitespace-nowrap",
                   tab === t.key
-                    ? "border-amber-500 text-amber-600 dark:text-amber-400 font-semibold"
+                    ? "border-amber-500 text-amber-600 font-semibold"
                     : "border-transparent text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -173,10 +133,8 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
                 {badge !== undefined && badge > 0 && (
                   <span className={cn(
                     "font-jetbrains text-[9px] px-1.5 py-0.5 rounded-full",
-                    tab === t.key ? "bg-amber-500/20 text-amber-500" : "bg-muted text-muted-foreground"
-                  )}>
-                    {badge}
-                  </span>
+                    tab === t.key ? "bg-amber-500/20 text-amber-600" : "bg-muted text-muted-foreground"
+                  )}>{badge}</span>
                 )}
               </button>
             )
@@ -187,121 +145,252 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto scroll-sovereign p-4 min-h-0">
         {tab === "overview" && <OverviewTab caseDetail={c} />}
-        {tab === "documents" && <DocumentsTab caseDetail={c} />}
-        {tab === "facts" && <FactsTab caseDetail={c} />}
-        {tab === "evidence" && <EvidenceTab caseDetail={c} />}
-        {tab === "timeline" && <TimelineTab caseDetail={c} />}
-        {tab === "deadlines" && <DeadlinesTab caseDetail={c} />}
-        {tab === "issues" && <IssuesTab caseDetail={c} />}
-        {tab === "authorities" && <AuthoritiesTab caseDetail={c} />}
-        {tab === "insights" && <InsightsTab caseDetail={c} />}
-        {tab === "ai" && <AIAnalysisTab caseDetail={c} />}
-        {tab === "adversary" && <AdversaryReviewTab caseDetail={c} />}
-        {tab === "judge" && <JudgeFieldsTab caseDetail={c} />}
-        {tab === "indicators" && <IndicatorsTab caseDetail={c} />}
-        {tab === "notes" && <JudgeNotesTab caseDetail={c} />}
+        {tab === "facts-evidence" && <FactsEvidenceTab caseDetail={c} />}
+        {tab === "law" && <LawTab caseDetail={c} />}
+        {tab === "analysis" && <AnalysisTab caseDetail={c} />}
+        {tab === "decision" && <DecisionTab caseDetail={c} />}
       </div>
     </div>
   )
 }
 
-function OperatingStatesBanner({
-  caseDetail, onUpdate,
-}: {
-  caseDetail: CaseDetailT
-  onUpdate: (patch: Record<string, unknown>, msg: string) => void
-}) {
-  const c = caseDetail
-  const state = findConstant(OPERATING_STATES, c.operatingState)
-
-  const icons: Record<string, React.ReactNode> = {
-    NOMINAL: <Eye className="h-3.5 w-3.5" />,
-    REVIEW: <Eye className="h-3.5 w-3.5" />,
-    INSUFFICIENT_EVIDENCE: <AlertTriangle className="h-3.5 w-3.5" />,
-    CONFLICT: <Swords className="h-3.5 w-3.5" />,
-    SYSTEM_DEGRADED: <ServerOff className="h-3.5 w-3.5" />,
-  }
+// ═══════════════════════════════════════════════════════════════════
+// TAB 1: OVERVIEW — case summary + timeline + deadlines in one view
+// ═══════════════════════════════════════════════════════════════════
+function OverviewTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  const provenFacts = c.facts.filter((f) => ["judicially_established", "undisputed", "admitted", "supported"].includes(f.status)).length
+  const disputedFacts = c.facts.filter((f) => ["denied", "contradicted"].includes(f.status)).length
+  const supportingCount = c.authorities.filter((a) => a.stance === "supporting").length
+  const contraryCount = c.authorities.filter((a) => a.stance === "contrary" || a.stance === "opposing").length
 
   return (
-    <div className="px-5 py-2 border-t border-border bg-background/40">
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="font-kufi text-[10px] text-muted-foreground">حالة التشغيل:</span>
-        {OPERATING_STATES.map((s) => {
-          const active = c.operatingState === s.value
-          const cc = colorClasses(s.color)
-          return (
-            <button
-              key={s.value}
-              onClick={() => onUpdate({ operatingState: s.value }, `تم تحديث حالة التشغيل: ${s.label}`)}
-              className={cn(
-                "flex items-center gap-1.5 rounded border px-2 py-1 font-kufi text-[10px] transition-all",
-                active ? cn(cc.bg, cc.text, cc.border, cc.glow) : "border-border/60 text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {icons[s.value]}
-              {s.label}
-            </button>
-          )
-        })}
-      </div>
-      {state && state.value !== "NOMINAL" && (
-        <div className="mt-1.5 font-kufi text-[10px] text-muted-foreground">
-          الحالة الحالية: <span className={colorClasses(state.color).text}>{state.label}</span>
-          {" — "}
-          {state.value === "INSUFFICIENT_EVIDENCE" && "الأدلة المتاحة غير كافية لإثبات النتيجة — يلزم تكليف الخصوم بمستندات إضافية"}
-          {state.value === "CONFLICT" && "يوجد تعارض بين السلطات القضائية — مراجعة القاضي إلزامية قبل البتّ"}
-          {state.value === "REVIEW" && "القضية قيد المراجعة القضائية — يُرجى استكمال الفحص"}
-          {state.value === "SYSTEM_DEGRADED" && "النظام في وضع متدهور — يلزم التحقق من التكامل قبل الاعتماد"}
-        </div>
-      )}
-    </div>
-  )
-}
-
-// ─── Proactive Contradiction Alert Banner ───────────────────────
-// Shows at top of case workspace when contradictions are detected
-function ContradictionAlertBanner({ report, onViewDetails }: { report: any; onViewDetails: () => void }) {
-  const criticalCount = report.criticalCount ?? 0
-  const warningCount = report.warningCount ?? 0
-  const isCritical = criticalCount > 0
-
-  return (
-    <div className={cn(
-      "border-b px-4 py-2.5 flex items-center justify-between gap-3",
-      isCritical ? "border-red-500/40 bg-red-500/5" : "border-amber-500/40 bg-amber-500/5"
-    )}>
-      <div className="flex items-center gap-2.5 min-w-0">
-        <div className={cn(
-          "flex h-8 w-8 items-center justify-center rounded-md shrink-0",
-          isCritical ? "bg-red-500/15 text-red-600" : "bg-amber-500/15 text-amber-600"
-        )}>
-          <AlertTriangle className="h-4 w-4 sovereign-pulse" />
-        </div>
-        <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className={cn("font-kufi text-xs font-semibold", isCritical ? "text-red-700" : "text-amber-700")}>
-              {isCritical ? "تنبيهات حرجة مُكتشَفة" : "تنبيهات مُكتشَفة"}
-            </span>
-            {criticalCount > 0 && <StatusBadge label={`${criticalCount} حرج`} color="red" size="sm" glow />}
-            {warningCount > 0 && <StatusBadge label={`${warningCount} تحذير`} color="amber" size="sm" />}
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Left: parties + subject */}
+      <div className="glass-panel rounded-xl p-4 lg:col-span-1">
+        <h3 className="font-kufi text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <FolderOpen className="h-4 w-4 text-amber-500" />
+          أطراف النزاع
+        </h3>
+        <div className="space-y-2 font-kufi text-xs">
+          <div>
+            <span className="text-muted-foreground">الأطراف:</span>
+            <p className="leading-relaxed mt-0.5">{c.parties}</p>
           </div>
-          <p className="font-kufi text-[10px] text-muted-foreground leading-relaxed truncate">
-            {report.summary}
-          </p>
+          <div className="gold-rule opacity-30 my-2" />
+          <div>
+            <span className="text-muted-foreground">الموضوع:</span>
+            <p className="leading-relaxed mt-0.5">{c.subjectMatter}</p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 pt-2">
+            <div><span className="text-muted-foreground">الإيداع:</span> <span className="font-jetbrains">{formatDate(c.filedDate)}</span></div>
+            <div><span className="text-muted-foreground">الجلسة:</span> <span className="font-jetbrains">{formatDate(c.nextHearing)}</span></div>
+          </div>
         </div>
       </div>
-      <button
-        onClick={onViewDetails}
-        className={cn(
-          "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors shrink-0",
-          isCritical
-            ? "border-red-500/40 text-red-600 hover:bg-red-500/10"
-            : "border-amber-500/40 text-amber-600 hover:bg-amber-500/10"
+
+      {/* Middle: key stats */}
+      <div className="glass-panel rounded-xl p-4 lg:col-span-2">
+        <h3 className="font-kufi text-sm font-semibold mb-3 flex items-center gap-1.5">
+          <LayoutDashboard className="h-4 w-4 text-amber-500" />
+          ملخّص سريع
+        </h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+          <MiniStat label="وقائع مثبتة" value={provenFacts} color="emerald" />
+          <MiniStat label="وقائع متنازع" value={disputedFacts} color="orange" />
+          <MiniStat label="سلطات مؤيِّدة" value={supportingCount} color="emerald" />
+          <MiniStat label="سلطات مخالفة" value={contraryCount} color="red" />
+          <MiniStat label="أدلة" value={c.evidence.length} color="blue" />
+          <MiniStat label="مستندات" value={c.documents.length} color="violet" />
+          <MiniStat label="مواعيد" value={c.deadlines.length} color="amber" />
+          <MiniStat label="ملاحظات" value={c.notes.length} color="slate" />
+        </div>
+      </div>
+
+      {/* Timeline */}
+      <div className="glass-panel rounded-xl p-4 lg:col-span-2">
+        <h3 className="font-kufi text-sm font-semibold mb-3">الخط الزمني</h3>
+        {c.timeline.length === 0 ? (
+          <p className="font-kufi text-xs text-muted-foreground text-center py-4">لا توجد أحداث</p>
+        ) : (
+          <div className="space-y-2">
+            {c.timeline.slice(-5).reverse().map((ev) => (
+              <div key={ev.id} className="flex items-start gap-2 rounded-md border border-border/40 bg-background/30 px-2 py-1.5">
+                <span className="font-jetbrains text-[10px] text-amber-500 shrink-0 mt-0.5">{formatDate(ev.eventDate)}</span>
+                <div className="min-w-0">
+                  <p className="font-kufi text-xs leading-snug">{ev.title}</p>
+                  {ev.legalRegime && <span className="font-kufi text-[9px] text-muted-foreground">{ev.legalRegime}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
         )}
-      >
-        <Lightbulb className="h-3.5 w-3.5" />
-        عرض الرؤى الذكية
-      </button>
+      </div>
+
+      {/* Deadlines */}
+      <div className="glass-panel rounded-xl p-4 lg:col-span-1">
+        <h3 className="font-kufi text-sm font-semibold mb-3">المواعيد القانونية</h3>
+        {c.deadlines.length === 0 ? (
+          <p className="font-kufi text-xs text-muted-foreground text-center py-4">لا توجد مواعيد محسوبة</p>
+        ) : (
+          <div className="space-y-2">
+            {c.deadlines.map((d) => (
+              <div key={d.id} className={cn(
+                "rounded-md border p-2",
+                d.status === "expired" ? "border-red-500/40 bg-red-500/5"
+                  : d.status === "approaching" ? "border-amber-500/40 bg-amber-500/5"
+                  : "border-border/40 bg-background/30"
+              )}>
+                <p className="font-kufi text-xs font-medium leading-snug">{d.title}</p>
+                <p className="font-jetbrains text-[10px] text-amber-500 mt-0.5">{formatDate(d.computedDeadline)}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   )
 }
+
+// ═══════════════════════════════════════════════════════════════════
+// TAB 2: FACTS & EVIDENCE — facts + evidence + documents combined
+// ═══════════════════════════════════════════════════════════════════
+function FactsEvidenceTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  const [sub, setSub] = React.useState<"facts" | "evidence" | "documents">("facts")
+
+  return (
+    <div className="space-y-4">
+      {/* Sub-toggle */}
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card/40 p-1 w-fit">
+        {([
+          { key: "facts", label: `الوقائع (${c.facts.length})` },
+          { key: "evidence", label: `الأدلة (${c.evidence.length})` },
+          { key: "documents", label: `المستندات (${c.documents.length})` },
+        ] as const).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setSub(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md font-kufi text-xs transition-colors",
+              sub === t.key ? "bg-amber-500/15 text-amber-700 font-semibold" : "text-muted-foreground hover:text-foreground"
+            )}
+          >{t.label}</button>
+        ))}
+      </div>
+
+      {/* Lazy render existing tabs */}
+      {sub === "facts" && <FactsInline caseDetail={c} />}
+      {sub === "evidence" && <EvidenceInline caseDetail={c} />}
+      {sub === "documents" && <DocumentsInline caseDetail={c} />}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TAB 3: LAW — authorities + law check + citation verification
+// ═══════════════════════════════════════════════════════════════════
+function LawTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  return (
+    <div className="space-y-4">
+      <LawInline caseDetail={c} />
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TAB 4: ANALYSIS — AI + adversary + contradictions + strength
+// ═══════════════════════════════════════════════════════════════════
+function AnalysisTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  const [sub, setSub] = React.useState<"insights" | "ai" | "adversary">("insights")
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card/40 p-1 w-fit">
+        {([
+          { key: "insights", label: "الرؤى والتعارضات" },
+          { key: "ai", label: "تحليل AI" },
+          { key: "adversary", label: `المراجعة الخصومية (${c.adversaryReviews.length})` },
+        ] as const).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setSub(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md font-kufi text-xs transition-colors",
+              sub === t.key ? "bg-amber-500/15 text-amber-700 font-semibold" : "text-muted-foreground hover:text-foreground"
+            )}
+          >{t.label}</button>
+        ))}
+      </div>
+
+      {sub === "insights" && <InsightsInline caseDetail={c} />}
+      {sub === "ai" && <AIInline caseDetail={c} />}
+      {sub === "adversary" && <AdversaryInline caseDetail={c} />}
+    </div>
+  )
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TAB 5: DECISION — judge fields + notes + indicators
+// ═══════════════════════════════════════════════════════════════════
+function DecisionTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  const [sub, setSub] = React.useState<"judge" | "notes" | "indicators">("judge")
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card/40 p-1 w-fit">
+        {([
+          { key: "judge", label: "حقول القاضي" },
+          { key: "notes", label: `الملاحظات (${c.notes.length})` },
+          { key: "indicators", label: "المؤشرات" },
+        ] as const).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setSub(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md font-kufi text-xs transition-colors",
+              sub === t.key ? "bg-amber-500/15 text-amber-700 font-semibold" : "text-muted-foreground hover:text-foreground"
+            )}
+          >{t.label}</button>
+        ))}
+      </div>
+
+      {sub === "judge" && <JudgeInline caseDetail={c} />}
+      {sub === "notes" && <NotesInline caseDetail={c} />}
+      {sub === "indicators" && <IndicatorsInline caseDetail={c} />}
+    </div>
+  )
+}
+
+// ─── Mini stat ───────────────────────────────────────────────────
+function MiniStat({ label, value, color }: { label: string; value: number; color: string }) {
+  const cc = colorClasses(color)
+  return (
+    <div className={cn("rounded-lg border p-2", cc.border, cc.bg)}>
+      <div className={cn("font-jetbrains text-lg font-bold leading-tight", cc.text)}>{value}</div>
+      <div className="font-kufi text-[9px] text-muted-foreground truncate">{label}</div>
+    </div>
+  )
+}
+
+// ─── Inline wrappers for existing tabs ───────────────────────────
+// These import and render the existing tab components without modification
+import { FactsTab } from "./tabs/facts"
+import { EvidenceTab } from "./tabs/evidence"
+import { DocumentsTab } from "./tabs/documents"
+import { AuthoritiesTab } from "./tabs/authorities"
+import { InsightsTab } from "./tabs/insights"
+import { AIAnalysisTab } from "./tabs/ai-analysis"
+import { AdversaryReviewTab } from "./tabs/adversary-review"
+import { JudgeFieldsTab } from "./tabs/judge-fields"
+import { JudgeNotesTab } from "./tabs/judge-notes"
+import { IndicatorsTab } from "./tabs/indicators"
+
+function FactsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <FactsTab caseDetail={c} /> }
+function EvidenceInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <EvidenceTab caseDetail={c} /> }
+function DocumentsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <DocumentsTab caseDetail={c} /> }
+function LawInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <AuthoritiesTab caseDetail={c} /> }
+function InsightsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <InsightsTab caseDetail={c} /> }
+function AIInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <AIAnalysisTab caseDetail={c} /> }
+function AdversaryInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <AdversaryReviewTab caseDetail={c} /> }
+function JudgeInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <JudgeFieldsTab caseDetail={c} /> }
+function NotesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <JudgeNotesTab caseDetail={c} /> }
+function IndicatorsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <IndicatorsTab caseDetail={c} /> }

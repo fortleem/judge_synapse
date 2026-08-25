@@ -4,7 +4,7 @@ import * as React from "react"
 import {
   FolderOpen, FileText, Scale, ShieldAlert, Swords, Loader2, Activity,
   TrendingUp, ChevronLeft, Database, Clock, AlertTriangle, Bot,
-  CalendarDays, Lightbulb, ArrowUpRight, Upload, type LucideIcon,
+  CalendarDays, Lightbulb, ArrowUpRight, Upload, ShieldCheck, type LucideIcon,
 } from "lucide-react"
 import { cn, colorClasses, relativeTime } from "@/lib/judicial/ui"
 import {
@@ -32,9 +32,9 @@ export function OperationsDashboard({
 
   return (
     <div className="flex-1 overflow-y-auto scroll-sovereign">
-      {/* Bento grid */}
+      {/* Bento grid — simplified */}
       <div className="bento-grid p-4">
-        {/* Hero bento — system state + welcome */}
+        {/* Hero bento — system state + welcome + quick actions */}
         <div className="bento-col-8 glass-panel-accent rounded-xl p-5 hover-lift animate-slide-up">
           <div className="flex items-start justify-between gap-4 flex-wrap mb-3">
             <div>
@@ -44,10 +44,10 @@ export function OperationsDashboard({
               </div>
               <h2 className="font-serif-judicial text-2xl font-bold mb-1">غرفة العمليات القضائية</h2>
               <p className="font-kufi text-xs text-muted-foreground leading-relaxed max-w-xl">
-                منصة الذكاء القضائي المصري — المساعد الرقمي الكامل للقاضي. ارفع المستندات، استخرج الوقائع آليًا، راجع التعارضات، وأصدر قراراتك بثقة.
+                منصة الذكاء القضائي المصري — المساعد الرقمي الكامل للقاضي.
               </p>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-4">
               <div className="text-center">
                 <div className="font-jetbrains text-3xl font-bold text-amber-500">{dashboard?.totals.cases ?? 0}</div>
                 <div className="font-kufi text-[10px] text-muted-foreground">قضية نشطة</div>
@@ -55,7 +55,7 @@ export function OperationsDashboard({
               <div className="h-12 w-px bg-border" />
               <div className="text-center">
                 <div className={cn("font-jetbrains text-3xl font-bold", dashboard?.systemState === "NOMINAL" ? "text-emerald-500" : "text-amber-500")}>
-                  {dashboard?.systemState === "NOMINAL" ? "سليم" : dashboard?.systemState === "CONFLICT" ? "تعارض" : dashboard?.systemState === "SYSTEM_DEGRADED" ? "متدهور" : "مراجعة"}
+                  {dashboard?.systemState === "NOMINAL" ? "سليم" : "تعارض"}
                 </div>
                 <div className="font-kufi text-[10px] text-muted-foreground">حالة النظام</div>
               </div>
@@ -63,49 +63,27 @@ export function OperationsDashboard({
           </div>
           {/* Quick actions */}
           <div className="flex items-center gap-2 mt-3 flex-wrap">
-            <QuickAction icon={FolderOpen} label="قضية جديدة" color="amber" onClick={() => window.dispatchEvent(new CustomEvent("new-case"))} />
-            <QuickAction icon={Upload} label="رفع مستند" color="blue" onClick={() => window.dispatchEvent(new CustomEvent("navigate-case"))} />
-            <QuickAction icon={Lightbulb} label="فحص قانون" color="violet" onClick={() => window.dispatchEvent(new CustomEvent("navigate-case"))} />
+            <QuickAction icon={FolderOpen} label="قضية جديدة" color="amber" onClick={() => window.dispatchEvent(new CustomEvent("navigate-case"))} />
             <QuickAction icon={Database} label="السجل القانوني" color="emerald" onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: "research" }))} />
+            <QuickAction icon={ShieldCheck} label="سجل التدقيق" color="blue" onClick={() => window.dispatchEvent(new CustomEvent("navigate", { detail: "audit" }))} />
           </div>
         </div>
 
         {/* Critical alerts bento */}
         <div className="bento-col-4 glass-panel rounded-xl p-4 hover-lift animate-slide-up">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-kufi text-sm font-semibold flex items-center gap-1.5">
-              <AlertTriangle className="h-4 w-4 text-amber-500" />
-              تنبيهات حرجة
-            </h3>
-            <span className="font-jetbrains text-xs text-muted-foreground">{dashboard?.totals.conflicts ?? 0}</span>
-          </div>
+          <h3 className="font-kufi text-sm font-semibold flex items-center gap-1.5 mb-3">
+            <AlertTriangle className="h-4 w-4 text-amber-500" />
+            تنبيهات
+          </h3>
           <div className="space-y-2">
             <AlertRow icon={Swords} label="حالات التعارض" count={dashboard?.totals.conflicts ?? 0} color="orange" />
             <AlertRow icon={ShieldAlert} label="قيد المراجعة" count={dashboard?.totals.pendingReview ?? 0} color="blue" />
-            <AlertRow icon={Clock} label="مواعيد قريبة" count={0} color="amber" />
           </div>
         </div>
 
-        {/* Stats bento — 4 columns */}
-        <div className="bento-col-3">
-          <StatBento icon={FileText} label="الوقائع" value={dashboard?.totals.facts ?? 0} color="blue" />
-        </div>
-        <div className="bento-col-3">
-          <StatBento icon={Scale} label="السلطات" value={dashboard?.totals.authorities ?? 0} color="emerald" />
-        </div>
-        <div className="bento-col-3">
-          <StatBento icon={FolderOpen} label="الأدلة" value={dashboard?.totals.evidence ?? 0} color="violet" />
-        </div>
-        <div className="bento-col-3">
-          <StatBento icon={Bot} label="تحليلات AI" value={0} color="amber" />
-        </div>
-
-        {/* Recent cases bento — large */}
+        {/* Recent cases — large */}
         <div className="bento-col-8 glass-panel rounded-xl p-4 hover-lift animate-slide-up">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="font-kufi text-sm font-semibold">أحدث القضايا</h3>
-            <span className="font-jetbrains text-[10px] text-muted-foreground">{dashboard?.recentCases.length ?? 0} قضية</span>
-          </div>
+          <h3 className="font-kufi text-sm font-semibold mb-3">أحدث القضايا</h3>
           {dashboard && dashboard.recentCases.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
               {dashboard.recentCases.slice(0, 6).map((c) => {
@@ -138,59 +116,29 @@ export function OperationsDashboard({
           )}
         </div>
 
-        {/* Distribution bento — small */}
+        {/* Corpus bento */}
         <div className="bento-col-4 glass-panel rounded-xl p-4 hover-lift animate-slide-up">
-          <h3 className="font-kufi text-sm font-semibold mb-3 flex items-center gap-1.5">
-            <TrendingUp className="h-4 w-4 text-amber-500" />
-            توزيع المراحل
-          </h3>
-          <div className="space-y-1.5">
-            {dashboard?.byStage.filter((s) => s.count > 0).slice(0, 6).map((s) => {
-              const meta = findConstant(PROCEDURAL_STAGES, s.stage)
-              const max = Math.max(...(dashboard.byStage.map((x) => x.count) || [1]), 1)
-              const pct = (s.count / max) * 100
-              return (
-                <div key={s.stage} className="flex items-center gap-2">
-                  <span className="font-kufi text-[11px] w-20 truncate">{meta?.label ?? s.stage}</span>
-                  <div className="flex-1 h-5 rounded bg-muted/40 overflow-hidden">
-                    <div className="h-full bg-gradient-to-l from-amber-500 to-amber-600 transition-all" style={{ width: `${pct}%` }} />
-                  </div>
-                  <span className="font-jetbrains text-[11px] w-4 text-left">{s.count}</span>
-                </div>
-              )
-            })}
-            {(!dashboard || dashboard.byStage.filter((s) => s.count > 0).length === 0) && (
-              <p className="font-kufi text-xs text-muted-foreground text-center py-2">لا توجد بيانات</p>
-            )}
-          </div>
-        </div>
-
-        {/* Corpus bento — full width */}
-        <div className="bento-col-12 glass-panel rounded-xl p-4 hover-lift animate-slide-up">
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
-                <Database className="h-5 w-5" />
-              </div>
-              <div>
-                <code className="font-jetbrains text-sm text-amber-500">{dashboard?.corpusVersion ?? "EJB-CORPUS-2026.08-R1"}</code>
-                <p className="font-kufi text-[10px] text-muted-foreground mt-0.5">نسخة موقّعة رقميًا — قابلة لإعادة الإنتاج</p>
-              </div>
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600">
+              <Database className="h-5 w-5" />
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-center">
-                <div className="font-jetbrains text-lg font-bold text-emerald-500">39</div>
-                <div className="font-kufi text-[9px] text-muted-foreground">نص قانوني</div>
-              </div>
-              <div className="text-center">
-                <div className="font-jetbrains text-lg font-bold text-blue-500">14</div>
-                <div className="font-kufi text-[9px] text-muted-foreground">مصدر رسمي</div>
-              </div>
-              <div className="text-center">
-                <div className="font-jetbrains text-lg font-bold text-violet-500">15</div>
-                <div className="font-kufi text-[9px] text-muted-foreground">نوع محكمة</div>
-              </div>
-              <StatusBadge label="موقّعة" color="emerald" />
+            <div>
+              <code className="font-jetbrains text-xs text-amber-500">{dashboard?.corpusVersion ?? "EJB-CORPUS-2026.08-R1"}</code>
+              <p className="font-kufi text-[10px] text-muted-foreground">السجل القانوني الموقّع</p>
+            </div>
+          </div>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <div className="font-jetbrains text-lg font-bold text-emerald-500">39</div>
+              <div className="font-kufi text-[9px] text-muted-foreground">نص قانوني</div>
+            </div>
+            <div>
+              <div className="font-jetbrains text-lg font-bold text-blue-500">14</div>
+              <div className="font-kufi text-[9px] text-muted-foreground">مصدر رسمي</div>
+            </div>
+            <div>
+              <div className="font-jetbrains text-lg font-bold text-violet-500">15</div>
+              <div className="font-kufi text-[9px] text-muted-foreground">نوع محكمة</div>
             </div>
           </div>
         </div>
