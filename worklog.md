@@ -311,3 +311,38 @@ Stage Summary:
 - Regional benchmark: UAE AI-powered judicial platform (launched 2025-2026) is the closest regional competitor — judge-facing AI analysis at multiple case stages, digital identity verification, smart court services. We must benchmark against it.
 - Long-term unlock: Egyptian Government Integration Layer (ELEC + esc.gov.eg + Misr Digital national ID + Ministry of Justice e-payment) is the strategic differentiator that converts this from a judge's personal tool into the national judicial operating system. Existing ImportJob pattern provides the architectural foundation for outbound push queueing.
 - File: /home/z/my-project/research-competing.json (valid JSON, 13 platforms + 24 features + 15 UI trends + summary)
+
+---
+Task ID: 32-38 (2026 UI Rebuild + Command Palette + Mobile + Judge-sole-entry)
+Agent: main (CTO + COO + Judicial Expert)
+Task: Research competitors, make judge sole data entry, rebuild UI with 2026 state-of-art design, build mobile version.
+
+Work Log:
+- Launched research subagent: analyzed 13 competing platforms (Harvey AI, Lexis+, Westlaw, CaseMine, Clio, Relativity, Everlaw, Saudi Najiz, UAE AI Judicial, Egypt ELEC, Casefleet, Opus2, Pre/Dicta). Identified 24 critical missing features + 15 UI trends for 2026. Top priorities: Command Palette (Cmd+K), Keyboard Shortcuts, Bookmark/Highlight, Case Comparison, Document Annotation, Hearing Calendar, Smart Notifications, Recent Activity Feed.
+- Changed default uploader role from "rapporteur" to "judge" across documents.tsx, serialize.ts, api-client.ts. Updated workflow banner: "مساحة القاضي الكاملة — الإدخال والمراجعة والاعتماد"
+- Built 2026 design system in globals.css: glassmorphism panels (frosted depth, backdrop-blur), bento grid (12-column responsive), micro-interactions (shimmer, slide-up-fade, scale-in, hover-lift, press-feedback), sticky context bars, command palette overlay styling, skeleton loading, mobile bottom nav.
+- Built Command Palette (Cmd+K): searches across cases + legal texts + navigation. Keyboard navigation (↑↓ Enter ESC), grouped results, hover selection, quick navigation (home/research/audit/settings). Trigger button in header with ⌘K hint.
+- Built keyboard shortcuts system: Cmd+K (palette), G+H/R/A/S (navigation), ESC (back to dashboard). Disabled when typing in inputs.
+- Rebuilt OperationsDashboard with bento layout: hero bento (system state + quick actions), critical alerts bento, 4 stat bento tiles, recent cases bento (2-col grid), distribution bento (progress bars), corpus bento (full-width footer). All using glass-panel + hover-lift + animate-slide-up.
+- Built MobileBottomNav: fixed bottom bar with 5 tabs (الرئيسية، السجل، التدقيق، الإعدادات), thumb-zone friendly, safe-area-inset support. Sidebar hidden on mobile (<768px).
+- Wired up: command palette event listener, custom navigation events (from quick actions), mobile detection (resize listener), pb-16 on main for mobile bottom nav spacing.
+- Added Cmd+K trigger button in header (hidden on mobile, shown on md+)
+
+Verification:
+- 2026 bento dashboard: renders with glass panels, hover-lift, slide-up animations ✓
+- Command Palette: opens via ⌘K button, searches cases + texts, keyboard nav works ✓
+- Mobile (390px): bottom nav visible (الرئيسية/السجل/التدقيق/الإعدادات), sidebar hidden, no overflow ✓
+- Desktop (1440px): bottom nav hidden, sidebar visible, Cmd+K button present ✓
+- Judge as sole entry: default uploader = "judge", workflow banner updated ✓
+- TypeScript typecheck: clean (0 errors)
+- ESLint: clean (0 errors)
+- No browser errors
+- Backup: v2.1-backup-20260825T164826Z
+
+Stage Summary:
+- Judge is now the sole data entry person (default role = "judge")
+- UI rebuilt with 2026 state-of-art design: glassmorphism, bento layouts, micro-interactions
+- Command Palette (Cmd+K) provides universal search across cases, legal texts, and navigation
+- Keyboard shortcuts (G+H/R/A/S, ESC) for power users
+- Mobile version: bottom navigation, hidden sidebar, responsive bento grid
+- All existing features preserved (14 tabs, legal corpus, AI gateway, contradiction alerts, etc.)
