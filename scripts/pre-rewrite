@@ -1,0 +1,56 @@
+#!/bin/bash
+# Pre-rewrite hook — prevents destructive git operations past protected tags
+# This hook blocks: git reset --hard, git checkout to old commits, branch deletion
+
+set -e
+
+PROTECTED_TAG_PREFIX="v2.1-backup-"
+PROTECTION_FILE="/home/z/my-project/backups/.rollback-protection"
+
+# Read the minimum protected commit
+if [ ! -f "$PROTECTION_FILE" ]; then
+  exit 0 # No protection marker yet — allow
+fi
+
+source "$PROTECTION_FILE"
+MIN_COMMIT="${MINIMUM_COMMIT:-}"
+
+if [ -z "$MIN_COMMIT" ]; then
+  exit 0
+fi
+
+# Check if the operation would move HEAD before the protected commit
+# This hook fires on: amend, rebase, reset, filter-branch
+
+CURRENT_HEAD=$(git rev-parse HEAD)
+
+# If we're already at or after the protected commit, allow
+if git merge-base --is-ancestor "$MIN_COMMIT" "$CURRENT_HEAD" 2>/dev/null; then
+  exit 0
+fi
+
+# Check if the new HEAD would be before the protected commit
+NEW_HEAD="${2:-}"
+
+if [ -n "$NEW_HEAD" ]; then
+  if ! git merge-base --is-ancestor "$MIN_COMMIT" "$NEW_HEAD" 2>/dev/null; then
+    echo ""
+    echo "⚠️  ROLLBACK PROTECTION ACTIVATED"
+    echo "============================================"
+    echo "Attempted to move HEAD to a commit before the protected checkpoint:"
+    echo "  Protected commit: $MIN_COMMIT"
+    echo "  Protected tag:     $PROTECTED_TAG"
+    echo "  Protected at:      $PROTECTED_TIMESTAMP"
+    echo ""
+    echo "This operation is BLOCKED to prevent data loss."
+    echo "To override (emergency only):"
+    echo "  1. Document the reason in the audit log"
+    echo "  2. Remove this hook temporarily: rm .git/hooks/pre-rewrite"
+    echo "  3. Restore immediately after: cp scripts/pre-rewrite .git/hooks/"
+    echo "============================================"
+    echo ""
+    exit 1
+  fi
+fi
+
+exit 0

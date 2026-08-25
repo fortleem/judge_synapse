@@ -1,0 +1,6 @@
+# EJB V2.1 Rollback Protection
+# This file marks the minimum protected version.
+# Do NOT git reset --hard or git checkout to any commit before this tag:
+PROTECTED_TAG=v2.1-backup-20260825T100557Z
+PROTECTED_TIMESTAMP=20260825T100557Z
+MINIMUM_COMMIT=544bdbaef29e3445dc28b3d50da6259a830f30f6
