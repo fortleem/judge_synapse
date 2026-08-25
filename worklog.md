@@ -218,3 +218,38 @@ Stage Summary:
 - 15 court types registered with full jurisdictional metadata
 - Knowledge orchestrator built for continuous expansion
 - All existing features preserved — nothing deleted
+
+---
+Task ID: 19-25 (Document Upload + AI Extraction + Data Input Roles)
+Agent: main (COO)
+Task: Define who inputs data, build document upload + AI extraction pipeline, make platform the judge's main assistant.
+
+Work Log:
+- Defined 4 clear data-input roles: Rapporteur (uploads/reviews), Judge (finalizes), System (auto-extracts), Administrator (manages corpus)
+- Added StoredDocument Prisma model: file metadata, OCR status, extraction status, extracted data (JSON), verification flag
+- Built document upload API (POST /api/cases/[id]/documents/upload): multipart/form-data, saves to public/uploads, extracts text from text files, marks OCR status
+- Built text extraction utility (extractTextFromFile): handles text files, PDFs (basic), images (marks OCR needed)
+- Built AI extraction engine (src/lib/judicial/extraction.ts): uses Sphinx Gateway to analyze document text, extracts structured JSON: facts, timeline events, citations, parties, evidence items, summary. Includes JSON parser with fallback for model responses with extra text
+- Built extraction API (POST /api/cases/[id]/documents/[docId]/extract): triggers AI extraction, stores results as JSON, logs to audit
+- Built promotion API (POST /api/cases/[id]/documents/[docId]/promote): promotes selected candidate items to actual case entities (facts, timeline, citations, evidence) with proper status tracking — promoted facts = "alleged", promoted citations = "unverified"
+- Built Documents tab UI: drag-drop upload zone, role/source-type selectors, document cards with OCR/extraction status, manual text paste for scanned docs, extraction review with checkbox selection, promote button
+- Added workflow banner explaining who inputs what: Rapporteur → System → Judge
+- Added documents to case detail include, schemas, serializers, API client
+- All promotions logged in audit log as "system_proposal" — clear separation from judge decisions
+
+Verification:
+- Document upload: tested with text file → saved + text extracted + OCR completed ✓
+- AI extraction: pipeline works end-to-end (tried Groq → 403, Gemini → geo-blocked, degraded safely with clear error message) ✓
+- Extraction review UI: shows candidate data with warning, checkbox selection, promote button ✓
+- Promotion: creates facts with status="alleged", citations with status="unverified", logs to audit ✓
+- TypeScript typecheck: clean (0 errors)
+- ESLint: clean (0 errors)
+- No browser console errors
+- All existing features preserved
+
+Stage Summary:
+- Platform is now the judge's main digital assistant: upload documents → AI extracts facts/timeline/citations → judge reviews and promotes
+- Clear role separation: Rapporteur inputs, System extracts, Judge finalizes
+- All extracted data is "candidate" until explicitly promoted — no AI content becomes judicial content without human action
+- Promotion creates properly-tagged entities (aiExtracted=true, status=alleged/unverified)
+- Full audit trail: upload, extraction, promotion all logged
