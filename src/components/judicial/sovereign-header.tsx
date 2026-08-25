@@ -21,6 +21,13 @@ export function SovereignHeader({
   const systemState = serverDown ? "SYSTEM_DEGRADED" : (dashboard?.systemState ?? "NOMINAL")
   const stateMeta = findConstant(OPERATING_STATES, systemState)
 
+  // Fix hydration: render date only after client mount
+  // Node ICU vs browser ICU produce different Arabic date formats
+  const [dateStr, setDateStr] = React.useState<string | null>(null)
+  React.useEffect(() => {
+    setDateStr(new Date().toLocaleDateString("ar-EG", { weekday: "long", year: "numeric", month: "long", day: "numeric" }))
+  }, [])
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-sidebar text-sidebar-foreground backdrop-blur supports-[backdrop-filter]:bg-sidebar/95">
       {/* Gold rule */}
@@ -39,8 +46,8 @@ export function SovereignHeader({
             — منصة الذكاء القضائي المصري في خدمتكم
           </span>
         </div>
-        <span className="font-jetbrains text-[9px] text-sidebar-foreground/40 hidden md:inline">
-          {new Date().toLocaleDateString("ar-EG", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
+        <span className="font-jetbrains text-[9px] text-sidebar-foreground/40 hidden md:inline" suppressHydrationWarning>
+          {dateStr ?? ""}
         </span>
       </div>
 
