@@ -253,3 +253,39 @@ Stage Summary:
 - All extracted data is "candidate" until explicitly promoted — no AI content becomes judicial content without human action
 - Promotion creates properly-tagged entities (aiExtracted=true, status=alleged/unverified)
 - Full audit trail: upload, extraction, promotion all logged
+
+---
+Task ID: 26-31 (Rename to Smart + Law Check + Contradiction Alerts + Strength Meter)
+Agent: main (COO)
+Task: Rename Brain to Smart, build law number check with web search, proactive contradiction notifications, and out-of-the-box add-ons for the judge.
+
+Work Log:
+- Renamed "الدماغ القضائي المصري" → "المنصة القضائية الذكية" in all UI files (header, footer, layout)
+- Renamed "Egyptian Judicial Brain" → "Egyptian Judicial Smart" in metadata
+- Built law-check.ts engine: verifies law number against legal corpus + checks court jurisdiction + searches web for similar cases via z-ai-web-dev-sdk + finds contradictions + AI analysis
+- Built contradiction-alerts.ts: proactive contradiction scanner (8 detection rules: factual, legal, temporal, unverified, jurisdictional, evidence, procedural, insufficient) + legal strength analysis (plaintiff vs defendant balance)
+- Created 3 new API routes: /api/cases/[id]/law-check (POST), /api/cases/[id]/contradictions (GET), /api/cases/[id]/strength (GET)
+- Added API client methods: checkLaw, scanContradictions, analyzeStrength
+- Built Insights tab (3 sub-tabs): Contradiction Alerts, Law Number Check, Legal Strength Meter
+- Built proactive contradiction notification banner: shows at top of case workspace when contradictions detected, with critical/warning/info severity, links to insights tab
+- Law Check result UI: 5 sections (verification, jurisdiction, web cases, contradictions, AI analysis) with creative structured design
+- Legal Strength Meter: visual balance bar (plaintiff green vs defendant red), factor breakdown, recommendation
+- Contradiction alerts: severity-colored cards with descriptions and recommendations
+
+Verification:
+- Rename: footer shows "المنصة القضائية الذكية", welcome banner shows "منصة الذكاء القضائي المصري" ✓
+- Contradiction banner: admin case shows "تنبيهات حرجة مُكتشَفة — 2 حرج" with link to insights ✓
+- Law check: "دستوري — 184" → verified, full text shown, 8 web cases found (real constitutional court rulings) ✓
+- Web search: z-ai-web-dev-sdk found 8 similar cases with snippets and sources ✓
+- Strength meter: plaintiff 51 vs defendant 25, "الميزان يميل للمدّعي" with factor breakdown ✓
+- TypeScript typecheck: clean (0 errors)
+- ESLint: clean (0 errors)
+- No browser errors
+- Backup created: v2.1-backup-20260825T135034Z
+
+Stage Summary:
+- Platform renamed to "المنصة القضائية الذكية" (Egyptian Judicial Smart)
+- Law number check: verifies against court + finds similar web cases + AI analysis
+- Proactive contradiction notifications: judge is alerted immediately when contradictions detected
+- Legal strength meter: visual balance of plaintiff vs defendant
+- All add-ons are non-authoritative — judge makes the final decision
