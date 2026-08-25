@@ -1,0 +1,64 @@
+{
+  "schemaVersion": "1.0",
+  "generatedAt": "2026-08-23",
+  "jurisdiction": "EG",
+  "policy": "Official-source-first; no source is authoritative until verified and versioned",
+  "sources": [
+    {
+      "id": "constitution-presidency",
+      "title": "الدستور المصري",
+      "tier": "مصدر حكومي رسمي",
+      "type": "constitution",
+      "url": "https://www.presidency.eg/ar/%D9%85%D8%B5%D8%B1/%D8%A7%D9%84%D8%AF%D8%B3%D8%AA%D9%88%D8%B1/"
+    },
+    {
+      "id": "legislation-register",
+      "title": "بوابة التشريعات المصرية",
+      "tier": "بوابة تشريعات رسمية",
+      "type": "legislation",
+      "url": "https://register.cc.gov.eg/legislations"
+    },
+    {
+      "id": "cassation",
+      "title": "محكمة النقض المصرية",
+      "tier": "جهة قضائية رسمية",
+      "type": "judgments",
+      "url": "http://cc.gov.eg/"
+    },
+    {
+      "id": "constitutional-court",
+      "title": "المحكمة الدستورية العليا",
+      "tier": "جهة قضائية رسمية",
+      "type": "constitutional",
+      "url": "https://www.sccourt.gov.eg/"
+    },
+    {
+      "id": "state-council",
+      "title": "مجلس الدولة المصري",
+      "tier": "جهة قضائية رسمية",
+      "type": "administrative",
+      "url": "https://esc.gov.eg/"
+    },
+    {
+      "id": "state-lawsuits",
+      "title": "هيئة قضايا الدولة",
+      "tier": "هيئة قضائية رسمية",
+      "type": "state-litigation",
+      "url": "https://sla.gov.eg/"
+    },
+    {
+      "id": "economic-courts",
+      "title": "التقاضي الإلكتروني للمحاكم الاقتصادية",
+      "tier": "منصة قضائية رسمية",
+      "type": "economic",
+      "url": "https://elec.eecourts.gov.eg/"
+    },
+    {
+      "id": "justice-ministry",
+      "title": "وزارة العدل المصرية",
+      "tier": "جهة حكومية رسمية",
+      "type": "ministry",
+      "url": "https://moj.gov.eg/"
+    }
+  ]
+}
