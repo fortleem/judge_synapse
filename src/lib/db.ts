@@ -1,22 +1,18 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaLibSql } from '@prisma/adapter-libsql'
+import { createClient } from '@libsql/client'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
 }
 
-// Turso adapter for production (Vercel)
-// The adapter must be loaded synchronously at module init time
-// On Vercel, env vars are available before the module loads
+// Create Prisma client — Turso for production, local SQLite for dev
+// On Vercel, TURSO_DATABASE_URL is available at module load time
+const tursoUrl = process.env.TURSO_DATABASE_URL
 
 function createPrismaClient(): PrismaClient {
-  const tursoUrl = process.env.TURSO_DATABASE_URL
-
   if (tursoUrl && tursoUrl.startsWith('libsql://')) {
-    // Production: Turso via libSQL adapter (sync require for module init)
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { PrismaLibSql } = require('@prisma/adapter-libsql')
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const { createClient } = require('@libsql/client')
+    // Production: Turso via libSQL adapter
     const libsql = createClient({
       url: tursoUrl,
       authToken: process.env.TURSO_AUTH_TOKEN,
