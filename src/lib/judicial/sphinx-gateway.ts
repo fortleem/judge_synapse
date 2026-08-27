@@ -190,6 +190,40 @@ async function callGemini(prompt: string, maxTokens: number): Promise<{ content:
   throw new Error(lastErr || "All Gemini models failed")
 }
 
+// ─── HuggingFace Inference API ──────────────────────────────────
+async function callHuggingFace(prompt: string, maxTokens: number): Promise<{ content: string; tokens: number; model: string }> {
+  const key = process.env.HUGGINGFACE_API_KEY
+  if (!key) throw new Error("HUGGINGFACE_API_KEY غير مُهيّأ")
+  const model = "meta-llama/Meta-Llama-3-8B-Instruct"
+
+  const res = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      inputs: `<|im_start|>system\nأنت مساعد قضائي مصري. تُساعد القاضي في التحليل القانوني. لا تُصدر أحكاماً ولا تخترع استشهادات. أجب بالعربية الفصحى.<|im_end|>\n<|im_start|>user\n${prompt}<|im_end|>\n<|im_start|>assistant\n`,
+      parameters: {
+        max_new_tokens: maxTokens,
+        temperature: 0.3,
+        return_full_text: false,
+      },
+      options: { wait_for_model: true },
+    }),
+  })
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`HuggingFace API ${res.status}: ${err.slice(0, 150)}`)
+  }
+
+  const data = await res.json()
+  // HuggingFace returns array of {generated_text}
+  const content = Array.isArray(data) ? data[0]?.generated_text ?? "" : data?.generated_text ?? ""
+  return { content, tokens: 0, model }
+}
+
 // ─── Main gateway entry point ────────────────────────────────────
 export async function invokeSphinx(req: SphinxRequest): Promise<SphinxResponse> {
   const start = Date.now()
@@ -221,11 +255,13 @@ export async function invokeSphinx(req: SphinxRequest): Promise<SphinxResponse> 
   const caseContext = caseRow ? buildCaseContext(caseRow) : ""
   const fullPrompt = `${req.prompt}\n\n--- سياق القضية ---\n${caseContext}\n--- نهاية السياق ---\n\nمهم: لا تخترع أيّ استشهاد قانوني غير مذكور في السياق أعلاه. إذا لم تكن الإجابة متوفّرة في المصادر، قل صراحةً «لا يمكن التأكد من المصادر المتاحة».`
 
-  // 3. Invoke provider with fallback
+  // 3. Invoke provider with fallback chain: Groq → Gemini → HuggingFace
   const providers: Provider[] = policy.route === "groq"
-    ? ["groq", "gemini"]
+    ? ["groq", "gemini", "huggingface"]
     : policy.route === "gemini"
-    ? ["gemini", "groq"]
+    ? ["gemini", "groq", "huggingface"]
+    : policy.route === "huggingface"
+    ? ["huggingface", "groq", "gemini"]
     : [policy.route]
 
   let lastError = ""
@@ -236,8 +272,10 @@ export async function invokeSphinx(req: SphinxRequest): Promise<SphinxResponse> 
         result = await callGroq(fullPrompt, maxTokens)
       } else if (provider === "gemini") {
         result = await callGemini(fullPrompt, maxTokens)
+      } else if (provider === "huggingface") {
+        result = await callHuggingFace(fullPrompt, maxTokens)
       } else {
-        // HuggingFace / sovereign — not yet implemented for direct inference
+        // sovereign — not yet implemented for direct inference
         throw new Error(`المزوّد ${provider} غير مُفعَّل في النسخة التجريبية`)
       }
 
