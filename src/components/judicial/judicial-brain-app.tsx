@@ -15,7 +15,7 @@ import { SettingsTab } from "./tabs/settings"
 import { LegalResearchCenter } from "./legal-research-center"
 import { AuditLogView } from "./audit-log-view"
 import { CommandPalette } from "./command-palette"
-import { MobileBottomNav } from "./mobile-bottom-nav"
+import { MobileBottomNav, MobileFAB } from "./mobile-bottom-nav"
 
 export type View = "operations" | "settings" | "research" | "audit"
 
@@ -185,11 +185,22 @@ export function JudicialBrainApp() {
 
       {/* Mobile bottom navigation */}
       {isMobile && (
-        <MobileBottomNav
-          view={view}
-          onNavigate={handleNavigate}
-          caseCount={casesQ.data?.length ?? 0}
-        />
+        <>
+          <MobileBottomNav
+            view={view}
+            onNavigate={handleNavigate}
+            caseCount={casesQ.data?.length ?? 0}
+            onSearch={() => setCmdkOpen(true)}
+            onShowCases={() => { setView("operations"); setSelectedCaseId(null) }}
+          />
+          {/* FAB — only on dashboard view */}
+          {!selectedCaseId && view === "operations" && (
+            <MobileFAB
+              onClick={() => { if (casesQ.data?.[0]) { setSelectedCaseId(casesQ.data[0].id); setView("operations") } }}
+              label="قضية جديدة"
+            />
+          )}
+        </>
       )}
     </div>
   )

@@ -112,9 +112,38 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
         </div>
       </div>
 
-      {/* 5 tabs only */}
-      <div className="border-b border-border bg-background/60 px-3">
-        <nav className="flex items-center gap-1 overflow-x-auto scroll-sovereign">
+      {/* 5 tabs — pills on mobile, underline on desktop */}
+      <div className="border-b border-border bg-background/60">
+        {/* Mobile: horizontal scroll pills */}
+        <div className="scroll-snap-x overflow-x-auto scroll-sovereign flex gap-1.5 px-3 py-2 md:hidden">
+          {TABS.map((t) => {
+            const badge = t.badge?.(c)
+            const isActive = tab === t.key
+            const cc = colorClasses(isActive ? "amber" : "slate")
+            return (
+              <button
+                key={t.key}
+                onClick={() => setTab(t.key)}
+                className={cn(
+                  "scroll-snap-item flex items-center gap-1.5 rounded-full px-3.5 py-2 font-kufi text-xs whitespace-nowrap transition-all active:scale-95",
+                  isActive ? cn(cc.bg, cc.text, "font-semibold") : "bg-muted/50 text-muted-foreground"
+                )}
+              >
+                {t.icon}
+                {t.label}
+                {badge !== undefined && badge > 0 && (
+                  <span className={cn(
+                    "font-jetbrains text-[9px] px-1.5 py-0.5 rounded-full",
+                    isActive ? "bg-amber-500/30" : "bg-muted"
+                  )}>{badge}</span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+
+        {/* Desktop: underline tabs */}
+        <nav className="hidden md:flex items-center gap-1 overflow-x-auto scroll-sovereign px-3">
           {TABS.map((t) => {
             const badge = t.badge?.(c)
             return (
