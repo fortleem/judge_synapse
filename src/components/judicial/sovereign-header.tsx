@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Scale, ShieldCheck, Activity, Settings2, Server, Cpu, Database, BookMarked, UserRound, Search } from "lucide-react"
+import { Scale, ShieldCheck, Activity, Settings2, BookMarked, UserRound, Search } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
 import { OPERATING_STATES, findConstant } from "@/lib/judicial/constants"
 import type { DashboardT, HealthT } from "@/lib/judicial/schemas"
@@ -21,29 +21,30 @@ export function SovereignHeader({
   const systemState = serverDown ? "SYSTEM_DEGRADED" : (dashboard?.systemState ?? "NOMINAL")
   const stateMeta = findConstant(OPERATING_STATES, systemState)
 
-  // Fix hydration: render date only after client mount
-  // Node ICU vs browser ICU produce different Arabic date formats
   const [dateStr, setDateStr] = React.useState<string | null>(null)
   React.useEffect(() => {
     setDateStr(new Date().toLocaleDateString("ar-EG", { weekday: "long", year: "numeric", month: "long", day: "numeric" }))
   }, [])
 
+  const navItems: Array<{ key: View; label: string; icon: React.ReactNode }> = [
+    { key: "operations", label: "الرئيسية", icon: <Activity className="h-3.5 w-3.5" /> },
+    { key: "research", label: "السجل القانوني", icon: <BookMarked className="h-3.5 w-3.5" /> },
+    { key: "audit", label: "التدقيق", icon: <ShieldCheck className="h-3.5 w-3.5" /> },
+    { key: "settings", label: "الإعدادات", icon: <Settings2 className="h-3.5 w-3.5" /> },
+  ]
+
   return (
     <header className="sticky top-0 z-30 border-b border-border bg-sidebar text-sidebar-foreground backdrop-blur supports-[backdrop-filter]:bg-sidebar/95">
-      {/* Gold rule */}
       <div className="gold-rule" />
 
-      {/* Welcome banner — Judge Sherif */}
-      <div className="px-4 py-1.5 bg-sidebar-accent/40 border-b border-sidebar-border/40 flex items-center justify-between gap-2">
+      {/* Welcome — minimal */}
+      <div className="px-4 py-1 bg-sidebar-accent/30 border-b border-sidebar-border/30 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500/20 text-amber-300 shrink-0">
-            <UserRound className="h-3.5 w-3.5" />
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/20 text-amber-300 shrink-0">
+            <UserRound className="h-3 w-3" />
           </div>
-          <span className="font-serif-judicial text-sm text-amber-200">
+          <span className="font-serif-judicial text-xs text-amber-200">
             أهلاً وسهلاً بسيادة المستشار / شريف
-          </span>
-          <span className="font-kufi text-[10px] text-sidebar-foreground/50 hidden sm:inline">
-            — منصة الذكاء القضائي المصري في خدمتكم
           </span>
         </div>
         <span className="font-jetbrains text-[9px] text-sidebar-foreground/40 hidden md:inline" suppressHydrationWarning>
@@ -51,106 +52,93 @@ export function SovereignHeader({
         </span>
       </div>
 
-      <div className="flex items-center gap-4 px-4 h-16">
-        {/* Seal + title */}
-        <div className="flex items-center gap-3 min-w-0">
-          <div className="relative flex h-11 w-11 items-center justify-center rounded-md bg-gradient-to-br from-emerald-700 to-emerald-900 seal-frame shrink-0">
-            <Scale className="h-6 w-6 text-amber-400" strokeWidth={1.5} />
-            <span className="absolute -bottom-1 -left-1 h-2 w-2 rounded-full bg-amber-400 sovereign-pulse" />
+      {/* Main bar — clean, minimal */}
+      <div className="flex items-center justify-between px-4 h-14">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-700 to-emerald-900 seal-frame">
+            <Scale className="h-5 w-5 text-amber-400" strokeWidth={1.5} />
           </div>
-          <div className="min-w-0">
-            <h1 className="font-serif-judicial text-lg font-bold leading-tight text-amber-300 truncate">
+          <div className="hidden sm:block">
+            <h1 className="font-serif-judicial text-base font-bold leading-tight text-amber-300">
               المنصة القضائية الذكية
             </h1>
-            <p className="font-jetbrains text-[10px] text-sidebar-foreground/60 tracking-wider truncate">
-              EGYPTIAN JUDICIAL SMART · V2.1 · SOVEREIGN PILOT
+            <p className="font-jetbrains text-[9px] text-sidebar-foreground/50 tracking-wider">
+              EGYPTIAN JUDICIAL SMART · V2.1
             </p>
           </div>
         </div>
 
-        {/* Simple status badge (replaces busy states bar) */}
-        <div className="hidden md:flex items-center gap-2 mx-auto">
-          {serverDown ? (
-            <StatusBadge label="الخادم غير متاح" color="red" glow />
-          ) : loading ? (
-            <StatusBadge label="بدء التشغيل…" color="amber" />
-          ) : (
-            <StatusBadge label={stateMeta?.label ?? "سليم"} color={stateMeta?.color ?? "green"} glow={systemState !== "NOMINAL"} />
-          )}
-        </div>
+        {/* Center nav — clean pills */}
+        <nav className="hidden md:flex items-center gap-1">
+          {navItems.map((item) => {
+            const active = activeView === item.key
+            return (
+              <button
+                key={item.key}
+                onClick={() => onNavigate(item.key)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-lg px-3 py-1.5 font-kufi text-[11px] transition-all active:scale-95",
+                  active
+                    ? "bg-amber-500/15 text-amber-300 font-semibold"
+                    : "text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent/50"
+                )}
+              >
+                {item.icon}
+                {item.label}
+              </button>
+            )
+          })}
+        </nav>
 
-        {/* Right cluster */}
-        <div className="flex items-center gap-2 mr-auto">
-          {/* Command palette trigger */}
+        {/* Right — status + search */}
+        <div className="flex items-center gap-2 shrink-0">
+          {/* Status dot */}
+          <div className="flex items-center gap-1.5">
+            <span className={cn(
+              "h-2 w-2 rounded-full",
+              serverDown ? "bg-red-500 sovereign-pulse"
+                : loading ? "bg-amber-400 sovereign-pulse"
+                : systemState === "NOMINAL" ? "bg-emerald-400"
+                : "bg-amber-400 sovereign-pulse"
+            )} />
+            <span className="hidden lg:inline font-kufi text-[10px] text-sidebar-foreground/50">
+              {serverDown ? "غير متاح" : loading ? "بدء التشغيل" : stateMeta?.label ?? "سليم"}
+            </span>
+          </div>
+
+          {/* Cmd+K */}
           <button
             onClick={() => window.dispatchEvent(new CustomEvent("open-cmdk"))}
-            className="hidden md:flex items-center gap-2 rounded-lg border border-sidebar-border/60 bg-sidebar-accent/30 px-3 py-1.5 font-kufi text-[11px] text-sidebar-foreground/60 hover:text-sidebar-foreground transition-colors group"
-            title="فتح لوحة الأوامر"
+            className="flex items-center gap-1.5 rounded-lg border border-sidebar-border/40 bg-sidebar-accent/20 px-2.5 py-1.5 font-kufi text-[10px] text-sidebar-foreground/50 hover:text-sidebar-foreground transition-colors"
+            title="بحث سريع"
           >
             <Search className="h-3.5 w-3.5" />
-            <span>بحث سريع…</span>
-            <kbd className="font-jetbrains text-[9px] px-1.5 py-0.5 rounded border border-sidebar-border/60 bg-sidebar/50 group-hover:bg-sidebar">⌘K</kbd>
-          </button>
-
-          {/* Corpus version */}
-          <div className="hidden lg:flex items-center gap-2 rounded border border-sidebar-border/60 px-2.5 py-1 font-jetbrains text-[10px] text-sidebar-foreground/70">
-            <Database className="h-3 w-3 text-amber-400" />
-            {health?.corpusVersion ?? "EJB-CORPUS-2026.08-R1"}
-          </div>
-
-          {/* Infrastructure health */}
-          <div className="hidden xl:flex items-center gap-1.5">
-            <IndicatorDot ok={health?.server ?? !serverDown} label="خادم" />
-            <IndicatorDot ok={health?.database ?? false} label="قاعدة بيانات" />
-          </div>
-
-          <button
-            onClick={() => onNavigate("research")}
-            className={cn(
-              "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors",
-              activeView === "research"
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                : "border-sidebar-border/60 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:border-sidebar-border"
-            )}
-          >
-            <BookMarked className="h-3.5 w-3.5" />
-            مركز البحث
-          </button>
-          <button
-            onClick={() => onNavigate("audit")}
-            className={cn(
-              "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors",
-              activeView === "audit"
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                : "border-sidebar-border/60 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:border-sidebar-border"
-            )}
-          >
-            <ShieldCheck className="h-3.5 w-3.5" />
-            سجل التدقيق
-          </button>
-          <button
-            onClick={() => onNavigate("settings")}
-            className={cn(
-              "flex items-center gap-1.5 rounded border px-2.5 py-1.5 font-kufi text-[11px] transition-colors",
-              activeView === "settings"
-                ? "border-amber-500/50 bg-amber-500/10 text-amber-300"
-                : "border-sidebar-border/60 text-sidebar-foreground/70 hover:text-sidebar-foreground hover:border-sidebar-border"
-            )}
-          >
-            <Settings2 className="h-3.5 w-3.5" />
-            الإعدادات
+            <span className="hidden sm:inline">بحث</span>
+            <kbd className="font-jetbrains text-[8px] px-1 py-0.5 rounded border border-sidebar-border/40 bg-sidebar/30">⌘K</kbd>
           </button>
         </div>
       </div>
-    </header>
-  )
-}
 
-function IndicatorDot({ ok, label }: { ok: boolean; label: string }) {
-  return (
-    <div className="flex items-center gap-1" title={label}>
-      <span className={cn("h-1.5 w-1.5 rounded-full", ok ? "bg-emerald-400" : "bg-red-500 sovereign-pulse")} />
-      <span className="font-kufi text-[9px] text-sidebar-foreground/60">{label}</span>
-    </div>
+      {/* Mobile nav pills */}
+      <nav className="md:hidden flex items-center gap-1 px-3 py-1.5 border-t border-sidebar-border/30 overflow-x-auto scroll-sovereign">
+        {navItems.map((item) => {
+          const active = activeView === item.key
+          return (
+            <button
+              key={item.key}
+              onClick={() => onNavigate(item.key)}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 font-kufi text-[10px] whitespace-nowrap transition-all active:scale-95",
+                active ? "bg-amber-500/15 text-amber-300 font-semibold" : "text-sidebar-foreground/50"
+              )}
+            >
+              {item.icon}
+              {item.label}
+            </button>
+          )
+        })}
+      </nav>
+    </header>
   )
 }

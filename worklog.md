@@ -425,3 +425,73 @@ Stage Summary:
   P1-5: Build Verdict Drafting Assistant with 12-section templates + per-paragraph provenance + Judgment Integrity Gate (high effort, core workflow)
 - File: /home/z/my-project/gap-analysis.json (786 lines, valid JSON)
 
+---
+Task ID: 1-research-ui
+Agent: sub-agent (UI research)
+Task: Research best world-class platform UIs (Linear, Notion, Arc, Vercel, Raycast, Stripe, GitHub) and extract actionable design patterns for the Egyptian Judicial Brain V2.1 — a judge-facing legal operations platform (RTL Arabic, sovereign obsidian/emerald/gold palette, shadcn/ui + Tailwind 4).
+
+Work Log:
+- Ran 10 web_search queries via z-ai SDK (Linear, Arc, Vercel, Raycast, Stripe, Notion, GitHub, dashboard bento, legal platform UI, tabs-vs-sidebar UX, mobile dashboard patterns)
+- Inspected existing implementation: globals.css (sovereign tokens + bento-grid + glass-panel + cmdk-overlay + mobile-bottom-nav + alert-glow-*), judicial-brain-app.tsx (Cmd+K + g+key nav + Escape + mobile detection), command-palette.tsx (4 groups: nav/cases/texts/quick-actions), case-sidebar.tsx (filter + search + 80w persistent), mobile-bottom-nav.tsx (5 items + FAB + 56px touch targets)
+- Wrote /home/z/my-project/ui-research.json (validated JSON) with:
+  • 7 platforms profiled (Linear, Arc, Vercel, Raycast, Stripe, Notion, GitHub) — each with keyPattern, url, adoptForJudges, currentlyImplemented
+  • 14 designPrinciples (keyboard-first, reduce-noise/increase-hierarchy, contextual density, bento 6-8 rule, sidebar-is-navigation, tabs-for-fixed-context, block-based editing, single accent color, status as first-class, empty states, loading states, RTL default, 44/56px touch, mobile bottom nav)
+  • navigationPattern — Arc+GitHub+Linear hybrid: sidebar (desktop) + tabs (in-case) + Cmd+K (everywhere) + bottom nav (mobile); documented why-not-just-tabs (13+ nav targets > NN/g threshold of 5)
+  • colorSystem — keep sovereign palette, reserve gold for stateful use only, formalize 5 alert-glow→judicial-state mapping, chart tokens for data viz
+  • mobilePattern — bottom nav (done) + FAB (done) + add swipe-gestures + pull-to-refresh + bottom-sheet case picker + sticky collapsing header
+  • informationDensity — case list Linear-dense, dashboard Vercel-bento, case workspace Stripe-clean, editor Notion-spacious (65ch max)
+  • summary — ~70% of world-class patterns already implemented; 5 gaps to close
+
+Key Findings:
+1. ALREADY IMPLEMENTED (~70% of world-class patterns):
+   - Cmd+K command palette with 4 groups (Linear/Raycast pattern) ✓
+   - Vim-style 'g+h/r/a/s' navigation + Escape-to-back (Linear pattern) ✓
+   - Persistent 80w sidebar with filters + search + new-case (Arc/GitHub pattern) ✓
+   - Bento grid (12-col → 2-col mobile) + glass-panel (Vercel pattern) ✓
+   - Mobile bottom nav with 5 items + FAB + 56px touch targets (industry standard) ✓
+   - Sovereign OKLCH palette (obsidian/emerald/gold/parchment) — distinctive ✓
+   - 5 alert-glow colors (RED/ORANGE/YELLOW/BLUE/GREEN) ✓
+   - Glassmorphism + micro-interactions (shimmer, slide-up-fade, hover-lift, press-feedback) ✓
+   - RTL by default (direction: rtl, logical properties) ✓
+   - Skeleton loaders + custom scrollbar ✓
+
+2. GAPS TO CLOSE (5 actionable upgrades, in priority order):
+   P1: Notion-style block-based editor for judge-notes.tsx + judge-fields.tsx — paragraph / heading / citation / authority-reference / statute-quote / fact-reference blocks; slash menu to insert; every citation links back to Authority record. Makes judgment drafts auditable end-to-end. BIGGEST UX upgrade.
+   P2: Arc-style "Spaces" in CaseSidebar — group cases by court (ابتدائية/استئناف/نقض) or circuit (دائرة 1/2/3); one-click workspace switcher at top of sidebar; Cmd+B to toggle sidebar visibility for focus mode.
+   P3: Stripe-style stakeholder-filter views on operations dashboard — filter by court/circuit/date-range; inline sparklines on every metric row (big number + delta + sparkline = one row, no click needed).
+   P4: Raycast-style AI commands inside command palette — 'تحقق من استشهاد', 'لخّص القضية', 'ابحث عن أحكام مضادة'; recent-actions section at top when query empty; right-side preview pane for highlighted case.
+   P5: Mobile gestures — swipe left/right to switch case tabs; pull-to-refresh on dashboard + case list; bottom-sheet (drawer) case picker on mobile; sticky collapsing case-header inside workspace.
+
+3. REFINEMENTS (low-effort polish):
+   - Reserve sovereign-gold for stateful use only (active/primary/selected); audit and remove decorative uses (gold-rule, gold-text, seal-frame) or repurpose as state-only.
+   - Formalize 5 alert-glow → judicial-state mapping in constants.ts (RED=contradiction, ORANGE=deadline-soon, YELLOW=warning, BLUE=AI-suggestion, GREEN=verified).
+   - Use chart-1..5 tokens consistently across all data viz (operations-dashboard, indicators, metrics).
+   - Operations dashboard: enforce 6-8 bento cards max (Vercel rule); each card answers one question the judge asks in the first 10 seconds.
+   - Empty states: every list with 0 items shows one explanatory sentence + one primary action (no blank panels).
+   - Breadcrumb at top of CaseWorkspace: المحكمة > الدائرة > القضية رقم X (GitHub pattern).
+
+Navigation Pattern Recommendation (Arc + GitHub + Linear hybrid):
+- Desktop: top SovereignHeader (logo, view switcher, health, Cmd+K trigger) + left CaseSidebar (search, filters, case list, new-case) + center main content (OperationsDashboard bento OR CaseWorkspace tabbed) + right contextual inspector (inside case only)
+- Mobile: condensed header + bottom MobileBottomNav (5 items) + FAB (new case) + bottom-sheet case picker
+- Keyboard: Cmd+K (palette) + g+key (views) + number keys 1-9 (in-case tabs) + Escape (back)
+- Why NOT just tabs: 4 top-level views + N cases + 9 in-case tabs = 13+ nav targets → exceeds NN/g threshold (≤5 buckets) → sidebar wins for cross-context, tabs for in-context
+
+Color System Recommendation:
+- KEEP existing sovereign OKLCH palette — distinctive, professional, already tokenized
+- Reserve sovereign-gold for ONE purpose: active/primary/selected state only
+- Formalize 5 alert-glow → judicial-state mapping in constants.ts
+- Use chart-1..5 tokens consistently across all data viz (one color per metric dimension, never random)
+- Auto-switch light/dark based on prefers-color-scheme with manual override in Settings
+
+Files:
+- /home/z/my-project/ui-research.json (validated JSON, ~150 lines) — 7 platforms profiled + 14 design principles + nav pattern + color + mobile + density + summary
+- /home/z/my-project/worklog.md (this entry)
+
+Next Actions (for the main project manager):
+- Read /home/z/my-project/ui-research.json → extract the 5 P1-P5 upgrades into the next sprint
+- P1 (block-based editor) is highest leverage — it unifies judge-notes + judge-fields + draft judgment into one auditable surface and addresses the gap-analysis.json "verdict drafting assistant" critical-missing item
+- P2 (Arc Spaces) is lowest effort / highest impact on navigation clarity
+- P3 (Stripe filters + sparklines) is medium effort, high visibility on dashboard
+- P4 (AI commands in palette) requires AI backend already present — pure UX work
+- P5 (mobile gestures) is incremental polish on an already-strong mobile foundation
+
