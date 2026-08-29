@@ -9,8 +9,13 @@ export const dynamic = "force-dynamic"
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   await ensureSeed()
   const { id } = await ctx.params
-  const parties = await db.party.findMany({ where: { caseId: id }, orderBy: { createdAt: "asc" } })
-  return ok(parties)
+  try {
+    const parties = await db.party.findMany({ where: { caseId: id }, orderBy: { createdAt: "asc" } })
+    return ok(parties)
+  } catch (err) {
+    console.error("[parties GET] error:", err)
+    return fail("PARTY_ERROR", err instanceof Error ? err.message : "خطأ في جلب الأطراف", 500)
+  }
 }
 
 const CreatePartySchema = z.object({
