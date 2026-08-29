@@ -47,6 +47,7 @@ model Case {
   citationVerifications CitationVerification[]
   deadlines       CaseDeadline[]
   documents       StoredDocument[]
+  partyMembers    Party[]
 
   @@index([proceduralStage])
   @@index([riskLevel])
@@ -515,4 +516,31 @@ model StoredDocument {
   @@index([caseId])
   @@index([uploadedBy])
   @@index([extractionStatus])
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// PARTY MANAGEMENT + CROSS-CASE DETECTION
+// Detect if a party (by national ID or company registration) is in another case
+// across different courts — notify the judge
+// ═══════════════════════════════════════════════════════════════════
+// role: plaintiff | defendant | witness | expert | representative | other
+// type: person | company
+model Party {
+  id              String   @id @default(cuid())
+  caseId          String
+  name            String
+  type            String   @default("person") // person | company
+  role            String   @default("plaintiff") // plaintiff | defendant | witness | expert | representative
+  nationalId      String?  // الرقم القومي (14 digits for person)
+  companyReg      String?  // رقم السجل التجاري (for company)
+  address         String?
+  phone           String?
+  email           String?
+  notes           String?
+  createdAt       DateTime @default(now())
+  case            Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId])
+  @@index([nationalId])
+  @@index([companyReg])
 }

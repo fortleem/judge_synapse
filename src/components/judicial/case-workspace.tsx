@@ -307,10 +307,10 @@ function OverviewTab({ caseDetail: c, onNavigateTab }: { caseDetail: CaseDetailT
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// TAB 2: FACTS & EVIDENCE — facts + evidence + documents combined
+// TAB 2: FACTS & EVIDENCE — facts + evidence + documents + parties
 // ═══════════════════════════════════════════════════════════════════
 function FactsEvidenceTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
-  const [sub, setSub] = React.useState<"facts" | "evidence" | "documents">("facts")
+  const [sub, setSub] = React.useState<"facts" | "evidence" | "documents" | "parties">("facts")
 
   return (
     <div className="space-y-4">
@@ -320,6 +320,7 @@ function FactsEvidenceTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
           { key: "facts", label: `الوقائع (${c.facts.length})` },
           { key: "evidence", label: `الأدلة (${c.evidence.length})` },
           { key: "documents", label: `المستندات (${c.documents.length})` },
+          { key: "parties", label: "الأطراف" },
         ] as const).map((t) => (
           <button
             key={t.key}
@@ -336,6 +337,7 @@ function FactsEvidenceTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
       {sub === "facts" && <FactsInline caseDetail={c} />}
       {sub === "evidence" && <EvidenceInline caseDetail={c} />}
       {sub === "documents" && <DocumentsInline caseDetail={c} />}
+      {sub === "parties" && <PartiesInline caseDetail={c} />}
     </div>
   )
 }
@@ -440,6 +442,7 @@ import { JudgeNotesTab } from "./tabs/judge-notes"
 import { IndicatorsTab } from "./tabs/indicators"
 import { TimelineTab } from "./tabs/timeline"
 import { DeadlinesTab } from "./tabs/deadlines"
+import { PartiesTab } from "./tabs/parties"
 
 function FactsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <FactsTab caseDetail={c} /> }
 function EvidenceInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <EvidenceTab caseDetail={c} /> }
@@ -453,3 +456,4 @@ function NotesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <J
 function IndicatorsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <IndicatorsTab caseDetail={c} /> }
 function TimelineInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <TimelineTab caseDetail={c} /> }
 function DeadlinesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <DeadlinesTab caseDetail={c} /> }
+function PartiesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <PartiesTab caseDetail={c} /> }

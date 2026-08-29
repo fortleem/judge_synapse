@@ -315,6 +315,29 @@ export const api = {
     await request(`/cases/${encodeURIComponent(caseId)}/deadlines/${encodeURIComponent(deadlineId)}`, { method: "DELETE" })
   },
 
+  // ─── Parties + Cross-Case Detection ──
+  async listParties(caseId: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/parties`, { cache: "no-store" })
+  },
+
+  async addParty(caseId: string, data: Record<string, unknown>) {
+    return request(`/cases/${encodeURIComponent(caseId)}/parties`, {
+      method: "POST",
+      body: JSON.stringify(data),
+    })
+  },
+
+  async deleteParty(caseId: string, partyId: string) {
+    return request(`/cases/${encodeURIComponent(caseId)}/parties?partyId=${encodeURIComponent(partyId)}`, { method: "DELETE" })
+  },
+
+  async crossCaseCheck(nationalId?: string, companyReg?: string, excludeCaseId?: string) {
+    return request("/parties/cross-check", {
+      method: "POST",
+      body: JSON.stringify({ nationalId: nationalId ?? null, companyReg: companyReg ?? null, excludeCaseId: excludeCaseId ?? null }),
+    })
+  },
+
   // ─── Sphinx AI Assist (External Model Gateway) ──
   async aiAssist(caseId: string, task: string, prompt: string, maxTokens?: number) {
     return request(`/cases/${encodeURIComponent(caseId)}/ai-assist`, {
