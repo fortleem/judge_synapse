@@ -28,7 +28,8 @@ export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: str
 
   // Delete file from disk
   try {
-    const filePath = join(process.cwd(), "public", "uploads", doc.storedName)
+    const uploadDir = process.env.VERCEL ? "/tmp/uploads" : join(process.cwd(), "public", "uploads")
+    const filePath = join(uploadDir, doc.storedName)
     await unlink(filePath)
   } catch {
     // file may not exist — ignore

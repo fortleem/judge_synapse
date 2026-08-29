@@ -34,7 +34,8 @@ export async function POST(req: NextRequest, ctx: { params: Promise<{ id: string
   const buffer = Buffer.from(await file.arrayBuffer())
   const ext = file.name.split(".").pop() ?? "bin"
   const storedName = `${crypto.randomUUID()}.${ext}`
-  const uploadDir = join(process.cwd(), "public", "uploads")
+  // Use /tmp on Vercel (serverless, read-only filesystem), public/uploads in local dev
+  const uploadDir = process.env.VERCEL ? "/tmp/uploads" : join(process.cwd(), "public", "uploads")
   const filePath = join(uploadDir, storedName)
 
   try {
