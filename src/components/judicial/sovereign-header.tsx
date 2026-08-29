@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Scale, ShieldCheck, Activity, Settings2, BookMarked, UserRound, Search } from "lucide-react"
+import { Scale, ShieldCheck, Activity, Settings2, BookMarked, UserRound, Search, MapPin } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
 import { OPERATING_STATES, findConstant } from "@/lib/judicial/constants"
 import type { DashboardT, HealthT } from "@/lib/judicial/schemas"
@@ -28,6 +28,7 @@ export function SovereignHeader({
 
   const navItems: Array<{ key: View; label: string; icon: React.ReactNode }> = [
     { key: "operations", label: "الرئيسية", icon: <Activity className="h-3.5 w-3.5" /> },
+    { key: "courts", label: "دليل المحاكم", icon: <MapPin className="h-3.5 w-3.5" /> },
     { key: "research", label: "السجل القانوني", icon: <BookMarked className="h-3.5 w-3.5" /> },
     { key: "audit", label: "التدقيق", icon: <ShieldCheck className="h-3.5 w-3.5" /> },
     { key: "settings", label: "الإعدادات", icon: <Settings2 className="h-3.5 w-3.5" /> },

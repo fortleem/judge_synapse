@@ -14,10 +14,11 @@ import { FallbackDemoMode } from "./fallback"
 import { SettingsTab } from "./tabs/settings"
 import { LegalResearchCenter } from "./legal-research-center"
 import { AuditLogView } from "./audit-log-view"
+import { CourtDirectory } from "./court-directory-view"
 import { CommandPalette } from "./command-palette"
 import { MobileBottomNav, MobileFAB } from "./mobile-bottom-nav"
 
-export type View = "operations" | "settings" | "research" | "audit"
+export type View = "operations" | "settings" | "research" | "audit" | "courts"
 
 export function JudicialBrainApp() {
   const [selectedCaseId, setSelectedCaseId] = React.useState<string | null>(null)
@@ -166,6 +167,8 @@ export function JudicialBrainApp() {
             <LegalResearchCenter />
           ) : view === "audit" ? (
             <AuditLogView />
+          ) : view === "courts" ? (
+            <CourtDirectory />
           ) : (
             <OperationsDashboard
               dashboard={dashboardQ.data}

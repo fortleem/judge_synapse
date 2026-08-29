@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import {
-  Home, FolderOpen, Database, ShieldCheck, Settings2,
+  Home, FolderOpen, Database, ShieldCheck, Settings2, MapPin,
   Search, Plus, type LucideIcon,
 } from "lucide-react"
 import { cn, colorClasses } from "@/lib/judicial/ui"
@@ -26,7 +26,7 @@ const NAV_ITEMS: NavItem[] = [
   { key: "operations", label: "الرئيسية", icon: Home, color: "amber" },
   { key: "cases", label: "القضايا", icon: FolderOpen, color: "emerald" },
   { key: "search", label: "بحث", icon: Search, color: "violet" },
-  { key: "research", label: "السجل", icon: Database, color: "blue" },
+  { key: "courts", label: "المحاكم", icon: MapPin, color: "blue" },
   { key: "audit", label: "التدقيق", icon: ShieldCheck, color: "rose" },
 ]
 
