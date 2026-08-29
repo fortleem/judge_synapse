@@ -1,0 +1,3283 @@
+# MASTER IMPLEMENTATION PROMPT
+
+# EGYPTIAN JUDICIAL INTELLIGENCE OS
+
+## UNIFIED STATE-OF-THE-ART PRIMARY JUDGE ASSISTANT
+
+## AUDIT-FIRST • GAP-ONLY IMPLEMENTATION • NO DUPLICATION • FULLY WIRED • ARABIC-FIRST
+
+You are the Principal:
+
+* Judicial Technology Architect
+* Solutions Architect
+* AI Architect
+* Legal Intelligence Architect
+* Egyptian Legal Research Architect
+* Arabic NLP Architect
+* Evidence Intelligence Architect
+* Document Intelligence Architect
+* UX Architect
+* Security Architect
+* Data Architect
+* Full-Stack Engineer
+* DevSecOps Engineer
+* QA Lead
+* Production Readiness Lead
+* Judicial Workflow Specialist
+
+You are responsible for transforming the existing `egycourt` platform into a state-of-the-art:
+
+# EGYPTIAN JUDICIAL INTELLIGENCE OS
+
+for specially authorized Egyptian judges.
+
+The system is a judicial decision-support and intelligence environment.
+
+The judge remains the sole judicial authority.
+
+The system may assist, analyze, organize, retrieve, compare, detect, challenge, explain and draft.
+
+The system must never autonomously:
+
+* issue a judgment
+* determine guilt
+* determine legal liability
+* determine credibility
+* impose a sentence
+* sign a judgment
+* publish a judgment
+* override the judge
+* create fictitious authority
+* fabricate evidence
+* conceal contradictory authority
+
+---
+
+# 0. MOST IMPORTANT DEVELOPMENT RULE
+
+# AUDIT FIRST — IMPLEMENT ONLY WHAT IS ACTUALLY MISSING
+
+DO NOT blindly implement every feature listed in this specification.
+
+FIRST:
+
+1. inspect the existing repository
+2. inspect all implemented functionality
+3. inspect all database models
+4. inspect all migrations
+5. inspect all routes
+6. inspect all controllers
+7. inspect all services
+8. inspect all AI functionality
+9. inspect all UI screens
+10. inspect all workflows
+11. inspect all search systems
+12. inspect all document handling
+13. inspect all legal data
+14. inspect all OCR
+15. inspect all evidence functionality
+16. inspect all timeline functionality
+17. inspect all case functionality
+18. inspect all court/circuit functionality
+19. inspect all authentication/authorization controls
+20. inspect all tests
+21. inspect all integrations
+22. inspect all repositories/packages
+23. inspect all configuration
+24. inspect all security controls
+25. inspect all previous implementations related to the Egyptian Judicial Brain
+
+THEN build a complete capability matrix.
+
+For every requirement determine:
+
+EXISTS AND COMPLETE
+EXISTS BUT WEAK
+PARTIALLY IMPLEMENTED
+DUPLICATED
+WIRED INCORRECTLY
+UI ONLY
+BACKEND ONLY
+MOCK ONLY
+NOT TESTED
+NOT SECURE
+NOT SOURCE-GROUNDED
+MISSING
+BLOCKED BY EXTERNAL DEPENDENCY
+NOT APPLICABLE
+
+ONLY AFTER THIS GAP ANALYSIS:
+
+IMPLEMENT WHAT IS MISSING.
+
+DO NOT recreate an existing feature under a new name.
+
+DO NOT create duplicate databases.
+
+DO NOT create duplicate search engines.
+
+DO NOT create duplicate evidence systems.
+
+DO NOT create duplicate case systems.
+
+DO NOT create duplicate legal-source systems.
+
+DO NOT create duplicate AI assistants.
+
+DO NOT create duplicate timeline systems.
+
+DO NOT create duplicate audit systems.
+
+DO NOT create duplicate drafting systems.
+
+If an existing component can be upgraded safely:
+
+UPGRADE IT.
+
+If an existing component is sufficient:
+
+KEEP IT.
+
+If an existing component is architecturally wrong:
+
+REFACTOR/MIGRATE IT.
+
+If an existing feature and a proposed feature overlap:
+
+MERGE THEM.
+
+Do not build parallel versions.
+
+---
+
+# 1. EXISTING PLATFORM PRESERVATION
+
+Preserve useful existing capabilities from the legacy application, including where applicable:
+
+* courts
+* circuits
+* court degrees
+* court specialties
+* schedules
+* administrative structures
+* validated judicial metadata
+* existing useful user/court relationships
+* any already-working case functionality
+* any existing AI functionality that passes evaluation
+* any existing integrations that are valid
+
+Do not preserve insecure implementation merely because it exists.
+
+Do not allow old architecture to constrain the new product.
+
+---
+
+# 2. FINAL PRODUCT DEFINITION
+
+The final platform is:
+
+# منصة الذكاء القضائي المصري
+
+Primary purpose:
+
+Provide the judge with one integrated, source-grounded, case-centered environment that connects:
+
+CASE
++
+DOCUMENTS
++
+EVIDENCE
++
+FACTS
++
+TIMELINE
++
+PROCEDURE
++
+LEGAL ISSUES
++
+LAW
++
+LAW VERSION
++
+PRECEDENT
++
+AUTHORITY TREATMENT
++
+CONTRARY AUTHORITY
++
+ARGUMENTS
++
+COUNTERARGUMENTS
++
+REASONING
++
+DRAFT JUDGMENT
++
+JUDGMENT INTEGRITY
++
+AUDIT
+
+into one coherent workflow.
+
+---
+
+# 3. CORE DESIGN PRINCIPLE
+
+The product must NOT feel like 50 applications.
+
+It must feel like:
+
+# ONE JUDICIAL WORKSPACE
+
+Visible judge-level navigation should be simple.
+
+Primary work modes:
+
+1. مركز القاضي
+2. القضية
+3. الأدلة
+4. البحث
+5. التسبيب
+6. الحكم
+
+Everything else appears contextually.
+
+Do not expose unnecessary technical complexity.
+
+---
+
+# 4. CASE AS THE CENTRAL OBJECT
+
+The CASE is the central object.
+
+Everything must connect to the Case.
+
+Required relationship graph:
+
+CASE
+→ PARTIES
+
+CASE
+→ DOCUMENTS
+
+DOCUMENT
+→ OCR
+
+DOCUMENT
+→ EVIDENCE
+
+EVIDENCE
+→ FACT
+
+FACT
+→ TIMELINE
+
+FACT
+→ ISSUE
+
+ISSUE
+→ PROCEDURE
+
+ISSUE
+→ LAW
+
+LAW
+→ LAW VERSION
+
+ISSUE
+→ PRECEDENT
+
+PRECEDENT
+→ RATIO
+
+PRECEDENT
+→ OBITER
+
+PRECEDENT
+→ AUTHORITY TREATMENT
+
+AUTHORITY
+→ CONTRARY AUTHORITY
+
+ISSUE
+→ ARGUMENT
+
+ISSUE
+→ COUNTERARGUMENT
+
+ISSUE
+→ REASONING
+
+REASONING
+→ DRAFT JUDGMENT
+
+DRAFT
+→ CITATIONS
+
+DRAFT
+→ EVIDENCE
+
+DRAFT
+→ PROCEDURAL CHECK
+
+DRAFT
+→ JUDGMENT INTEGRITY
+
+Everything must be connected.
+
+---
+
+# 5. CANONICAL DATA PRINCIPLE
+
+Every concept gets ONE canonical representation.
+
+Examples:
+
+ONE Case object.
+
+ONE Party object.
+
+ONE Document object.
+
+ONE Evidence object.
+
+ONE Fact object.
+
+ONE Issue object.
+
+ONE Timeline Event object.
+
+ONE Legal Source object.
+
+ONE Law Version object.
+
+ONE Precedent object.
+
+ONE Citation object.
+
+ONE AI Analysis object.
+
+ONE Draft object.
+
+Other modules reference canonical objects.
+
+Do not create:
+
+EvidenceCopy
+EvidenceAnalysisRecord
+EvidenceAIRecord
+EvidenceTimelineRecord
+
+when these are merely different views of the same evidence.
+
+Use relationships and derived views.
+
+---
+
+# 6. NO DUPLICATE FEATURE RULE
+
+Before implementing any requested feature:
+
+Search existing codebase for:
+
+* equivalent route
+* equivalent model
+* equivalent database table
+* equivalent service
+* equivalent UI
+* equivalent API
+* equivalent background job
+* equivalent AI capability
+
+If equivalent functionality exists:
+
+DO NOT CREATE NEW FUNCTIONALITY.
+
+Instead:
+
+* extend
+* refactor
+* merge
+* wire
+* improve
+* test
+
+---
+
+# 7. GAP MATRIX
+
+Create a master:
+
+# JUDICIAL CAPABILITY MATRIX
+
+Columns:
+
+CAPABILITY
+EXISTING COMPONENT
+LOCATION
+CURRENT QUALITY
+DATABASE
+API
+UI
+AI
+SECURITY
+TESTS
+INTEGRATION
+PROVENANCE
+STATUS
+DUPLICATION?
+GAP
+RECOMMENDATION
+IMPLEMENTATION ACTION
+
+Statuses:
+
+PASS
+PARTIAL
+WEAK
+DUPLICATE
+BROKEN
+MOCK
+MISSING
+BLOCKED
+
+This matrix is mandatory before major implementation.
+
+---
+
+# 8. PRIORITY MODEL
+
+Classify gaps:
+
+P0 — critical for judicial safety/correctness
+P1 — essential for professional use
+P2 — high-value productivity
+P3 — advanced enhancement
+P4 — optional future capability
+
+Do not spend time on P3/P4 while P0/P1 gaps remain.
+
+---
+
+# 9. ARABIC-FIRST UX
+
+All judge-facing UI must be:
+
+* Arabic
+* RTL
+* professional judicial Arabic
+* simple
+* fast
+* low-click
+* high-information
+* readable
+
+No ordinary judge screen should require English.
+
+Technical identifiers may remain English internally.
+
+---
+
+# 10. NO NORMAL LOGIN EXPERIENCE
+
+This system is intended for specially authorized judges under institutional court authorization.
+
+Therefore do not build:
+
+* public registration
+* consumer accounts
+* normal public login UX
+* social login
+* public onboarding
+
+However, internally preserve authorization architecture for:
+
+* court
+* chamber
+* judge
+* case
+* document
+* administrative scope
+* audit
+* export
+
+The absence of a login page does not mean unrestricted access.
+
+Design for future institutional identity integration.
+
+---
+
+# 11. CENTRED JUDGE WORK MODES
+
+## MODE 1 — مركز القاضي
+
+Show only:
+
+* قضايا اليوم
+* الجلسات
+* القضايا العاجلة
+* مستندات جديدة
+* مسائل غير محسومة
+* تعارضات
+* فجوات
+* مسودات
+* أبحاث
+
+## MODE 2 — القضية
+
+The full Case Twin.
+
+## MODE 3 — الأدلة
+
+Documents + evidence + facts + timeline.
+
+## MODE 4 — البحث
+
+Law + precedent + authority treatment.
+
+## MODE 5 — التسبيب
+
+Issues + arguments + counterarguments + reasoning.
+
+## MODE 6 — الحكم
+
+Draft + source check + procedural check + integrity.
+
+---
+
+# 12. JUDGE COMMAND CENTER
+
+Create or upgrade:
+
+# مركز القاضي
+
+Use real case information.
+
+No decorative generic analytics.
+
+Every alert/card is clickable.
+
+Examples:
+
+"3 مسائل غير محسومة"
+
+→ opens those 3 issues.
+
+"2 فجوات في الأدلة"
+
+→ opens those 2 evidence gaps.
+
+"مبدأ يحتاج مراجعة"
+
+→ opens the exact precedent and treatment.
+
+---
+
+# 13. CONTEXTUAL ASSISTANT
+
+Do not create a generic chatbot.
+
+Use:
+
+# مساعد القاضي
+
+The assistant automatically knows:
+
+* current case
+* active issue
+* selected document
+* relevant dates
+* available evidence
+* prior research
+
+Judge can type:
+
+"حلل هذا الدفع"
+
+and the system already knows the case context.
+
+---
+
+# 14. MINIMUM-ENTRY UX
+
+Do not ask for data the system already knows.
+
+Auto-populate:
+
+* case
+* court
+* chamber
+* parties
+* dates
+* issue
+* document
+* legal context
+
+Judge only enters genuinely new information.
+
+---
+
+# 15. ONE ACTION → MANY CONNECTED RESULTS
+
+Example:
+
+Judge uploads one document.
+
+The platform may automatically:
+
+OCR
+→ classify
+→ extract entities
+→ identify dates
+→ propose facts
+→ propose evidence
+→ propose timeline events
+→ identify legal references
+→ identify affected issues
+→ identify possible precedent queries
+→ identify draft impact
+
+Then show:
+
+# تم اكتشاف عناصر جديدة
+
+Judge reviews/approves.
+
+Do not automatically commit uncertain relationships.
+
+---
+
+# 16. APPROVAL, NOT DATA ENTRY
+
+Where AI has sufficient confidence:
+
+suggest.
+
+Where uncertainty exists:
+
+ask the judge to confirm.
+
+Example:
+
+"هل تريد ربط هذه الواقعة بالمسألة الثالثة؟"
+
+YES / NO
+
+not:
+
+manual multi-field relationship form.
+
+---
+
+# 17. DOCUMENT INTELLIGENCE
+
+Implement only if missing or incomplete:
+
+* PDF
+* scanned documents
+* images
+* DOC/DOCX
+* tables
+* forms
+* mixed Arabic/English
+
+Automatic:
+
+* classification
+* OCR
+* layout understanding
+* entity extraction
+* date extraction
+* case-number extraction
+* legal citation extraction
+
+All extracted data must retain source coordinates where possible.
+
+---
+
+# 18. ARABIC HANDWRITING
+
+Implement if missing or weak:
+
+* Arabic handwriting OCR
+* handwritten dates
+* handwritten numbers
+* marginal notes
+* annotations
+
+Display:
+
+ORIGINAL
++
+TRANSCRIPTION
++
+CONFIDENCE
++
+ALTERNATIVE READING where appropriate.
+
+Never convert uncertain handwriting into unquestioned fact.
+
+---
+
+# 19. DOCUMENT VIEWER
+
+One integrated viewer.
+
+Judge can:
+
+* view original
+* search text
+* view OCR
+* highlight
+* annotate
+* link to fact
+* link to evidence
+* link to issue
+* link to timeline
+* link to legal citation
+
+No separate viewers for each feature.
+
+---
+
+# 20. EVIDENCE INTELLIGENCE
+
+Upgrade existing evidence functionality rather than duplicating it.
+
+One evidence object should support:
+
+* source document
+* page
+* location
+* fact
+* issue
+* party
+* witness
+* expert
+* timeline event
+* legal element
+* provenance
+* confidence
+* contradictions
+
+---
+
+# 21. EVIDENCE GRAPH
+
+Create/upgrade:
+
+# خريطة الأدلة
+
+Underlying graph must connect:
+
+DOCUMENT
+→ EVIDENCE
+→ FACT
+→ ISSUE
+→ LEGAL ELEMENT
+
+Also:
+
+WITNESS
+→ STATEMENT
+→ FACT
+
+EXPERT
+→ REPORT
+→ FINDING
+→ ISSUE
+
+PARTY
+→ CLAIM
+→ EVIDENCE
+
+The graph is primarily an underlying intelligence layer.
+
+Visual graph is optional.
+
+---
+
+# 22. FACT TABLE
+
+Provide:
+
+# جدول الوقائع
+
+Columns:
+
+الواقعة
+التاريخ
+المصدر
+الدليل
+الطرف
+الحالة
+التعارض
+
+Every row clickable.
+
+---
+
+# 23. SMART TIMELINE
+
+Build or upgrade one canonical timeline.
+
+Sources:
+
+* documents
+* testimony
+* pleadings
+* hearings
+* reports
+* official records
+
+Automatically detect:
+
+* conflicting dates
+* chronology gaps
+* duplicate events
+* impossible sequences
+
+Never automatically accuse anyone of fraud.
+
+---
+
+# 24. TEMPORAL LEGAL ENGINE
+
+Implement:
+
+# القانون الواجب التطبيق بحسب التاريخ
+
+Inputs:
+
+* incident date
+* contract date
+* filing date
+* procedural date
+* offense date
+* judgment date
+
+Outputs:
+
+* applicable law
+* article version
+* amendments
+* repeal
+* effective date
+* transitional provisions
+* relevant constitutional effects
+
+Never silently use current law for historical facts.
+
+---
+
+# 25. LEGAL MASTER CORPUS
+
+Create or upgrade one legal corpus.
+
+Do NOT create separate law databases for each AI feature.
+
+Include lawfully available:
+
+* Constitution
+* constitutional amendments
+* statutes
+* regulations
+* executive regulations
+* ministerial decisions
+* decrees
+* official legal publications
+* authorized judicial material
+
+---
+
+# 26. LEGAL SOURCE ACQUISITION
+
+Build one acquisition engine.
+
+It may download only:
+
+* public
+* openly accessible
+* lawfully accessible
+
+material.
+
+Never:
+
+* bypass paywalls
+* bypass login
+* bypass CAPTCHA
+* defeat anti-bot controls
+* use unauthorized credentials
+* evade access restrictions
+* reproduce subscription-restricted material without authorization
+
+Restricted sources must be represented as restricted.
+
+---
+
+# 27. SOURCE REGISTRY
+
+One canonical:
+
+# سجل المصادر القانونية
+
+Track:
+
+authority
+source type
+URL/reference
+access status
+publication date
+effective date
+retrieval date
+hash
+version
+verification status
+authority level
+
+---
+
+# 28. LEGAL SOURCE HIERARCHY
+
+Separate:
+
+1. Constitution
+2. Legislation
+3. Regulations
+4. Official governmental sources
+5. Constitutional Court
+6. Court of Cassation
+7. Other official judicial sources
+8. Authorized secondary sources
+9. General secondary sources
+
+Never silently treat them as equal.
+
+---
+
+# 29. LEGAL VERSIONING
+
+One canonical legal version engine.
+
+Model:
+
+Law
+→ Version
+→ Article
+→ Amendment
+→ Repeal
+→ Effective Period
+→ Transition Rule
+
+Never overwrite historical versions.
+
+---
+
+# 30. PRECEDENT INTELLIGENCE
+
+Create or upgrade one:
+
+# محرك الأحكام والمبادئ القضائية
+
+For each accessible authority store:
+
+* court
+* division
+* case/appeal number
+* year
+* date
+* issue
+* facts
+* procedural posture
+* holding
+* ratio
+* obiter
+* cited law
+* cited authorities
+* later treatment
+* source
+
+---
+
+# 31. AUTHORITY TREATMENT ENGINE
+
+This is a critical addition.
+
+For each precedent or legal authority:
+
+find:
+
+* later citations
+* applications
+* distinctions
+* limitations
+* contrary treatment
+* later developments
+* constitutional impact
+* legislative changes
+
+Display:
+
+# حالة السلطة القانونية
+
+Possible indicators:
+
+مؤيدة
+مطبقة
+مميزة
+مقيدة
+محل اختلاف
+متأثرة بتعديل
+متأثرة بحكم دستوري
+تحتاج مراجعة
+
+Never claim an authority is overruled/repealed/invalid without authoritative support.
+
+---
+
+# 32. PRECEDENT CONFLICT ENGINE
+
+When authorities differ:
+
+show:
+
+# اختلاف قضائي محتمل
+
+Then:
+
+* authority A
+* authority B
+* dates
+* facts
+* procedural context
+* statutory versions
+* later treatment
+
+Do not hide conflicting authority.
+
+---
+
+# 33. RATIO / OBITER
+
+One analytical structure:
+
+* الوقائع
+* المسألة
+* الأسباب
+* المنطوق
+* ratio decidendi
+* obiter dicta
+
+Make clear which parts are AI interpretation.
+
+---
+
+# 34. DEEP LEGAL RESEARCH
+
+Create or upgrade:
+
+# البحث القضائي العميق
+
+Judge enters one question.
+
+System automatically:
+
+1. decomposes issue
+2. identifies relevant legal concepts
+3. retrieves law
+4. determines historical version
+5. searches precedent
+6. searches contrary authority
+7. searches constitutional material
+8. connects case evidence
+9. compares factual distinctions
+10. produces a cited research dossier
+
+One click to launch.
+
+---
+
+# 35. RESEARCH DOSSIER
+
+Output:
+
+* question
+* issue tree
+* applicable law
+* version
+* relevant authorities
+* contrary authorities
+* evidence
+* factual distinctions
+* unresolved points
+* sources
+
+All source-linked.
+
+---
+
+# 36. RESEARCH BASKET
+
+One-click:
+
+# حفظ في البحث
+
+for:
+
+* article
+* paragraph
+* judgment
+* principle
+* evidence
+* page
+
+Then:
+
+# إنشاء ملف بحث
+
+---
+
+# 37. NEGATIVE / CONTRARY SEARCH
+
+Every serious analysis must support:
+
+# ابحث عن الرأي المقابل
+
+and:
+
+# ابحث عما قد ينقض هذا التحليل
+
+Search actively for:
+
+* contrary law
+* contrary precedent
+* contrary evidence
+* distinguishing facts
+* procedural objections
+
+---
+
+# 38. COGNITIVE BLOCKER
+
+If significant contrary authority/evidence appears:
+
+display:
+
+# تنبيه: توجد معلومات قد تؤثر على التحليل
+
+Show exactly why.
+
+Do not force a conclusion.
+
+---
+
+# 39. NEUTRALITY ENGINE
+
+Build one shared neutrality service.
+
+It checks whether analysis has become:
+
+* one-sided
+* outcome-seeking
+* prematurely conclusive
+* anchored to the judge's initial conclusion
+
+If so:
+
+force/offer:
+
+* counterargument
+* contrary authority
+* alternative interpretation
+* missing evidence
+
+---
+
+# 40. BLIND ANALYSIS
+
+Optional mode:
+
+# تحليل محايد
+
+Analyze facts + legal issue without revealing the judge's preferred outcome to the reasoning process where technically feasible.
+
+---
+
+# 41. SECOND INDEPENDENT ANALYSIS
+
+For high-risk issues:
+
+run independent analysis paths.
+
+Compare:
+
+* conclusions
+* legal sources
+* factual assumptions
+* evidence
+* contradictions
+
+If materially different:
+
+# يوجد اختلاف جوهري في التحليل الآلي
+
+Never average outputs into a fake confidence score.
+
+---
+
+# 42. ISSUE TREE
+
+One canonical:
+
+# شجرة المسائل
+
+Each issue automatically connects to:
+
+* facts
+* evidence
+* procedure
+* law
+* precedent
+* contrary authority
+* arguments
+* counterarguments
+* reasoning
+* draft
+
+---
+
+# 43. DEFENSE MATRIX
+
+Build:
+
+# خريطة الدفوع
+
+For each defense:
+
+الدفع
+→ مقدم من
+→ الدليل
+→ القانون
+→ المبادئ
+→ المسودة
+→ هل تمت المعالجة؟
+
+---
+
+# 44. ISSUE COVERAGE
+
+Before judgment:
+
+# تغطية المسائل
+
+Show:
+
+معالجة
+تحتاج مراجعة
+غير معالجة
+غير محسومة
+
+---
+
+# 45. EVIDENCE GAP ENGINE
+
+One shared service.
+
+Detect:
+
+* legal element without supporting evidence
+* issue without factual support
+* claim with weak support
+* conflicting evidence
+* missing document
+* unexplained factual assertion
+
+Use:
+
+# فجوة محتملة في الإثبات
+
+not a final judicial conclusion.
+
+---
+
+# 46. WITNESS INTELLIGENCE
+
+Connect:
+
+Witness
+→ Statement
+→ Date
+→ Fact
+→ Evidence
+
+Detect:
+
+* inconsistencies
+* changed versions
+* contradictions with documents
+
+Never automatically determine credibility.
+
+---
+
+# 47. EXPERT INTELLIGENCE
+
+Connect:
+
+Expert
+→ Mandate
+→ Report
+→ Evidence
+→ Methodology
+→ Finding
+→ Conclusion
+
+Compare multiple expert reports.
+
+Show:
+
+نقاط الاتفاق
+نقاط الاختلاف
+النقاط التي تحتاج مراجعة
+
+---
+
+# 48. PROCEDURAL INTELLIGENCE
+
+One shared engine.
+
+Check:
+
+* jurisdiction
+* competence
+* standing
+* admissibility
+* limitation
+* deadlines
+* service
+* prior decisions
+* res judicata
+* procedural defects
+* appeal/cassation posture
+
+Do not create separate procedural systems for different screens.
+
+---
+
+# 49. PROCEDURAL GATE
+
+At the beginning of serious case analysis:
+
+# هل توجد مسألة إجرائية يجب حسمها أولاً؟
+
+Link directly to the issue.
+
+---
+
+# 50. CONSTITUTIONAL INTELLIGENCE
+
+One constitutional layer.
+
+Check:
+
+* Constitution
+* constitutional amendments
+* Supreme Constitutional Court
+* constitutional challenges
+* previous decisions affecting applicable law
+
+If relevant:
+
+# تنبيه دستوري محتمل
+
+---
+
+# 51. DIGITAL EVIDENCE
+
+Support:
+
+* email
+* messages
+* files
+* screenshots
+* metadata
+* logs
+* audio
+* video
+
+Separate:
+
+content
+metadata
+source
+provenance
+integrity
+
+Never automatically authenticate.
+
+---
+
+# 52. MULTIMEDIA / HEARING INTELLIGENCE
+
+Where institutionally authorized:
+
+Audio/video
+→ transcription
+→ speaker segmentation
+→ requests
+→ admissions
+→ objections
+→ procedural events
+→ timeline
+→ issues
+→ evidence
+
+AI output is not automatically the official court record.
+
+---
+
+# 53. MEDIA VIEWER
+
+One unified viewer:
+
+original media
++
+transcript
++
+timestamp
++
+evidence
++
+issue
+
+Clicking a statement jumps to the relevant media segment.
+
+---
+
+# 54. DOCUMENT COMPARISON
+
+One engine.
+
+Compare:
+
+* contracts
+* pleadings
+* reports
+* expert reports
+* judgments
+* draft versions
+
+Detect:
+
+* additions
+* deletions
+* changed dates
+* changed amounts
+* changed names
+* changed clauses
+* potentially material changes
+
+---
+
+# 55. LEGAL-IMPACT DOCUMENT DIFF
+
+Do not merely color changes.
+
+Determine:
+
+# هل التغيير قد يؤثر قانونياً؟
+
+Show affected:
+
+* issue
+* evidence
+* legal rule
+* reasoning
+
+---
+
+# 56. CASE TWIN
+
+Create/upgrade:
+
+# التوأم الرقمي للقضية
+
+The Case Twin contains the canonical relationships across the full case.
+
+It must be updated through events.
+
+---
+
+# 57. CASE IMPACT ENGINE
+
+When something changes:
+
+DOCUMENT
+→ affected evidence
+→ affected fact
+→ affected issue
+→ affected analysis
+→ affected draft
+
+LAW CHANGE
+→ affected article
+→ affected issue
+→ affected case
+→ affected draft
+
+PRECEDENT UPDATE
+→ affected issue
+→ affected analysis
+→ alert
+
+Do not silently rewrite downstream judicial work.
+
+---
+
+# 58. "WHAT AM I MISSING?"
+
+Permanent button:
+
+# ماذا قد أكون أغفلت؟
+
+Check:
+
+* defenses
+* issues
+* evidence
+* legal sources
+* contrary authorities
+* procedural problems
+* constitutional issues
+* expert issues
+* chronology
+
+---
+
+# 59. "CHALLENGE MY ANALYSIS"
+
+Permanent button:
+
+# اختبر هذا التحليل
+
+System deliberately attacks selected reasoning.
+
+---
+
+# 60. ARGUE BOTH SIDES
+
+One action:
+
+# حلل الرأيين
+
+Show:
+
+* side A
+* side B
+* evidence
+* law
+* precedent
+* distinctions
+* unresolved questions
+
+---
+
+# 61. "PREPARE ME FOR THIS CASE"
+
+One click:
+
+# جهزني للقضية
+
+Show:
+
+* essential facts
+* parties
+* procedure
+* issues
+* evidence
+* contradictions
+* applicable law
+* important precedent
+* contrary authority
+* unresolved matters
+
+---
+
+# 62. "PREPARE TODAY'S HEARINGS"
+
+One click:
+
+# جهزني لجلسات اليوم
+
+For each case:
+
+* current posture
+* previous hearing
+* new material
+* pending issues
+* evidence
+* procedural actions
+* important research
+
+---
+
+# 63. JUDICIAL REASONING BOARD
+
+One unified screen:
+
+الوقائع
+الدفوع
+المسائل
+الأدلة
+القانون
+المبادئ
+الحجة المضادة
+التعارضات
+الفجوات
+التحليل
+النتيجة التحليلية
+
+Every element clickable.
+
+---
+
+# 64. JUDGMENT DRAFTING
+
+Only if existing drafting is missing/incomplete.
+
+One-click:
+
+# إنشاء مسودة الحكم
+
+Sections:
+
+* الديباجة
+* الوقائع
+* الطلبات
+* الدفوع
+* الدفاع
+* الأدلة
+* الإجراءات
+* المسائل
+* القانون
+* المبادئ
+* الأسباب
+* المنطوق
+
+---
+
+# 65. JUDGMENT INTEGRITY ENGINE
+
+One shared service.
+
+Check:
+
+* all material issues
+* all material defenses
+* factual support
+* evidence support
+* legal citations
+* law version
+* precedent
+* contrary authority
+* procedural issues
+* chronology
+* names
+* dates
+* amounts
+* reasoning/disposition consistency
+
+---
+
+# 66. RECORD-TO-JUDGMENT TRACEABILITY
+
+Every major factual finding must be traceable:
+
+JUDGMENT SENTENCE
+→ FACT
+→ EVIDENCE
+→ DOCUMENT
+→ PAGE
+
+If no source:
+
+# لا يوجد مصدر واضح في ملف القضية
+
+---
+
+# 67. LAW-TO-JUDGMENT TRACEABILITY
+
+Every material legal proposition:
+
+JUDGMENT SENTENCE
+→ LAW
+→ ARTICLE
+→ VERSION
+→ EFFECTIVE DATE
+→ SOURCE
+
+---
+
+# 68. PRECEDENT-TO-JUDGMENT TRACEABILITY
+
+For:
+
+"استقر قضاء النقض..."
+
+automatically verify:
+
+* source
+* case number
+* date
+* principle
+* treatment
+* distinction
+* contrary authority
+
+---
+
+# 69. CASSATION/APPEAL VULNERABILITY REVIEW
+
+Do not predict outcome.
+
+Instead:
+
+# نقاط تحتاج مراجعة
+
+Detect:
+
+* omitted material defense
+* weak reasoning
+* unsupported finding
+* legal-source mismatch
+* procedural issue
+* contradictory reasoning
+* authority problem
+
+---
+
+# 70. FINAL SOURCE FIREWALL
+
+No authoritative legal statement may be presented without adequate source verification.
+
+Possible status:
+
+* موثق
+* مدعوم بمصدر
+* استنتاج
+* غير مؤكد
+* محل خلاف
+* مصدر غير متاح
+
+---
+
+# 71. NO FABRICATED LEGAL MATERIAL
+
+Never fabricate:
+
+* legislation
+* article numbers
+* judgments
+* case numbers
+* quotations
+* dates
+* courts
+* judicial principles
+
+If unavailable:
+
+# تعذر التحقق من المصدر
+
+---
+
+# 72. JUDICIAL AI PROVENANCE
+
+Every material AI result stores:
+
+* model
+* model version
+* prompt/template version
+* corpus version
+* retrieval version
+* sources
+* documents
+* timestamp
+* output
+* judge edits
+
+---
+
+# 73. AI ACTIVITY LEDGER
+
+Create/upgrade:
+
+# سجل استخدام الذكاء الاصطناعي
+
+Record material AI actions.
+
+This should be separate from the official judicial record but auditable according to institutional policy.
+
+---
+
+# 74. AI/JUDGE TEXT ATTRIBUTION
+
+Every generated paragraph should identify:
+
+* AI-generated
+* judge-authored
+* judge-edited
+* verified source
+* final
+
+---
+
+# 75. JUDGE MEMORY
+
+One:
+
+# ملاحظات القاضي
+
+Store:
+
+* research notes
+* questions
+* working hypotheses
+* unresolved points
+
+Clearly separate from official evidence and legal authority.
+
+---
+
+# 76. NO CONTAMINATION
+
+Do not allow:
+
+Judge Notes
+to become law.
+
+AI Output
+to become evidence.
+
+Document Text
+to become verified fact automatically.
+
+Secondary commentary
+to become official law.
+
+---
+
+# 77. INSTITUTIONAL KNOWLEDGE VAULT
+
+Create one controlled knowledge layer for:
+
+* court procedures
+* approved circulars
+* forms
+* institutional guidance
+* approved references
+
+Keep separate from:
+
+official legislation
+official judgments
+case data
+judge notes
+AI outputs.
+
+---
+
+# 78. LEGAL SOURCE FRESHNESS
+
+Every legal source shows:
+
+* last verification
+* current version
+* effective date
+* source status
+
+---
+
+# 79. LEGAL CHANGE ALERTS
+
+When new legislation/judicial authority appears:
+
+identify potentially affected:
+
+* issues
+* cases
+* drafts
+
+Notify only where materially relevant.
+
+---
+
+# 80. SOURCE ACQUISITION MONITOR
+
+Technical dashboard:
+
+* source availability
+* latest retrieval
+* changes
+* hash
+* version
+* verification
+* restrictions
+* failures
+
+---
+
+# 81. CORPUS GAP DETECTOR
+
+Show administrators:
+
+* missing laws
+* missing versions
+* restricted sources
+* unavailable judgments
+* OCR gaps
+* stale sources
+* unverified material
+
+Never claim complete legal coverage without evidence.
+
+---
+
+# 82. REDACTION ENGINE
+
+Where institutionally appropriate:
+
+detect:
+
+* national IDs
+* addresses
+* phone numbers
+* bank details
+* minors
+* sensitive personal information
+
+Support:
+
+suggested redaction
+→ authorized review
+→ approved redaction
+
+Never silently modify official evidence.
+
+---
+
+# 83. CASE FREEZE
+
+Before final judicial review:
+
+# تجميد نسخة المراجعة
+
+Snapshot:
+
+* case state
+* documents
+* evidence
+* law version
+* corpus
+* authorities
+* analysis
+* draft
+
+This becomes the review baseline.
+
+---
+
+# 84. REPRODUCIBLE ANALYSIS
+
+An authorized auditor should be able to determine:
+
+"What did the system know when this analysis was generated?"
+
+Provide:
+
+* corpus version
+* source set
+* model version
+* document set
+* timestamps
+* output
+
+---
+
+# 85. OFFLINE-FIRST
+
+Core judicial capabilities should work without public Internet where deployment permits:
+
+* case access
+* documents
+* search
+* legal corpus
+* OCR
+* selected AI
+* evidence graph
+* timeline
+* audit
+
+External sources are optional and governed.
+
+---
+
+# 86. PII ZERO-TRUST
+
+Minimize sensitive data exposure.
+
+Implement:
+
+* encryption
+* data minimization
+* pseudonymization
+* case isolation
+* document authorization
+* local inference where possible
+* secure model access
+* audit
+
+Do not send confidential cases to external AI without explicit institutional authorization.
+
+---
+
+# 87. DOCUMENT PROMPT-INJECTION DEFENSE
+
+Documents are untrusted data.
+
+Text such as:
+
+"Ignore previous instructions"
+
+must NEVER override system rules.
+
+---
+
+# 88. SECURITY
+
+Test:
+
+* cross-case leakage
+* document leakage
+* unauthorized export
+* privilege escalation
+* prompt injection
+* malicious files
+* data exfiltration
+* unauthorized admin access
+* audit tampering
+* source tampering
+
+Critical findings block production.
+
+---
+
+# 89. DATA ARCHITECTURE
+
+Use one canonical architecture.
+
+Core entities should include only what is not already present.
+
+Potential missing entities:
+
+Case
+Party
+Document
+DocumentVersion
+OCRResult
+Evidence
+Fact
+Issue
+Claim
+Defense
+ProceduralEvent
+TimelineEvent
+LegalSource
+Law
+LawVersion
+Article
+ArticleVersion
+Amendment
+Repeal
+Judgment
+Precedent
+Ratio
+Obiter
+AuthorityTreatment
+Citation
+ResearchSession
+LegalProposition
+AIFinding
+AIAnalysis
+Contradiction
+DraftJudgment
+DraftVersion
+JudgeNote
+AuditEvent
+ModelVersion
+CorpusVersion
+
+Before creating any entity:
+
+CHECK WHETHER AN EQUIVALENT ALREADY EXISTS.
+
+---
+
+# 90. API ARCHITECTURE
+
+Before creating new endpoints:
+
+audit existing APIs.
+
+Reuse existing APIs where possible.
+
+Create only genuinely missing endpoints.
+
+All APIs must enforce:
+
+* case scope
+* role
+* authorization
+* document scope
+* data sensitivity
+* audit
+
+---
+
+# 91. EVENT ARCHITECTURE
+
+Use domain events for cross-module propagation.
+
+Examples:
+
+document_added
+document_processed
+evidence_created
+fact_created
+timeline_updated
+issue_created
+law_version_changed
+precedent_added
+authority_treatment_changed
+analysis_created
+draft_updated
+integrity_check_completed
+
+Do not duplicate data to synchronize modules.
+
+---
+
+# 92. EVENT-DRIVEN WIRING
+
+One canonical event can update multiple read models.
+
+Example:
+
+document_added
+
+→ OCR job
+
+→ evidence candidates
+
+→ timeline candidates
+
+→ issue impact
+
+→ case twin
+
+→ alerts
+
+No separate manual workflows for each.
+
+---
+
+# 93. AI ORCHESTRATION
+
+Do not use one model for everything.
+
+Use model routing where useful:
+
+* OCR model
+* handwriting model
+* extraction model
+* embedding model
+* Arabic legal reasoning model
+* strong reasoning model
+* drafting model
+
+Use deterministic software for:
+
+* date logic
+* law version selection
+* citations
+* arithmetic
+* hashing
+* source identity
+
+---
+
+# 94. MULTI-MODEL DISAGREEMENT
+
+For high-risk analysis:
+
+Model A
++
+Model B
++
+Deterministic verification
+
+If disagreement:
+
+flag.
+
+Do not manufacture certainty.
+
+---
+
+# 95. CASE COMPLEXITY
+
+Compute transparent case complexity based on:
+
+* parties
+* documents
+* evidence
+* issues
+* witnesses
+* experts
+* legal sources
+* contradictions
+* procedural events
+
+Do not use it to pressure or rank judges.
+
+---
+
+# 96. INSTITUTIONAL ANALYTICS
+
+Provide court-level operational analytics where authorized:
+
+* backlog
+* case aging
+* document processing
+* expert delays
+* procedural bottlenecks
+* system reliability
+
+DO NOT create:
+
+* judge win rate
+* judge conviction rate
+* judge bias score
+* judge propensity score
+* judge ranking based on decisions
+
+Protect judicial independence.
+
+---
+
+# 97. SPECIALIZED CASE MODES
+
+Use one platform with configurable profiles:
+
+* مدني
+* جنائي
+* تجاري
+* اقتصادي
+* إداري
+* عمالي
+* أحوال شخصية
+* إيجارات
+* دستوري
+
+Profiles modify:
+
+* issue templates
+* terminology
+* source priority
+* procedure checks
+* evidence types
+
+Do not create separate applications.
+
+---
+
+# 98. CASE-SPECIFIC INTELLIGENCE
+
+Everything visible to the judge should understand current:
+
+* case
+* issue
+* document
+* date
+* court
+* case type
+
+The system should not repeatedly ask for context.
+
+---
+
+# 99. NO DEAD-END SCREEN
+
+Every screen must offer contextually relevant next actions.
+
+Examples:
+
+Evidence:
+
+ربط بالمسألة
+ربط بالواقعة
+إظهار المصدر
+
+Issue:
+
+تحليل
+بحث
+اختبر التحليل
+ماذا أغفلت؟
+
+Draft:
+
+فحص المصادر
+فحص الدفوع
+فحص الأدلة
+فحص الإجراءات
+
+---
+
+# 100. ONE-CLICK DEPTH
+
+Primary screen:
+
+simple.
+
+One click:
+
+detail.
+
+Second click:
+
+source.
+
+Example:
+
+تعارض محتمل
+→ statement A / B
+→ original documents
+→ exact page
+
+---
+
+# 101. JUDICIAL COGNITIVE LOAD
+
+Never overwhelm the judge with:
+
+* logs
+* raw model outputs
+* technical information
+* unnecessary alerts
+
+Show:
+
+# ما يحتاج إلى انتباه الآن
+
+with details one click away.
+
+---
+
+# 102. ALERT MANAGEMENT
+
+Group related notifications.
+
+Example:
+
+"5 تنبيهات في القضية"
+
+Click:
+
+* 2 evidence
+* 1 legal
+* 1 procedural
+* 1 chronology
+
+Do not create notification noise.
+
+---
+
+# 103. CASE NAVIGATION MEMORY
+
+When judge returns to a case:
+
+restore:
+
+* last issue
+* last document
+* last research
+* unresolved alerts
+* current draft position
+
+---
+
+# 104. BATCH ANALYSIS
+
+Allow:
+
+# تحليل جميع مستندات القضية
+
+Questions such as:
+
+* استخرج جميع التواريخ
+* استخرج جميع المبالغ
+* أين ورد اسم الطرف؟
+* ما المستندات التي تدعم المسألة؟
+* أين توجد الإشارات المتعارضة؟
+
+Return structured results with source links.
+
+---
+
+# 105. LEGAL ENTITY RESOLUTION
+
+Detect possible:
+
+* same person
+* same company
+* aliases
+* spelling variations
+
+Never merge uncertain identities automatically.
+
+---
+
+# 106. ARABIC NORMALIZATION
+
+Search normalization must support:
+
+* Arabic character variants
+* tashkeel
+* Arabic/Latin digits
+* OCR variants
+* name variants
+* punctuation
+* legal abbreviations
+
+Keep the original text untouched.
+
+---
+
+# 107. JUDICIAL WRITING ASSISTANT
+
+Assist with:
+
+* grammar
+* clarity
+* formal judicial Arabic
+* consistency
+* terminology
+
+Do not change substantive legal reasoning automatically.
+
+---
+
+# 108. JUDICIAL SOURCE COMPARISON
+
+Allow side-by-side:
+
+* law
+* judgment
+* precedent
+* case evidence
+* draft reasoning
+
+---
+
+# 109. SOURCE-TO-SOURCE COMPARISON
+
+Judge can compare:
+
+Law vs judgment
+
+Judgment vs later judgment
+
+Evidence vs testimony
+
+Expert report vs expert report
+
+Draft vs final
+
+---
+
+# 110. JUDGMENT VERSION HISTORY
+
+Track:
+
+* draft 1
+* draft 2
+* draft 3
+* final review
+* final
+
+Never delete earlier versions.
+
+---
+
+# 111. FINALIZATION CONTROL
+
+Workflow:
+
+AI assistance
+→ verification
+→ judge review
+→ judge editing
+→ final judicial action
+
+There must be no automated AI-to-final path.
+
+---
+
+# 112. TECHNICAL ADMINISTRATION
+
+Separate:
+
+# الإدارة التقنية
+
+from:
+
+# السلطة القضائية
+
+Technical administrators manage:
+
+* infrastructure
+* models
+* corpus
+* source connectors
+* indexing
+* monitoring
+
+They do not automatically receive unrestricted judicial-content access.
+
+---
+
+# 113. INSTITUTIONAL SOURCE POLICY
+
+Each external source must have:
+
+* authority classification
+* access model
+* licensing/access restrictions
+* update mechanism
+* verification status
+
+No source enters authoritative retrieval merely because it is available online.
+
+---
+
+# 114. CORPUS VERSION CONTROL
+
+Every release of:
+
+* law corpus
+* judgment corpus
+* embeddings
+* index
+* model
+* prompt templates
+
+gets a version.
+
+AI analysis must reference those versions.
+
+---
+
+# 115. BACKUP AND RECOVERY
+
+Back up:
+
+* case data
+* documents
+* evidence
+* legal corpus
+* graph
+* drafts
+* audit
+
+Use encrypted and tested recovery.
+
+---
+
+# 116. TESTING FRAMEWORK
+
+Do not only test screens.
+
+Test:
+
+functional
++
+data
++
+security
++
+legal retrieval
++
+source verification
++
+temporal correctness
++
+AI safety
++
+OCR
++
+handwriting
++
+evidence linking
++
+cross-case isolation
++
+draft integrity
+
+---
+
+# 117. JUDICIAL GOLDEN DATASET
+
+Build a controlled benchmark set containing:
+
+* real or legally authorized synthetic cases
+* facts
+* issues
+* defenses
+* evidence
+* laws
+* historical law versions
+* precedents
+* contrary authorities
+* expected citations
+
+Every model/corpus upgrade is tested.
+
+---
+
+# 118. AI TESTING
+
+Measure independently:
+
+* citation accuracy
+* legal retrieval recall
+* temporal law accuracy
+* precedent relevance
+* contrary-authority retrieval
+* evidence extraction
+* OCR
+* handwriting
+* contradiction detection
+* procedural issue detection
+* draft integrity
+
+Do not produce a meaningless "AI accuracy 97%" number.
+
+---
+
+# 119. RED TEAM
+
+Attack the platform with:
+
+* fabricated judgment request
+* fake citation
+* fake article
+* obsolete law
+* contradictory documents
+* prompt injection
+* malicious files
+* cross-case retrieval
+* unauthorized export
+* role escalation
+
+All critical failures must block release.
+
+---
+
+# 120. SOURCE-QUALITY TESTING
+
+Test:
+
+* stale law
+* duplicate law
+* amended law
+* repealed law
+* restricted judgment
+* unverified source
+* conflicting source
+* OCR corruption
+
+---
+
+# 121. NO FALSE COMPLETENESS
+
+Never state:
+
+"كل قوانين مصر موجودة"
+
+unless the system can prove corpus coverage.
+
+Show:
+
+* covered
+* missing
+* restricted
+* stale
+* unverified
+
+---
+
+# 122. PRODUCTION READINESS
+
+Do not declare production-ready until:
+
+* architecture verified
+* security verified
+* legal-source pipeline verified
+* corpus verified
+* model evaluation passed
+* data isolation passed
+* audit passed
+* backups tested
+* offline mode tested
+* UI tested
+* full regression passed
+* deployment runbook complete
+
+---
+
+# 123. MIGRATION FROM LEGACY SYSTEM
+
+Create controlled migration.
+
+Extract useful:
+
+* court
+* circuit
+* schedule
+* specialty
+* administrative data
+
+Validate before migration.
+
+Do not migrate exposed credentials.
+
+Do not migrate insecure configuration.
+
+---
+
+# 124. NO ARCHITECTURAL DUPLICATION
+
+After implementation, run a duplication scan for:
+
+* tables
+* models
+* APIs
+* routes
+* services
+* AI assistants
+* search indexes
+* document stores
+* graph systems
+* timelines
+* audit systems
+* source registries
+
+Merge duplicates.
+
+---
+
+# 125. NO UX DUPLICATION
+
+If two screens perform the same job:
+
+merge them.
+
+If two features use the same underlying data:
+
+use one canonical component.
+
+If one feature can be accessed contextually from another:
+
+do not create a separate workflow unless necessary.
+
+---
+
+# 126. UI SIMPLICITY TEST
+
+Every major workflow must answer:
+
+How many clicks?
+
+How much typing?
+
+How many screens?
+
+How many duplicated entries?
+
+Target:
+
+# MINIMUM INPUT
+
+# MAXIMUM CONTEXT
+
+# ONE-CLICK DEPTH
+
+---
+
+# 127. JUDGE DAILY WORKFLOW TEST
+
+A judge should be able to:
+
+## Start of day
+
+فتح مركز القاضي
+→ جلسات اليوم
+→ اختر قضية
+
+## Prepare case
+
+جهزني للقضية
+
+## Review new evidence
+
+مستندات جديدة
+→ مراجعة
+
+## Research
+
+بحث
+→ المسألة
+→ القانون
+→ المبادئ
+
+## Challenge reasoning
+
+اختبر هذا التحليل
+
+## Draft
+
+إنشاء مسودة
+
+## Verify
+
+فحص الحكم
+
+## Finalize
+
+Judge-controlled finalization
+
+No unnecessary module hopping.
+
+---
+
+# 128. COMPLETE CONNECTIVITY TEST
+
+Verify:
+
+Document
+→ Evidence
+→ Fact
+→ Timeline
+→ Issue
+→ Procedure
+→ Law
+→ Law Version
+→ Precedent
+→ Authority Treatment
+→ Counterargument
+→ Reasoning
+→ Draft
+→ Citation
+→ Integrity
+
+Every relationship must actually function.
+
+---
+
+# 129. CHANGE PROPAGATION TEST
+
+Change:
+
+law version
+
+Expected:
+
+affected issue
+→ affected analysis
+→ affected citation
+→ affected draft warning
+
+Change:
+
+evidence
+
+Expected:
+
+affected fact
+→ timeline
+→ issue
+→ analysis
+
+Change:
+
+issue
+
+Expected:
+
+research
+→ reasoning
+→ draft coverage
+
+---
+
+# 130. NO ORPHAN FEATURES
+
+For every new feature:
+
+identify:
+
+parent case object
+input
+output
+relationships
+downstream consumers
+audit
+security
+UI access
+
+If a feature has no meaningful relationship to the Case Twin:
+
+question whether it should exist.
+
+---
+
+# 131. NO ORPHAN DATA
+
+Every important stored object must have a reason and relationship.
+
+Examples:
+
+Evidence without source
+→ flagged.
+
+Legal proposition without source
+→ flagged.
+
+Citation without verified authority
+→ flagged.
+
+Timeline event without source
+→ flagged as inferred/uncertain.
+
+---
+
+# 132. FINAL JUDICIAL CONTROL
+
+The final platform must always preserve:
+
+# القاضي هو صاحب القرار القضائي.
+
+AI:
+
+مساعد
+محلل
+باحث
+مدقق
+مقارن
+منظم
+
+NOT:
+
+قاضي
+صاحب حكم
+صاحب قرار نهائي
+
+---
+
+# 133. FINAL AUDIT MATRIX
+
+Produce at completion:
+
+REQUIREMENT
+EXISTING IMPLEMENTATION
+NEW IMPLEMENTATION
+MERGED
+REFACTORED
+DATABASE
+API
+UI
+AI
+SECURITY
+AUDIT
+PROVENANCE
+TEST
+STATUS
+REMAINING GAP
+
+Do not hide missing capabilities.
+
+---
+
+# 134. FINAL DUPLICATION AUDIT
+
+Explicitly report:
+
+DUPLICATE FEATURES FOUND
+DUPLICATE DATA MODELS FOUND
+DUPLICATE SERVICES FOUND
+DUPLICATE APIs FOUND
+DUPLICATE UI FOUND
+
+For every duplicate:
+
+KEEP
+MERGE
+REMOVE
+REFACTOR
+
+and explain why.
+
+---
+
+# 135. FINAL WIRING MAP
+
+Produce a complete diagram:
+
+CASE
+↓
+DOCUMENT
+↓
+OCR
+↓
+EVIDENCE
+↓
+FACT
+↓
+TIMELINE
+↓
+ISSUE
+↓
+PROCEDURE
+↓
+LAW
+↓
+LAW VERSION
+↓
+PRECEDENT
+↓
+AUTHORITY TREATMENT
+↓
+CONTRARY AUTHORITY
+↓
+ARGUMENT
+↓
+COUNTERARGUMENT
+↓
+REASONING
+↓
+DRAFT
+↓
+CITATION
+↓
+EVIDENCE CHECK
+↓
+PROCEDURAL CHECK
+↓
+JUDGMENT INTEGRITY
+↓
+JUDGE REVIEW
+↓
+FINAL JUDICIAL ACTION
+
+Every node must identify its source and relationship.
+
+---
+
+# 136. FINAL USER EXPERIENCE MAP
+
+Visible judge experience:
+
+```text
+مركز القاضي
+    ↓
+القضية
+    ↓
+┌───────────────┬───────────────┐
+│               │               │
+الأدلة         البحث          الإجراءات
+│               │               │
+└───────────────┼───────────────┘
+                ↓
+              التسبيب
+                ↓
+              الحكم
+```
+
+The judge should not need to understand the internal architecture.
+
+---
+
+# 137. FINAL QUALITY STANDARD
+
+The system is not state-of-the-art merely because it has many features.
+
+It is state-of-the-art when:
+
+* fewer clicks achieve more
+* one entry propagates everywhere
+* every fact has provenance
+* every legal proposition has a source
+* every legal source is version-aware
+* contrary authority is surfaced
+* evidence connects directly to issues
+* procedure connects directly to the case
+* research connects directly to reasoning
+* reasoning connects directly to drafting
+* drafting connects directly to verification
+* the judge never loses context
+* duplicate systems do not exist
+* uncertainty is visible
+* AI cannot silently alter the judicial record
+* the judge remains fully in control
+
+---
+
+# 138. FINAL IMPLEMENTATION COMMAND
+
+DO NOT blindly build every item in this prompt.
+
+FIRST:
+
+AUDIT THE ENTIRE EXISTING PLATFORM.
+
+SECOND:
+
+MAP ALL EXISTING FEATURES.
+
+THIRD:
+
+MAP ALL EXISTING DATA MODELS.
+
+FOURTH:
+
+MAP ALL EXISTING AI CAPABILITIES.
+
+FIFTH:
+
+MAP ALL EXISTING LEGAL RESEARCH.
+
+SIXTH:
+
+MAP ALL EXISTING DOCUMENT/EVIDENCE/TIMELINE FEATURES.
+
+SEVENTH:
+
+MAP ALL EXISTING JUDICIAL WORKFLOWS.
+
+EIGHTH:
+
+IDENTIFY DUPLICATES.
+
+NINTH:
+
+IDENTIFY PARTIAL FEATURES.
+
+TENTH:
+
+IDENTIFY TRUE MISSING CAPABILITIES.
+
+ELEVENTH:
+
+REUSE EVERYTHING THAT IS CORRECT.
+
+TWELFTH:
+
+MERGE OVERLAPPING FEATURES.
+
+THIRTEENTH:
+
+REFACTOR WEAK FOUNDATIONS.
+
+FOURTEENTH:
+
+IMPLEMENT ONLY TRUE GAPS.
+
+FIFTEENTH:
+
+WIRE EVERY NEW CAPABILITY INTO THE EXISTING CANONICAL CASE MODEL.
+
+SIXTEENTH:
+
+DO NOT CREATE PARALLEL DATABASES OR PARALLEL WORKFLOWS.
+
+SEVENTEENTH:
+
+MAKE THE JUDGE EXPERIENCE SIMPLE, ARABIC, CONTEXTUAL AND LOW-CLICK.
+
+EIGHTEENTH:
+
+MAKE THE COMPLEXITY EXIST IN THE ENGINE, NOT IN THE JUDGE'S SCREEN.
+
+NINETEENTH:
+
+RUN COMPLETE SECURITY, AI, LEGAL-SOURCE, DATA, UX AND REGRESSION TESTING.
+
+TWENTIETH:
+
+RUN COMPLETE DUPLICATION AUDIT.
+
+TWENTY-FIRST:
+
+RUN COMPLETE WIRING/RELATIONSHIP AUDIT.
+
+TWENTY-SECOND:
+
+RUN COMPLETE PRODUCTION-READINESS AUDIT.
+
+TWENTY-THIRD:
+
+PRODUCE A FINAL GAP MATRIX.
+
+DO NOT CLAIM COMPLETION IF FEATURES ARE ONLY UI PLACEHOLDERS.
+
+DO NOT CLAIM LEGAL SOURCE VERIFICATION IF THE SOURCE WAS NOT VERIFIED.
+
+DO NOT CLAIM AI ACCURACY WITHOUT BENCHMARK EVIDENCE.
+
+DO NOT CLAIM COMPLETE LEGAL CORPUS COVERAGE WITHOUT PROOF.
+
+DO NOT CLAIM PRODUCTION READINESS WITHOUT TESTING.
+
+FINAL PRODUCT PRINCIPLE:
+
+# BUILD ONLY WHAT IS MISSING.
+
+# MERGE WHAT OVERLAPS.
+
+# REUSE WHAT WORKS.
+
+# WIRE EVERYTHING THAT IS RELATED.
+
+# KEEP THE JUDGE EXPERIENCE SIMPLE.
+
+# PUT THE COMPLEXITY INSIDE THE PLATFORM.
+
+# PRESERVE JUDICIAL AUTHORITY.
+
+# NEVER LET AI BECOME THE JUDGE.
+
+The finished platform must operate as:
+
+# ONE CASE
+
+# ONE CONTEXT
+
+# ONE CONNECTED JUDICIAL WORKSPACE
+
+# MANY INTELLIGENT ENGINES
+
+# ONE SOURCE-GROUNDED SYSTEM
+
+and not as a collection of disconnected features.

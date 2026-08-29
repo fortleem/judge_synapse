@@ -173,7 +173,7 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
 
       {/* Tab content */}
       <div className="flex-1 overflow-y-auto scroll-sovereign p-4 min-h-0">
-        {tab === "overview" && <OverviewTab caseDetail={c} />}
+        {tab === "overview" && <OverviewTab caseDetail={c} onNavigateTab={setTab} />}
         {tab === "facts-evidence" && <FactsEvidenceTab caseDetail={c} />}
         {tab === "law" && <LawTab caseDetail={c} />}
         {tab === "analysis" && <AnalysisTab caseDetail={c} />}
@@ -184,13 +184,14 @@ export function CaseWorkspace({ caseDetail, loading }: { caseDetail: CaseDetailT
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// TAB 1: OVERVIEW — case summary + timeline + deadlines in one view
+// TAB 1: OVERVIEW — case summary + timeline + deadlines + issues + verdict
 // ═══════════════════════════════════════════════════════════════════
-function OverviewTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+function OverviewTab({ caseDetail: c, onNavigateTab }: { caseDetail: CaseDetailT; onNavigateTab: (t: TabKey) => void }) {
   const provenFacts = c.facts.filter((f) => ["judicially_established", "undisputed", "admitted", "supported"].includes(f.status)).length
   const disputedFacts = c.facts.filter((f) => ["denied", "contradicted"].includes(f.status)).length
   const supportingCount = c.authorities.filter((a) => a.stance === "supporting").length
   const contraryCount = c.authorities.filter((a) => a.stance === "contrary" || a.stance === "opposing").length
+  const openIssues = c.issues.filter((i) => i.status !== "resolved").length
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -224,57 +225,82 @@ function OverviewTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
           ملخّص سريع
         </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-          <MiniStat label="وقائع مثبتة" value={provenFacts} color="emerald" />
-          <MiniStat label="وقائع متنازع" value={disputedFacts} color="orange" />
-          <MiniStat label="سلطات مؤيِّدة" value={supportingCount} color="emerald" />
-          <MiniStat label="سلطات مخالفة" value={contraryCount} color="red" />
-          <MiniStat label="أدلة" value={c.evidence.length} color="blue" />
-          <MiniStat label="مستندات" value={c.documents.length} color="violet" />
-          <MiniStat label="مواعيد" value={c.deadlines.length} color="amber" />
-          <MiniStat label="ملاحظات" value={c.notes.length} color="slate" />
+          <button onClick={() => onNavigateTab("facts-evidence")} className="text-right">
+            <MiniStat label="وقائع مثبتة" value={provenFacts} color="emerald" />
+          </button>
+          <button onClick={() => onNavigateTab("facts-evidence")} className="text-right">
+            <MiniStat label="وقائع متنازع" value={disputedFacts} color="orange" />
+          </button>
+          <button onClick={() => onNavigateTab("law")} className="text-right">
+            <MiniStat label="سلطات مؤيِّدة" value={supportingCount} color="emerald" />
+          </button>
+          <button onClick={() => onNavigateTab("law")} className="text-right">
+            <MiniStat label="سلطات مخالفة" value={contraryCount} color="red" />
+          </button>
+          <button onClick={() => onNavigateTab("facts-evidence")} className="text-right">
+            <MiniStat label="أدلة" value={c.evidence.length} color="blue" />
+          </button>
+          <button onClick={() => onNavigateTab("facts-evidence")} className="text-right">
+            <MiniStat label="مستندات" value={c.documents.length} color="violet" />
+          </button>
+          <button onClick={() => onNavigateTab("analysis")} className="text-right">
+            <MiniStat label="مواعيد" value={c.deadlines.length} color="amber" />
+          </button>
+          <button onClick={() => onNavigateTab("decision")} className="text-right">
+            <MiniStat label="ملاحظات" value={c.notes.length} color="slate" />
+          </button>
         </div>
+        {openIssues > 0 && (
+          <button
+            onClick={() => onNavigateTab("analysis")}
+            className="mt-3 w-full flex items-center gap-2 rounded-lg border border-amber-500/40 bg-amber-500/5 p-2.5 text-right hover:bg-amber-500/10 transition-colors"
+          >
+            <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+            <span className="font-kufi text-xs">{openIssues} مسائل قانونية مفتوحة — اضغط للمراجعة</span>
+          </button>
+        )}
       </div>
 
-      {/* Timeline */}
+      {/* Timeline — full inline */}
       <div className="glass-panel rounded-xl p-4 lg:col-span-2">
-        <h3 className="font-kufi text-sm font-semibold mb-3">الخط الزمني</h3>
-        {c.timeline.length === 0 ? (
-          <p className="font-kufi text-xs text-muted-foreground text-center py-4">لا توجد أحداث</p>
-        ) : (
-          <div className="space-y-2">
-            {c.timeline.slice(-5).reverse().map((ev) => (
-              <div key={ev.id} className="flex items-start gap-2 rounded-md border border-border/40 bg-background/30 px-2 py-1.5">
-                <span className="font-jetbrains text-[10px] text-amber-500 shrink-0 mt-0.5">{formatDate(ev.eventDate)}</span>
-                <div className="min-w-0">
-                  <p className="font-kufi text-xs leading-snug">{ev.title}</p>
-                  {ev.legalRegime && <span className="font-kufi text-[9px] text-muted-foreground">{ev.legalRegime}</span>}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-kufi text-sm font-semibold">الخط الزمني</h3>
+          <button onClick={() => onNavigateTab("facts-evidence")} className="font-kufi text-[10px] text-amber-600 hover:underline">
+            عرض الوقائع والأدلة ←
+          </button>
+        </div>
+        <TimelineInline caseDetail={c} />
       </div>
 
-      {/* Deadlines */}
+      {/* Deadlines — full inline */}
       <div className="glass-panel rounded-xl p-4 lg:col-span-1">
-        <h3 className="font-kufi text-sm font-semibold mb-3">المواعيد القانونية</h3>
-        {c.deadlines.length === 0 ? (
-          <p className="font-kufi text-xs text-muted-foreground text-center py-4">لا توجد مواعيد محسوبة</p>
-        ) : (
-          <div className="space-y-2">
-            {c.deadlines.map((d) => (
-              <div key={d.id} className={cn(
-                "rounded-md border p-2",
-                d.status === "expired" ? "border-red-500/40 bg-red-500/5"
-                  : d.status === "approaching" ? "border-amber-500/40 bg-amber-500/5"
-                  : "border-border/40 bg-background/30"
-              )}>
-                <p className="font-kufi text-xs font-medium leading-snug">{d.title}</p>
-                <p className="font-jetbrains text-[10px] text-amber-500 mt-0.5">{formatDate(d.computedDeadline)}</p>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="font-kufi text-sm font-semibold">المواعيد القانونية</h3>
+          <button onClick={() => onNavigateTab("analysis")} className="font-kufi text-[10px] text-amber-600 hover:underline">
+            حساب جديد ←
+          </button>
+        </div>
+        <DeadlinesInline caseDetail={c} />
+      </div>
+
+      {/* Verdict Draft Quick Access */}
+      <div className="glass-panel rounded-xl p-4 lg:col-span-3">
+        <div className="flex items-center justify-between">
+          <h3 className="font-kufi text-sm font-semibold flex items-center gap-1.5">
+            <Gavel className="h-4 w-4 text-amber-500" />
+            مسودة الحكم
+          </h3>
+          <button
+            onClick={() => onNavigateTab("decision")}
+            className="flex items-center gap-1.5 rounded-lg border border-amber-500/40 bg-amber-500/10 px-3 py-1.5 font-kufi text-xs text-amber-700 hover:bg-amber-500/20 transition-colors"
+          >
+            <Gavel className="h-3.5 w-3.5" />
+            صياغة الحكم
+          </button>
+        </div>
+        <p className="font-kufi text-xs text-muted-foreground mt-2 leading-relaxed">
+          ابدأ صياغة الحكم من القوالب الجاهزة — الوقائع، الدفوع، الأدلة، النصوص، المبادئ، التطبيق، التسبيب، المنطوق. مرتبط بكل بيانات القضية.
+        </p>
       </div>
     </div>
   )
@@ -412,6 +438,8 @@ import { AdversaryReviewTab } from "./tabs/adversary-review"
 import { JudgeFieldsTab } from "./tabs/judge-fields"
 import { JudgeNotesTab } from "./tabs/judge-notes"
 import { IndicatorsTab } from "./tabs/indicators"
+import { TimelineTab } from "./tabs/timeline"
+import { DeadlinesTab } from "./tabs/deadlines"
 
 function FactsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <FactsTab caseDetail={c} /> }
 function EvidenceInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <EvidenceTab caseDetail={c} /> }
@@ -423,3 +451,5 @@ function AdversaryInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { retur
 function JudgeInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <JudgeFieldsTab caseDetail={c} /> }
 function NotesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <JudgeNotesTab caseDetail={c} /> }
 function IndicatorsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <IndicatorsTab caseDetail={c} /> }
+function TimelineInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <TimelineTab caseDetail={c} /> }
+function DeadlinesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <DeadlinesTab caseDetail={c} /> }

@@ -380,3 +380,48 @@ Stage Summary:
 - File saved: /home/z/my-project/downloaded-laws.json (128 KB, valid JSON, structured per template with lawName, lawNameEn, lawNumber, lawYear, officialJournalRef, domain, articles[], sourceUrl)
 - Adds to existing 39-text corpus without significant duplication (only 2 of 99 articles overlap with existing seed)
 - Each article includes real Arabic text (exactText field) + citation slug + brief notes for judicial reference
+
+---
+Task ID: audit-requirements
+Agent: audit-and-requirements-extraction subagent
+Task: Read both uploaded spec files (3,493 + 3,284 lines) and audit the existing codebase to produce a comprehensive GAP ANALYSIS identifying what EXISTS_COMPLETE / EXISTS_WEAK / PARTIAL / MISSING / UI_ONLY / BACKEND_ONLY.
+
+Work Log:
+- Read both uploaded spec files in chunks (Pasted Content_1787964804270.txt = Master Product spec with 136 numbered sections; Pasted Content_1787964864019.txt = Audit-First Implementation spec with 138 numbered sections) — both define Egyptian Judicial Intelligence OS for authorized judges, ASSISTIVE/SOURCE-GROUNDED/CASE-CENTRIC/ARABIC-FIRST
+- Read /home/z/my-project/worklog.md (382 lines) to understand history: 8 prior task batches covering foundation, frontend, research, research-center, deadlines/sphinx, document upload, law-check/contradictions, UI rebuild 2026, downloaded laws
+- Read /home/z/my-project/prisma/schema.prisma (518 lines) — 19 Prisma models: Case, Fact, Evidence, TimelineEvent, LegalIssue, Authority, JudgeField, AIAnalysis, Indicator, Setting, LegalSource, LegalText, CorpusSnapshot, ImportJob, Conflict, AdversaryReview, JudgeNote, AuditLog, CitationVerification, CaseDeadline, StoredDocument
+- Audited /home/z/my-project/src/lib/judicial/ (19 modules, 5,331 lines): schemas.ts (601), seed.ts (373), seed-expanded-corpus.ts (530), seed-corpus.ts (361), seed-downloaded-laws.ts (126), constants.ts (329), serialize.ts (401), api-client.ts (382), api-helpers.ts (52), audit.ts (46), adversary.ts (276), contradiction-alerts.ts (333), court-types.ts (187), deadlines.ts (200), extraction.ts (297), law-check.ts (263), orchestrator.ts (144), sphinx-gateway.ts (361), ui.ts (69)
+- Audited /home/z/my-project/src/app/api/ — 46 API routes including cases CRUD, sub-entity CRUD (facts/evidence/timeline/issues/authorities/judge-fields/notes), conflicts, adversary-review, contrary-search, verify-citation, ai-assist, law-check, contradictions, strength, deadlines, documents (+ extract + promote), corpus (sources/texts/snapshots/import-queue/search), dashboard, health, audit, knowledge, court-types, settings
+- Audited /home/z/my-project/src/components/judicial/ (12 components) + tabs/ (15 tab components, 2,965 lines total)
+- Cross-referenced every spec feature against the codebase implementation
+- Discovered 3 BLOCKING regressions:
+  1) POST /api/cases/[id]/documents/upload route.ts is MISSING — documents.tsx + api-client.uploadDocument() reference this endpoint but it returns 404. Only GET/DELETE exist in /api/cases/[id]/documents/route.ts. Worklog Task 19-25 claims this was built but the file is missing.
+  2) IssuesTab (tabs/issues.tsx, 189 lines, hierarchical issue tree) is exported but NEVER imported/rendered — the 5-tab CaseWorkspace (overview/facts-evidence/law/analysis/decision) has no entry point for it. Issue data is unreachable from the UI.
+  3) TimelineTab (tabs/timeline.tsx, 172 lines, full vertical timeline with 12 event types) is exported but only inline widget shown in OverviewTab (last 5 events). Full timeline view + add/delete form unreachable.
+  4) DeadlinesTab (tabs/deadlines.tsx, 205 lines, 12 legal deadlines compute form) is exported but never rendered — 'decision' tab only has judge/notes/indicators sub-toggle. Deadline compute form unreachable from UI.
+- Wrote /home/z/my-project/gap-analysis.json (validated JSON, 786 lines) with:
+  • existing_complete: 37 features (case CRUD, fact/evidence/timeline/issues/authorities engines, adversary review, citation verification, audit log with source separation, legal research center, Sphinx gateway, contradiction alerts, law check, legal strength meter, deadlines engine, court types, expanded corpus, command palette, mobile nav, sovereign design)
+  • existing_weak: 23 features (upload route missing, OCR pipeline not wired, Arabic handwriting OCR not implemented, document classification weak, Issue page shallow, procedural intelligence absent, authority treatment absent, persistent notifications missing, judge-facing activity feed missing, case twin absent, smart timeline absent, dashboard KPIs missing, contextual assistant absent, judgment integrity gate partial, ratio/obiter absent, verdict drafting basic, judgment version control absent, source freshness tracker absent, source acquisition monitor basic, corpus gap detector absent, + 3 unreachable tabs)
+  • missing_critical: 15 features (case parties management, witness management, expert report management, document upload backend, document viewer w/ annotation, hearing calendar, smart notifications inbox, procedural checklist engine, case brief auto-gen, verdict drafting assistant w/ templates, judgment integrity gate, appeal vulnerability preview, export PDF/Word, case twin event propagation, semantic/cross-case search)
+  • missing_medium: 51 features (research session, bookmark/favorites, document comparison, case comparison, linked cases, sentencing calculator, tagging, voice dictation, case templates per court type, what-am-i-missing button, challenge-my-analysis button, argue-both-sides, blind analysis, second opinion, procedural-first gate, issue coverage report, defense matrix, judicial reasoning board, hearing co-pilot, post-hearing update, customizable dashboard widgets, case navigation memory, batch analysis, legal entity resolution, evidence-to-law engine, evidence gap engine, constitutional intelligence, citation firewall enforcement, clickable citations, legal proposition engine, cognitive blocker, neutrality engine, digital evidence separation, media viewer, PII redaction, case freeze, reproducible analysis, judicial writing assistant, contextual action bar, NL shortcuts, case graph view, research dossier, case health diagnostics, final source firewall, no-fabricated-completeness report, AI activity ledger, institutional knowledge vault, legal change alerts, specialized case modes, source-to-source comparison, Arabic normalization)
+  • missing_low: 10 features (golden judicial dataset, red-team framework, backup/DR automation, PWA/offline mode, accessibility, institutional analytics, Egyptian government integration, multi-model disagreement, case complexity score, source acquisition pipeline)
+  • ui_only: 1 (document upload)
+  • backend_only: 0
+- Validated JSON: parses cleanly with Python json.load
+- Appended findings to worklog.md
+
+Stage Summary:
+- Audited codebase: 19 Prisma models, 19 lib modules, 46 API routes, 12 judicial components, 15 tab components (3 orphaned/unreachable)
+- 37 features exist and complete — strong doctrinal foundation (AI/Judge separation, signed corpus, adversary review, citation firewall, audit source separation)
+- 23 features exist but weak (3 BLOCKING regressions: missing upload route + orphaned issues/timeline/deadlines tabs)
+- 15 critical missing features (case parties, witness, expert, document viewer, hearing calendar, smart notifications, procedural checklist, case brief, verdict drafting templates, judgment integrity gate, appeal vulnerability preview, export, case twin, semantic search)
+- 51 medium missing features (research session, comparison tools, tagging, voice dictation, templates, what-am-i-missing, challenge analysis, argue both sides, blind analysis, etc.)
+- 10 low priority (golden dataset, red-team, backup automation, PWA, accessibility, institutional analytics, gov integration)
+- Top 5 priority recommendations:
+  P0-1: Restore POST /api/cases/[id]/documents/upload (single file, low effort, BLOCKING)
+  P0-2: Re-wire Issues + Timeline + Deadlines tabs into CaseWorkspace (low effort, BLOCKING — components already built)
+  P0-3: Build Case Parties Management with Witness/Expert sub-entities (high effort, foundational)
+  P0-4: Build Hearing Calendar with 'جهزني لجلسات اليوم' (medium effort, daily-work)
+  P1-5: Build Verdict Drafting Assistant with 12-section templates + per-paragraph provenance + Judgment Integrity Gate (high effort, core workflow)
+- File: /home/z/my-project/gap-analysis.json (786 lines, valid JSON)
+
