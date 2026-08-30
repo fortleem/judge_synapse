@@ -378,6 +378,23 @@ export const CaseDeadlineSchema = z.object({
 })
 export type CaseDeadlineT = z.infer<typeof CaseDeadlineSchema>
 
+// ─── Party (case parties with national ID / company reg) ─────────
+export const PartySchema = z.object({
+  id: z.string(),
+  caseId: z.string(),
+  name: z.string(),
+  type: z.string(),
+  role: z.string(),
+  nationalId: z.string().nullable(),
+  companyReg: z.string().nullable(),
+  address: z.string().nullable(),
+  phone: z.string().nullable(),
+  email: z.string().nullable(),
+  notes: z.string().nullable(),
+  createdAt: z.string(),
+})
+export type PartyT = z.infer<typeof PartySchema>
+
 // ─── Stored Documents (uploads + AI extraction) ──────────────────
 export const StoredDocumentSchema = z.object({
   id: z.string(),
@@ -444,6 +461,7 @@ export const CaseDetailSchema = CaseSchema.extend({
   citationVerifications: z.array(CitationVerificationSchema),
   deadlines: z.array(CaseDeadlineSchema),
   documents: z.array(StoredDocumentSchema),
+  partyMembers: z.array(PartySchema),
 })
 export type CaseDetailT = z.infer<typeof CaseDetailSchema>
 

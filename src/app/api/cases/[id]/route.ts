@@ -25,6 +25,7 @@ const CASE_INCLUDE = {
   citationVerifications: { orderBy: { verifiedAt: "desc" as const } },
   deadlines: { orderBy: { computedDeadline: "asc" as const } },
   documents: { orderBy: { createdAt: "desc" as const } },
+  partyMembers: { orderBy: { createdAt: "asc" as const } },
 }
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {

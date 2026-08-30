@@ -369,5 +369,33 @@ export async function seedJudicialCorpus() {
     })
   }
 
+  // ── Seed parties with cross-case detection demo ──
+  // Same company (شركة الصحراء) in two different cases → cross-case detection
+  if (await db.party.count() === 0) {
+    await db.party.create({ data: { caseId: case1.id, name: "شركة النيل للتجارة الخارجية", type: "company", role: "plaintiff", companyReg: "100001", address: "القاهرة - مدينة نصر" } })
+    await db.party.create({ data: { caseId: case1.id, name: "شركة الصحراء للتصنيع", type: "company", role: "defendant", companyReg: "200002", address: "القاهرة - المعادي" } })
+
+    await db.party.create({ data: { caseId: case2.id, name: "أحمد عبد الرحمن محمد", type: "person", role: "plaintiff", nationalId: "29001011234567", address: "الجيزة - الهرم" } })
+    await db.party.create({ data: { caseId: case2.id, name: "شركة الدلتا للصناعات", type: "company", role: "defendant", companyReg: "300003", address: "الجيزة - 6 أكتوبر" } })
+
+    await db.party.create({ data: { caseId: case3.id, name: "محمود فؤاد سيد", type: "person", role: "plaintiff", nationalId: "28503159876543", address: "القاهرة - حلوان" } })
+    // Same company as case1 — cross-case detection!
+    await db.party.create({ data: { caseId: case3.id, name: "شركة الصحراء للتصنيع", type: "company", role: "defendant", companyReg: "200002", address: "القاهرة - المعادي" } })
+
+    await db.party.create({ data: { caseId: case4.id, name: "ورثة المرحوم سالم", type: "person", role: "plaintiff", nationalId: "27909151111111" } })
+    await db.party.create({ data: { caseId: case4.id, name: "شركة العقارية الكبرى", type: "company", role: "defendant", companyReg: "400004" } })
+
+    console.log("[seed] 8 parties seeded (companyReg 200002 in 2 cases for cross-case demo)")
+  }
+
+  // ── Seed audit log entries ──
+  if (await db.auditLog.count() === 0) {
+    await db.auditLog.create({ data: { caseId: case1.id, actor: "system", action: "case_created", entityType: "case", entityId: case1.id, source: "system_action", details: "إنشاء قضية تجارية" } })
+    await db.auditLog.create({ data: { caseId: case1.id, actor: "system", action: "fact_added", entityType: "fact", source: "system_proposal", details: "إضافة وقائع القضية" } })
+    await db.auditLog.create({ data: { caseId: case1.id, actor: "judge", action: "judge_review_started", entityType: "case", entityId: case1.id, source: "judge_decision", details: "بدأ القاضي مراجعة القضية" } })
+    await db.auditLog.create({ data: { caseId: case3.id, actor: "system", action: "cross_case_detected", entityType: "party", source: "system_proposal", details: "اكتشاف قضية متقاطعة: شركة الصحراء للتصنيع (سجل 200002) في قضيتين" } })
+    console.log("[seed] 4 audit log entries seeded")
+  }
+
   return { seeded: true, count: 4 }
 }
