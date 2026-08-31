@@ -52,3 +52,5 @@ research-temp/
 downloaded-laws.json
 tsconfig.tsbuildinfo
 *.json
+.next/
+backups/

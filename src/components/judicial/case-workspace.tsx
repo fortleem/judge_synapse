@@ -343,12 +343,31 @@ function FactsEvidenceTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// TAB 3: LAW — authorities + law check + citation verification
+// TAB 3: LAW — authorities + issues + law check + citation verification
 // ═══════════════════════════════════════════════════════════════════
 function LawTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
+  const [sub, setSub] = React.useState<"authorities" | "issues">("authorities")
+
   return (
     <div className="space-y-4">
-      <LawInline caseDetail={c} />
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card/40 p-1 w-fit">
+        {([
+          { key: "authorities", label: `السلطات القانونية (${c.authorities.length})` },
+          { key: "issues", label: `المسائل القانونية (${c.issues.length})` },
+        ] as const).map((t) => (
+          <button
+            key={t.key}
+            onClick={() => setSub(t.key)}
+            className={cn(
+              "px-3 py-1.5 rounded-md font-kufi text-xs transition-colors",
+              sub === t.key ? "bg-amber-500/15 text-amber-700 font-semibold" : "text-muted-foreground hover:text-foreground"
+            )}
+          >{t.label}</button>
+        ))}
+      </div>
+
+      {sub === "authorities" && <LawInline caseDetail={c} />}
+      {sub === "issues" && <IssuesInline caseDetail={c} />}
     </div>
   )
 }
@@ -386,15 +405,16 @@ function AnalysisTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// TAB 5: DECISION — judge fields + notes + indicators
+// TAB 5: DECISION — verdict draft + judge fields + notes + indicators
 // ═══════════════════════════════════════════════════════════════════
 function DecisionTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
-  const [sub, setSub] = React.useState<"judge" | "notes" | "indicators">("judge")
+  const [sub, setSub] = React.useState<"verdict" | "judge" | "notes" | "indicators">("verdict")
 
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-1 rounded-lg border border-border bg-card/40 p-1 w-fit">
         {([
+          { key: "verdict", label: "مسودة الحكم" },
           { key: "judge", label: "حقول القاضي" },
           { key: "notes", label: `الملاحظات (${c.notes.length})` },
           { key: "indicators", label: "المؤشرات" },
@@ -410,6 +430,7 @@ function DecisionTab({ caseDetail: c }: { caseDetail: CaseDetailT }) {
         ))}
       </div>
 
+      {sub === "verdict" && <VerdictDraftInline caseDetail={c} />}
       {sub === "judge" && <JudgeInline caseDetail={c} />}
       {sub === "notes" && <NotesInline caseDetail={c} />}
       {sub === "indicators" && <IndicatorsInline caseDetail={c} />}
@@ -443,6 +464,8 @@ import { IndicatorsTab } from "./tabs/indicators"
 import { TimelineTab } from "./tabs/timeline"
 import { DeadlinesTab } from "./tabs/deadlines"
 import { PartiesTab } from "./tabs/parties"
+import { IssuesTab } from "./tabs/issues"
+import { VerdictDraftTab } from "./tabs/verdict-draft"
 
 function FactsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <FactsTab caseDetail={c} /> }
 function EvidenceInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <EvidenceTab caseDetail={c} /> }
@@ -457,3 +480,5 @@ function IndicatorsInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { retu
 function TimelineInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <TimelineTab caseDetail={c} /> }
 function DeadlinesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <DeadlinesTab caseDetail={c} /> }
 function PartiesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <PartiesTab caseDetail={c} /> }
+function IssuesInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <IssuesTab caseDetail={c} /> }
+function VerdictDraftInline({ caseDetail: c }: { caseDetail: CaseDetailT }) { return <VerdictDraftTab caseDetail={c} /> }
