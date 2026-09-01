@@ -57,7 +57,7 @@ export function SovereignHeader({
       <div className="flex items-center justify-between px-4 h-14">
         {/* Logo */}
         <div className="flex items-center gap-2.5 shrink-0">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-emerald-700 to-emerald-900 seal-frame">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-slate-700 to-slate-900 seal-frame">
             <Scale className="h-5 w-5 text-amber-400" strokeWidth={1.5} />
           </div>
           <div className="hidden sm:block">

@@ -54,105 +54,108 @@
 :root {
   --radius: 0.5rem;
 
-  /* Sovereign Judicial Operations Room — light institutional variant */
-  --background: oklch(0.985 0.006 95);
-  --foreground: oklch(0.20 0.02 155);
+  /* ═══ 2026 State-of-Art Institutional Palette ═══
+     Slate blue base (authoritative) + warm gold (judicial heritage)
+     + cyan highlights (futuristic) + parchment (document comfort) */
 
-  --card: oklch(0.995 0.003 95);
-  --card-foreground: oklch(0.20 0.02 155);
+  --background: oklch(0.972 0.004 240);
+  --foreground: oklch(0.22 0.025 255);
 
-  --popover: oklch(0.995 0.003 95);
-  --popover-foreground: oklch(0.20 0.02 155);
+  --card: oklch(0.992 0.002 240);
+  --card-foreground: oklch(0.22 0.025 255);
 
-  --primary: oklch(0.38 0.07 155);
-  --primary-foreground: oklch(0.98 0.01 95);
+  --popover: oklch(0.992 0.002 240);
+  --popover-foreground: oklch(0.22 0.025 255);
 
-  --secondary: oklch(0.95 0.01 95);
-  --secondary-foreground: oklch(0.24 0.02 155);
+  --primary: oklch(0.44 0.08 255);
+  --primary-foreground: oklch(0.97 0.005 240);
 
-  --muted: oklch(0.95 0.008 95);
-  --muted-foreground: oklch(0.46 0.015 155);
+  --secondary: oklch(0.94 0.012 240);
+  --secondary-foreground: oklch(0.26 0.025 255);
 
-  --accent: oklch(0.78 0.12 80);
-  --accent-foreground: oklch(0.22 0.03 70);
+  --muted: oklch(0.94 0.008 240);
+  --muted-foreground: oklch(0.48 0.018 255);
 
-  --destructive: oklch(0.55 0.22 27);
-  --border: oklch(0.88 0.012 95);
-  --input: oklch(0.93 0.01 95);
-  --ring: oklch(0.55 0.10 70);
+  --accent: oklch(0.72 0.14 75);
+  --accent-foreground: oklch(0.18 0.025 50);
 
-  --chart-1: oklch(0.55 0.11 70);
-  --chart-2: oklch(0.52 0.12 155);
-  --chart-3: oklch(0.55 0.15 250);
-  --chart-4: oklch(0.60 0.17 25);
-  --chart-5: oklch(0.52 0.16 300);
+  --destructive: oklch(0.54 0.22 25);
+  --border: oklch(0.87 0.012 240);
+  --input: oklch(0.92 0.01 240);
+  --ring: oklch(0.52 0.12 255);
 
-  /* Light institutional sidebar — deep emerald with gold accents */
-  --sidebar: oklch(0.30 0.05 155);
-  --sidebar-foreground: oklch(0.93 0.012 95);
-  --sidebar-primary: oklch(0.76 0.13 80);
-  --sidebar-primary-foreground: oklch(0.20 0.02 150);
-  --sidebar-accent: oklch(0.36 0.04 155);
-  --sidebar-accent-foreground: oklch(0.95 0.012 95);
-  --sidebar-border: oklch(0.38 0.03 155);
-  --sidebar-ring: oklch(0.55 0.10 70);
+  --chart-1: oklch(0.52 0.12 75);
+  --chart-2: oklch(0.48 0.10 255);
+  --chart-3: oklch(0.50 0.14 195);
+  --chart-4: oklch(0.58 0.18 25);
+  --chart-5: oklch(0.48 0.16 300);
 
-  /* Sovereign brand tokens */
-  --sovereign-gold: oklch(0.68 0.13 80);
-  --sovereign-gold-soft: oklch(0.82 0.09 85);
-  --sovereign-emerald: oklch(0.40 0.09 155);
-  --sovereign-obsidian: oklch(0.20 0.02 155);
-  --sovereign-parchment: oklch(0.97 0.015 85);
+  /* Futuristic sidebar — deep slate-navy with gold+cyan accents */
+  --sidebar: oklch(0.22 0.04 260);
+  --sidebar-foreground: oklch(0.88 0.015 240);
+  --sidebar-primary: oklch(0.72 0.14 75);
+  --sidebar-primary-foreground: oklch(0.16 0.025 50);
+  --sidebar-accent: oklch(0.28 0.045 260);
+  --sidebar-accent-foreground: oklch(0.92 0.012 240);
+  --sidebar-border: oklch(0.32 0.035 260);
+  --sidebar-ring: oklch(0.52 0.12 255);
+
+  /* Sovereign brand tokens — gold + cyan + slate */
+  --sovereign-gold: oklch(0.72 0.14 75);
+  --sovereign-gold-soft: oklch(0.84 0.09 80);
+  --sovereign-emerald: oklch(0.50 0.10 180);
+  --sovereign-obsidian: oklch(0.22 0.04 260);
+  --sovereign-parchment: oklch(0.97 0.008 60);
 }
 
 .dark {
-  /* Sovereign Judicial Operations Room — operations-night variant */
-  --background: oklch(0.14 0.015 155);
-  --foreground: oklch(0.94 0.012 95);
+  /* 2026 Futuristic Dark — deep slate-navy with gold+cyan glow */
+  --background: oklch(0.15 0.02 255);
+  --foreground: oklch(0.92 0.012 240);
 
-  --card: oklch(0.18 0.018 155);
-  --card-foreground: oklch(0.94 0.012 95);
+  --card: oklch(0.19 0.025 255);
+  --card-foreground: oklch(0.92 0.012 240);
 
-  --popover: oklch(0.16 0.018 155);
-  --popover-foreground: oklch(0.94 0.012 95);
+  --popover: oklch(0.17 0.022 255);
+  --popover-foreground: oklch(0.92 0.012 240);
 
-  --primary: oklch(0.72 0.13 80);
-  --primary-foreground: oklch(0.16 0.02 150);
+  --primary: oklch(0.72 0.14 75);
+  --primary-foreground: oklch(0.15 0.02 255);
 
-  --secondary: oklch(0.24 0.02 155);
-  --secondary-foreground: oklch(0.92 0.012 95);
+  --secondary: oklch(0.25 0.025 255);
+  --secondary-foreground: oklch(0.90 0.012 240);
 
-  --muted: oklch(0.22 0.018 155);
-  --muted-foreground: oklch(0.68 0.02 95);
+  --muted: oklch(0.23 0.02 255);
+  --muted-foreground: oklch(0.66 0.02 240);
 
-  --accent: oklch(0.72 0.13 80);
-  --accent-foreground: oklch(0.16 0.02 150);
+  --accent: oklch(0.72 0.14 75);
+  --accent-foreground: oklch(0.15 0.02 255);
 
-  --destructive: oklch(0.62 0.22 27);
-  --border: oklch(0.30 0.025 155);
-  --input: oklch(0.26 0.02 155);
-  --ring: oklch(0.72 0.13 80);
+  --destructive: oklch(0.60 0.22 25);
+  --border: oklch(0.30 0.03 255);
+  --input: oklch(0.26 0.025 255);
+  --ring: oklch(0.72 0.14 75);
 
-  --chart-1: oklch(0.74 0.13 80);
-  --chart-2: oklch(0.62 0.13 155);
-  --chart-3: oklch(0.62 0.16 250);
-  --chart-4: oklch(0.68 0.18 25);
-  --chart-5: oklch(0.62 0.18 300);
+  --chart-1: oklch(0.72 0.14 75);
+  --chart-2: oklch(0.58 0.12 255);
+  --chart-3: oklch(0.58 0.14 195);
+  --chart-4: oklch(0.65 0.18 25);
+  --chart-5: oklch(0.58 0.16 300);
 
-  --sidebar: oklch(0.11 0.012 155);
-  --sidebar-foreground: oklch(0.90 0.012 95);
-  --sidebar-primary: oklch(0.74 0.13 80);
-  --sidebar-primary-foreground: oklch(0.16 0.02 150);
-  --sidebar-accent: oklch(0.20 0.02 155);
-  --sidebar-accent-foreground: oklch(0.94 0.012 95);
-  --sidebar-border: oklch(0.24 0.02 155);
-  --sidebar-ring: oklch(0.72 0.13 80);
+  --sidebar: oklch(0.13 0.02 260);
+  --sidebar-foreground: oklch(0.88 0.012 240);
+  --sidebar-primary: oklch(0.72 0.14 75);
+  --sidebar-primary-foreground: oklch(0.15 0.02 255);
+  --sidebar-accent: oklch(0.20 0.025 260);
+  --sidebar-accent-foreground: oklch(0.92 0.012 240);
+  --sidebar-border: oklch(0.25 0.025 260);
+  --sidebar-ring: oklch(0.72 0.14 75);
 
-  --sovereign-gold: oklch(0.74 0.13 80);
-  --sovereign-gold-soft: oklch(0.62 0.10 80);
-  --sovereign-emerald: oklch(0.45 0.10 155);
-  --sovereign-obsidian: oklch(0.10 0.012 155);
-  --sovereign-parchment: oklch(0.20 0.015 155);
+  --sovereign-gold: oklch(0.72 0.14 75);
+  --sovereign-gold-soft: oklch(0.62 0.10 75);
+  --sovereign-emerald: oklch(0.55 0.10 180);
+  --sovereign-obsidian: oklch(0.13 0.02 260);
+  --sovereign-parchment: oklch(0.20 0.02 255);
 }
 
 @layer base {
@@ -182,25 +185,25 @@
 /* ─── Sovereign operations-room surfaces ──────────────────────── */
 .sovereign-grid {
   background-image:
-    linear-gradient(rgba(116, 80, 26, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(116, 80, 26, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(120, 140, 200, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 140, 200, 0.04) 1px, transparent 1px);
   background-size: 32px 32px;
 }
 .dark .sovereign-grid {
   background-image:
-    linear-gradient(rgba(212, 175, 55, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
+    linear-gradient(rgba(200, 175, 80, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200, 175, 80, 0.04) 1px, transparent 1px);
 }
 
 .sovereign-panel {
   background:
-    linear-gradient(180deg, rgba(116, 80, 26, 0.03), transparent 40%),
+    linear-gradient(180deg, rgba(100, 130, 200, 0.03), transparent 40%),
     var(--card);
   border: 1px solid var(--border);
 }
 .dark .sovereign-panel {
   background:
-    linear-gradient(180deg, rgba(212, 175, 55, 0.04), transparent 40%),
+    linear-gradient(180deg, rgba(200, 175, 80, 0.04), transparent 40%),
     var(--card);
 }
 
@@ -215,8 +218,8 @@
 
 .parchment-bg {
   background:
-    radial-gradient(circle at 20% 10%, rgba(116, 80, 26, 0.05), transparent 50%),
-    radial-gradient(circle at 80% 90%, rgba(40, 100, 80, 0.04), transparent 50%),
+    radial-gradient(circle at 20% 10%, rgba(100, 130, 200, 0.05), transparent 50%),
+    radial-gradient(circle at 80% 90%, rgba(60, 120, 160, 0.04), transparent 50%),
     var(--card);
 }
 
