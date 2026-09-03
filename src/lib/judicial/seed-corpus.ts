@@ -340,6 +340,27 @@ export async function seedCorpusRegistry() {
     })
   }
 
+  // Add State Lawsuits Authority (from egycourt source registry)
+  const slaExists = await db.legalSource.findFirst({ where: { nameEn: "State Lawsuits Authority" } })
+  if (!slaExists) {
+    await db.legalSource.create({
+      data: {
+        name: "هيئة قضايا الدولة المصرية",
+        nameEn: "State Lawsuits Authority",
+        portalUrl: "https://sla.gov.eg/",
+        sourceType: "ministry",
+        issuingBody: "هيئة قضايا الدولة المصرية",
+        jurisdiction: "تمثيل الدولة أمام القضاء",
+        accessStatus: "PARTIAL",
+        sourceTier: 3,
+        contentAvailable: "أحكام وقرارات هيئة قضايا الدولة، أخبار، تعيينات",
+        accessNotes: "بوابة رسمية لهيئة قضايا الدولة — بعض المحتوى متاح للعموم",
+        verified: true,
+        lastChecked: new Date(),
+      },
+    })
+  }
+
   // Add the AUTH_REQUIRED portals to the import queue
   for (const s of researched.sources.filter((s) => s.accessStatus === "AUTH_REQUIRED")) {
     await db.importJob.create({

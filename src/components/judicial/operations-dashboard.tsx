@@ -2,11 +2,13 @@
 
 import * as React from "react"
 import {
-  FolderOpen, FileText, Scale, ShieldAlert, Swords, Loader2, Activity,
+  FolderOpen, FileText, Scale, ShieldAlert, Swords, Loader2, Activity as ActivityIcon,
   Database, Clock, AlertTriangle, ArrowUpRight, Plus, Search, ChevronLeft,
-  type LucideIcon,
+  Bell, BookOpen, CheckCircle2, type LucideIcon,
 } from "lucide-react"
 import { cn, colorClasses, relativeTime } from "@/lib/judicial/ui"
+import { useQuery } from "@tanstack/react-query"
+import { api } from "@/lib/judicial/api-client"
 import {
   PROCEDURAL_STAGES, RISK_LEVELS, OPERATING_STATES, findConstant,
 } from "@/lib/judicial/constants"
@@ -112,6 +114,9 @@ export function OperationsDashboard({
           )}
         </div>
 
+        {/* Recent activity — judge-facing feed */}
+        <ActivityFeed />
+
         {/* Corpus — compact */}
         <div className="glass-panel rounded-2xl p-4">
           <div className="flex items-center justify-between flex-wrap gap-3">
@@ -158,5 +163,67 @@ function StatCard({ icon: Icon, label, value, color, onClick }: { icon: LucideIc
         </div>
       </div>
     </button>
+  )
+}
+
+// ─── Judge-facing Activity Feed (from egycourt pattern) ─────────
+const ACT_ICONS: Record<string, React.ReactNode> = {
+  case: <FolderOpen className="h-3.5 w-3.5" />,
+  source: <BookOpen className="h-3.5 w-3.5" />,
+  review: <CheckCircle2 className="h-3.5 w-3.5" />,
+  alert: <Bell className="h-3.5 w-3.5" />,
+}
+const ACT_COLORS: Record<string, string> = { case: "blue", source: "emerald", review: "violet", alert: "amber" }
+
+function ActivityFeed() {
+  const q = useQuery({
+    queryKey: ["audit-global"],
+    queryFn: () => api.listAudit() as Promise<any>,
+    refetchInterval: 30000,
+  })
+
+  const activities = React.useMemo(() => {
+    const raw = q.data?.data ?? q.data ?? []
+    if (!Array.isArray(raw)) return []
+    return raw.slice(0, 6).map((log: any) => {
+      let type = "case"
+      if (log.source === "judge_decision") type = "review"
+      else if (log.action?.includes("cross_case") || log.action?.includes("contradiction")) type = "alert"
+      else if (log.action?.includes("source") || log.action?.includes("corpus")) type = "source"
+      return { id: log.id, type, title: log.action?.replace(/_/g, " ") || "إجراء", detail: log.details || "", time: log.timestamp }
+    })
+  }, [q.data])
+
+  return (
+    <div className="glass-panel rounded-2xl p-4">
+      <div className="flex items-center justify-between mb-3">
+        <h2 className="font-kufi text-sm font-semibold flex items-center gap-1.5">
+          <ActivityIcon className="h-4 w-4 text-amber-500" />
+          النشاط الأخير
+        </h2>
+        <span className="font-kufi text-[10px] text-muted-foreground">{activities.length} عنصر</span>
+      </div>
+      {activities.length === 0 ? (
+        <p className="font-kufi text-xs text-muted-foreground text-center py-4">لا يوجد نشاط حديث</p>
+      ) : (
+        <div className="space-y-2">
+          {activities.map((a) => {
+            const cc = colorClasses(ACT_COLORS[a.type] ?? "slate")
+            return (
+              <div key={a.id} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-background/30 p-2.5">
+                <div className={cn("flex h-7 w-7 items-center justify-center rounded-md shrink-0", cc.bg, cc.text)}>
+                  {ACT_ICONS[a.type] ?? <ActivityIcon className="h-3.5 w-3.5" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-kufi text-xs font-medium leading-snug">{a.title}</p>
+                  {a.detail && <p className="font-kufi text-[10px] text-muted-foreground leading-relaxed truncate">{a.detail}</p>}
+                </div>
+                <span className="font-kufi text-[9px] text-muted-foreground/70 shrink-0">{relativeTime(a.time)}</span>
+              </div>
+            )
+          })}
+        </div>
+      )}
+    </div>
   )
 }

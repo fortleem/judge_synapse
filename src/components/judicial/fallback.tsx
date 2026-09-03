@@ -3,13 +3,15 @@
 import * as React from "react"
 import {
   WifiOff, ServerOff, Scale, AlertTriangle, ShieldCheck, Database, FileText,
-  Bot, Gavel, BookOpen, CalendarClock, GitBranch,
+  Bot, Gavel, BookOpen, CalendarClock, GitBranch, RefreshCw, Loader2,
 } from "lucide-react"
 import { SovereignPanel, StatusBadge } from "./ui/primitives"
 
 // Fallback demo UI shown when the server is unreachable (§98 Degrade-Safely)
 // The judicial record, documents, audit and legal search remain available.
 export function FallbackDemoMode() {
+  const [retrying, setRetrying] = React.useState(false)
+  const handleRetry = () => { setRetrying(true); setTimeout(() => window.location.reload(), 500) }
   return (
     <div className="flex-1 overflow-y-auto scroll-sovereign p-4">
       <div className="max-w-4xl mx-auto space-y-4">
@@ -96,7 +98,11 @@ export function FallbackDemoMode() {
         <div className="text-center py-2">
           <p className="font-kufi text-xs text-muted-foreground">
             <WifiOff className="inline h-3 w-3 mr-1" />
-            يحاول النظام إعادة الاتصال تلقائيًا كل 30 ثانية. تحقّق من حالة الخادم أو أعد تحميل الصفحة.
+            يحاول النظام إعادة الاتصال تلقائيًا كل 30 ثانية.
+            <button onClick={handleRetry} disabled={retrying} className="ml-2 inline-flex items-center gap-1 font-semibold text-amber-600 hover:underline">
+              {retrying ? <Loader2 className="h-3 w-3 animate-spin" /> : <RefreshCw className="h-3 w-3" />}
+              إعادة المحاولة
+            </button>
           </p>
         </div>
       </div>
